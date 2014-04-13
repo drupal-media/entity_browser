@@ -46,7 +46,6 @@ class BrowserWidget extends WidgetBase {
     // If a value was entered into the autocomplete.
     $handler = \Drupal::service('plugin.manager.entity_reference.selection')->getSelectionHandler($this->fieldDefinition);
     $bundles = entity_get_bundles($this->getFieldSetting('target_type'));
-    $auto_create = $this->getSelectionHandlerSetting('auto_create');
 
     if (!empty($element['#value'])) {
       $value = array();
@@ -58,6 +57,10 @@ class BrowserWidget extends WidgetBase {
         if (preg_match("/.+\((\d+)\)/", $input, $matches)) {
           $match = $matches[1];
         }
+        // Match the ID when it is the only thing
+        elseif (preg_match('/^\d+$/', $input, $matches)) {
+          $match = $matches[0];
+        }
         // Match the ID when it's a string (e.g. for config entity types).
         elseif (preg_match("/.+\(([\w.]+)\)/", $input, $matches)) {
           $match = $matches[1];
@@ -65,22 +68,15 @@ class BrowserWidget extends WidgetBase {
         else {
           // Try to get a match from the input string when the user didn't use
           // the autocomplete but filled in a value manually.
-          $match = $handler->validateAutocompleteInput($input, $element, $form_state, $form, !$auto_create);
+          $match = $handler->validateAutocompleteInput($input, $element, $form_state, $form, FALSE);
         }
 
         if ($match) {
           $value[] = array('target_id' => $match);
         }
-        elseif ($auto_create && (count($this->getSelectionHandlerSetting('target_bundles')) == 1 || count($bundles) == 1)) {
-          // Auto-create item. See
-          // \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem::presave().
-          $value[] = array(
-            'target_id' => NULL,
-            'entity' => $this->createNewEntity($input, $element['#autocreate_uid']),
-          );
-        }
       }
     };
+
     // Change the element['#parents'], so in form_set_value() we
     // populate the correct key.
     array_pop($element['#parents']);

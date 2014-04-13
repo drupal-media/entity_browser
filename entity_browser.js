@@ -12,7 +12,7 @@
     attach: function (context) {
       $('.entity_browser-open', context).click(function(e) {
         e.preventDefault();
-        alert('yes');
+        $(this).parent().find('input').val('1');
       });
     }
   };

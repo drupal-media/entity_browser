@@ -1,0 +1,5 @@
+media.view:
+  path: '/entity_browser/browser'
+  defaults:
+    _content: '\Drupal\entity_browser\Controller\EntityBrowserController::page'
+    _title_callback: '\Drupal\entity_browser\Controller\EntityBrowserController::pageTitle'
