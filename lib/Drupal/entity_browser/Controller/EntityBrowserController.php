@@ -13,9 +13,9 @@ use Drupal\media_entity\MediaBundleInterface;
 use Drupal\media_entity\MediaInterface;
 
 /**
- * Returns responses for Media entity routes.
+ * Returns responses for Entity browser routes.
  */
-class MediaController extends ControllerBase {
+class EntityBrowserController extends ControllerBase {
 
   /**
    * Displays a media.
@@ -103,14 +103,11 @@ class MediaController extends ControllerBase {
   /**
    * The _title_callback for the media.add route.
    *
-   * @param \Drupal\media_entity\MediaBundleInterface $media_bundle
-   *   The current media.
-   *
    * @return string
    *   The page title.
    */
-  public function addPageTitle(MediaBundleInterface $media_bundle) {
-    return $this->t('Create @name', array('@name' => $media_bundle->id()));
+  public function addPageTitle() {
+    return $this->t('Entity browser');
   }
 
 }

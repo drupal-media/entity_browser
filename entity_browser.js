@@ -17,4 +17,16 @@
     }
   };
 
+  /**
+   * Command to save the contents of an editor-provided modal.
+   *
+   * This command does not close the open modal. It should be followed by a call
+   * to Drupal.AjaxCommands.prototype.closeDialog.
+   */
+  Drupal.AjaxCommands.prototype.entityBrowserDialogUpdate = function (ajax, response, status) {
+    var result = response.values;
+    $('input[name="' + result.field_name + '[' + result.field_column + ']"]').val(result.items.join(','));
+  };
+
+
 }(Drupal, jQuery));

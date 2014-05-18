@@ -7,8 +7,8 @@
 
 namespace Drupal\entity_browser\Plugin\Field\FieldWidget;
 use Drupal\Component\Utility\Tags;
-use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\entity_reference\Plugin\Field\FieldWidget\AutocompleteWidgetBase;
 
 
 /**
@@ -24,7 +24,7 @@ use Drupal\Core\Field\FieldItemListInterface;
  *   multiple_values = TRUE
  * )
  */
-class BrowserWidget extends WidgetBase {
+class BrowserWidget extends AutocompleteWidgetBase {
 
   /**
    * {@inheritdoc}
@@ -96,8 +96,25 @@ class BrowserWidget extends WidgetBase {
       '#size' => $this->getSetting('size'),
       '#placeholder' => $this->getSetting('placeholder'),
       '#element_validate' => array(array($this, 'elementValidate')),
-      'browser' => array(
-        '#markup' => '<a class="entity_browser-open">' . t('Open browser') . '</a>',
+      'links' => array(
+        '#theme' => 'links',
+        '#links' => array(
+          'browser' => array(
+            'title' => 'Open browser',
+            'href' => 'entity_browser/browser/default',
+            'attributes' => array(
+              'class' => array('use-ajax'),
+              'data-accepts' => 'application/vnd.drupal-modal',
+              'data-dialog-options' => json_encode(array(
+                'width' => '90%',
+              )),
+            ),
+            'query' => array(
+              'field_name' => $this->fieldDefinition->getName(),
+              'field_column' => 'target_id',
+            ),
+          ),
+        ),
       ),
       '#attached' => array(
         'library' => array('entity_browser/drupal.entity_browser'),

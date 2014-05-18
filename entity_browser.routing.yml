@@ -1,5 +1,7 @@
-media.view:
-  path: '/entity_browser/browser'
+entity_browser.browser:
+  path: '/entity_browser/browser/{library}'
   defaults:
-    _content: '\Drupal\entity_browser\Controller\EntityBrowserController::page'
-    _title_callback: '\Drupal\entity_browser\Controller\EntityBrowserController::pageTitle'
+    _form: '\Drupal\entity_browser\Form\EntityBrowserDialog'
+    _title: 'Entity browser'
+  requirements:
+    _permission: 'access content'
