@@ -9,6 +9,7 @@ namespace Drupal\entity_browser\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\entity_browser\EntityBrowserDisplayInterface;
 use Drupal\entity_browser\EntityBrowserInterface;
 
 /**
@@ -18,7 +19,7 @@ use Drupal\entity_browser\EntityBrowserInterface;
  *   id = "entity_browser",
  *   label = @Translation("Entity browser"),
  *   admin_permission = "administer entity browsers",
- *   config_prefix = "entity_browser",
+ *   config_prefix = "browser",
  *   entity_keys = {
  *     "id" = "name",
  *     "label" = "label"
@@ -42,6 +43,13 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   public $label;
 
   /**
+   * The display plugin.
+   *
+   * @var \Drupal\entity_browser\EntityBrowserDisplayInterface
+   */
+  public $display;
+
+  /**
    * {@inheritdoc}
    */
   public function id() {
@@ -60,6 +68,21 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function setName($name) {
     $this->set('name', $name);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getDisplay() {
+    return $this->get('display');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setDisplay(EntityBrowserDisplayInterface $display) {
+    $this->set('display', $display);
     return $this;
   }
 

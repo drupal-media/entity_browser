@@ -1,0 +1,15 @@
+# Schema for configuration files of the Entity browser module.
+
+entity_browser.browser.*:
+  type: config_entity
+  label: 'Entity browser'
+  mapping:
+    name:
+      type: string
+      label: 'Machine name'
+    label:
+      type: label
+      label: 'Label'
+    display:
+      type: string
+      label: 'Display'

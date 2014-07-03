@@ -33,4 +33,23 @@ interface EntityBrowserInterface extends ConfigEntityInterface {
    */
   public function setName($name);
 
+  /**
+   * Returns the display.
+   *
+   * @return \Drupal\entity_browser\EntityBrowserDisplayInterface
+   *   The display.
+   */
+  public function getDisplay();
+
+  /**
+   * Sets the display.
+   *
+   * @param \Drupal\entity_browser\EntityBrowserDisplayInterface $display
+   *   The display.
+   *
+   * @return \Drupal\entity_browser\EntityBrowserInterface
+   *   The class instance this method is called on.
+   */
+  public function setDisplay(EntityBrowserDisplayInterface $display);
+
 }
