@@ -21,5 +21,15 @@ function hook_entity_browser_display_info_alter(&$displays) {
 }
 
 /**
+ * Alter the information provided in \Drupal\entity_browser\Annotation\EntityBrowserTab.
+ *
+ * @param $tabs
+ *   The array of tab plugins, keyed on the machine-readable name.
+ */
+function hook_entity_browser_tab_info_alter(&$displays) {
+  $displays['view_tab']['label'] = t('Views FTW!');
+}
+
+/**
  * @} End of "addtogroup hooks".
  */

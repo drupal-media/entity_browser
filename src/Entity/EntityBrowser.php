@@ -8,9 +8,11 @@
 namespace Drupal\entity_browser\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityWithPluginBagsInterface;
+use Drupal\Core\Plugin\DefaultPluginBag;
 use Drupal\entity_browser\EntityBrowserDisplayInterface;
 use Drupal\entity_browser\EntityBrowserInterface;
+use Drupal\entity_browser\EntityBrowserTabInterface;
 
 /**
  * Defines an entity browser configuration entity.
@@ -26,7 +28,7 @@ use Drupal\entity_browser\EntityBrowserInterface;
  *   },
  * )
  */
-class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, EntityInterface {
+class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, EntityWithPluginBagsInterface {
 
   /**
    * The name of the entity browser.
@@ -48,6 +50,20 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * @var \Drupal\entity_browser\EntityBrowserDisplayInterface
    */
   public $display;
+
+  /**
+   * The array of tabs for this entity browser.
+   *
+   * @var array
+   */
+  protected $tabs = array();
+
+  /**
+   * Holds the collection of tabs that are used by this entity browser.
+   *
+   * @var \Drupal\Core\Plugin\DefaultPluginBag
+   */
+  protected $tabsBag;
 
   /**
    * {@inheritdoc}
@@ -83,6 +99,49 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function setDisplay(EntityBrowserDisplayInterface $display) {
     $this->set('display', $display);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPluginBags() {
+    return array('tabs' => $this->getTabs());
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTab($tab) {
+    return $this->getTabs()->get($tab);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getTabs() {
+    if (!$this->tabsBag) {
+      $this->tabsBag = new DefaultPluginBag(\Drupal::service('plugin.manager.entity_browser.tab'), $this->tabs);
+      $this->tabsBag->sort();
+    }
+    return $this->tabsBag;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addTab(array $configuration) {
+    $configuration['uuid'] = $this->uuidGenerator()->generate();
+    $this->getTabs()->addInstanceId($configuration['uuid'], $configuration);
+    return $configuration['uuid'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function deleteTab(EntityBrowserTabInterface $tab) {
+    $this->getTabs()->removeInstanceId($tab->getUuid());
+    $this->save();
     return $this;
   }
 
