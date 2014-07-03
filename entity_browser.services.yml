@@ -1,0 +1,4 @@
+services:
+  plugin.manager.entity_browser.display:
+    class: Drupal\entity_browser\EntityBrowserDisplayManager
+    parent: default_plugin_manager
