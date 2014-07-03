@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\entity_browser\Annotation\EntityBrowserDisplay.
+ * Contains \Drupal\entity_browser\Annotation\EntityBrowserTab.
  */
 
 namespace Drupal\entity_browser\Annotation;
