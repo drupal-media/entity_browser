@@ -40,6 +40,17 @@ function hook_entity_browser_selection_display_info_alter(&$selection_displays) 
   $selection_displays['no_selection']['label'] = t('Nothing!');
 }
 
+/**
+ * Alter the information provided in \Drupal\entity_browser\Annotation\EntityBrowserWidgetSelector.
+ *
+ * @param $widget_selectors
+ *   The array of widget selector plugins, keyed on the machine-readable name.
+ */
+function hook_entity_browser_widget_selector_info_alter(&$widgets) {
+  $widgets['tab_selector']['label'] = t('Tabs are for winners');
+}
+
+
 
 /**
  * @} End of "addtogroup hooks".

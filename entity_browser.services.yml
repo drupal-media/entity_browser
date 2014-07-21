@@ -2,6 +2,12 @@ services:
   plugin.manager.entity_browser.display:
     class: Drupal\entity_browser\EntityBrowserDisplayManager
     parent: default_plugin_manager
+  plugin.manager.entity_browser.selection_display:
+    class: Drupal\entity_browser\EntityBrowserSelectionDisplayManager
+    parent: default_plugin_manager
   plugin.manager.entity_browser.widget:
     class: Drupal\entity_browser\EntityBrowserWidgetManager
+    parent: default_plugin_manager
+  plugin.manager.entity_browser.widget_selector:
+    class: Drupal\entity_browser\EntityBrowserWidgetSelectorManager
     parent: default_plugin_manager
