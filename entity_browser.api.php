@@ -31,5 +31,16 @@ function hook_entity_browser_widget_info_alter(&$widgets) {
 }
 
 /**
+ * Alter the information provided in \Drupal\entity_browser\Annotation\EntityBrowserSelectionDisplay.
+ *
+ * @param $widgets
+ *   The array of selection display plugins, keyed on the machine-readable name.
+ */
+function hook_entity_browser_selection_display_info_alter(&$selection_displays) {
+  $selection_displays['no_selection']['label'] = t('Nothing!');
+}
+
+
+/**
  * @} End of "addtogroup hooks".
  */
