@@ -53,43 +53,43 @@ interface EntityBrowserInterface extends ConfigEntityInterface {
   public function setDisplay(EntityBrowserDisplayInterface $display);
 
   /**
-   * Returns a specific tab.
+   * Returns a specific widget.
    *
-   * @param string $tab
-   *   The tab ID.
+   * @param string $widget
+   *   The widget ID.
    *
-   * @return \Drupal\entity_browser\EntityBrowserTabInterface
-   *   The tab object.
+   * @return \Drupal\entity_browser\EntityBrowserWidgetInterface
+   *   The widget object.
    */
-  public function getTab($tab);
+  public function getWidget($widget);
 
   /**
-   * Returns the tabs for this entity browser.
+   * Returns the widgets for this entity browser.
    *
    * @return \Drupal\Core\Plugin\DefaultPluginBag
    *   The tag plugin bag.
    */
-  public function getTabs();
+  public function getWidgets();
 
   /**
-   * Saves a tab for this entity browser.
+   * Saves a widget for this entity browser.
    *
    * @param array $configuration
-   *   An array of tab configuration.
+   *   An array of widget configuration.
    *
    * @return string
-   *   The tab ID.
+   *   The widget ID.
    */
-  public function addTab(array $configuration);
+  public function addWidget(array $configuration);
 
   /**
-   * Deletes a tab from this entity browser.
+   * Deletes a widget from this entity browser.
    *
-   * @param \Drupal\entity_browser\EntityBrowserTabInterface $tab
-   *   The tab object.
+   * @param \Drupal\entity_browser\EntityBrowserWidgetInterface $widget
+   *   The widget object.
    *
    * @return $this
    */
-  public function deleteTab(EntityBrowserTabInterface $tab);
+  public function deleteWidget(EntityBrowserWidgetInterface $widget);
 
 }

@@ -21,13 +21,13 @@ function hook_entity_browser_display_info_alter(&$displays) {
 }
 
 /**
- * Alter the information provided in \Drupal\entity_browser\Annotation\EntityBrowserTab.
+ * Alter the information provided in \Drupal\entity_browser\Annotation\EntityBrowserWidget.
  *
- * @param $tabs
- *   The array of tab plugins, keyed on the machine-readable name.
+ * @param $widgets
+ *   The array of widget plugins, keyed on the machine-readable name.
  */
-function hook_entity_browser_tab_info_alter(&$displays) {
-  $displays['view_tab']['label'] = t('Views FTW!');
+function hook_entity_browser_widget_info_alter(&$widgets) {
+  $widgets['view_widget']['label'] = t('Views FTW!');
 }
 
 /**

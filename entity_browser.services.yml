@@ -2,6 +2,6 @@ services:
   plugin.manager.entity_browser.display:
     class: Drupal\entity_browser\EntityBrowserDisplayManager
     parent: default_plugin_manager
-  plugin.manager.entity_browser.tab:
-    class: Drupal\entity_browser\EntityBrowserTabManager
+  plugin.manager.entity_browser.widget:
+    class: Drupal\entity_browser\EntityBrowserWidgetManager
     parent: default_plugin_manager

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\entity_browser\EntityBrowserTabManager.
+ * Contains \Drupal\entity_browser\EntityBrowserWidgetManager.
  */
 
 namespace Drupal\entity_browser;
@@ -12,12 +12,12 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
- * Manages entity browser tab plugins.
+ * Manages entity browser widget plugins.
  */
-class EntityBrowserTabManager extends DefaultPluginManager {
+class EntityBrowserWidgetManager extends DefaultPluginManager {
 
   /**
-   * Constructs a new EntityBrowserTabManager.
+   * Constructs a new EntityBrowserWidgetManager.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths
@@ -28,10 +28,10 @@ class EntityBrowserTabManager extends DefaultPluginManager {
    *   The module handler.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/EntityBrowserTab', $namespaces, $module_handler, 'Drupal\entity_browser\Annotation\EntityBrowserTab');
+    parent::__construct('Plugin/EntityBrowserWidget', $namespaces, $module_handler, 'Drupal\entity_browser\Annotation\EntityBrowserWidget');
 
-    $this->alterInfo('entity_browser_tab_info');
-    $this->setCacheBackend($cache_backend, 'entity_browser_tab_plugins');
+    $this->alterInfo('entity_browser_widget_info');
+    $this->setCacheBackend($cache_backend, 'entity_browser_widget_plugins');
   }
 
 }
