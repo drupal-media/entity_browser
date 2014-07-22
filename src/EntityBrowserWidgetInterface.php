@@ -30,4 +30,12 @@ interface EntityBrowserWidgetInterface extends PluginInspectionInterface {
    */
   public function getUuid();
 
+  /**
+   * Returns the widget's weight.
+   *
+   * @return int
+   *   Widget's weight.
+   */
+  public function getWeight();
+
 }

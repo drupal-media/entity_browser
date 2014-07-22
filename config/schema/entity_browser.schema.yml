@@ -11,5 +11,52 @@ entity_browser.browser.*:
       type: label
       label: 'Label'
     display:
-      type: string
+      type: 'mapping'
       label: 'Display'
+      mapping:
+        id:
+          type: string
+        uuid:
+          type: string
+        label:
+          type: string
+        settings:
+          type: entity_browser.browser.display.[%parent.id]
+    widgets:
+      type: sequence
+      label: 'Widgets'
+      sequence:
+        - type: mapping
+          mapping:
+            id:
+              type: string
+            uuid:
+              type: string
+            label:
+              type: string
+            weight:
+              type: integer
+            settings:
+              type: entity_browser.browser.widget.[%parent.id]
+    widget_selector:
+      type: mapping
+      mapping:
+        id:
+          type: string
+        uuid:
+          type: string
+        label:
+          type: string
+        settings:
+          type: entity_browser.browser.widget_selector.[%parent.id]
+    selection_display:
+      type: mapping
+      mapping:
+        id:
+          type: string
+        uuid:
+          type: string
+        label:
+          type: string
+        settings:
+          type: entity_browser.browser.selection_display.[%parent.id]

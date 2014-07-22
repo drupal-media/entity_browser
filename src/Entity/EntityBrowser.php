@@ -10,9 +10,12 @@ namespace Drupal\entity_browser\Entity;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityWithPluginBagsInterface;
 use Drupal\Core\Plugin\DefaultPluginBag;
+use Drupal\Core\Plugin\DefaultSinglePluginBag;
 use Drupal\entity_browser\EntityBrowserDisplayInterface;
 use Drupal\entity_browser\EntityBrowserInterface;
+use Drupal\entity_browser\EntityBrowserSelectionDisplayInterface;
 use Drupal\entity_browser\EntityBrowserWidgetInterface;
+use Drupal\entity_browser\EntityBrowserWidgetSelectorInterface;
 
 /**
  * Defines an entity browser configuration entity.
@@ -45,11 +48,18 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   public $label;
 
   /**
-   * The display plugin.
+   * The display plugin configuration.
    *
-   * @var \Drupal\entity_browser\EntityBrowserDisplayInterface
+   * @var array
    */
   public $display;
+
+  /**
+   * Display plugin bag.
+   *
+   * @var \Drupal\Core\Plugin\DefaultSinglePluginBag
+   */
+  protected $displayBag;
 
   /**
    * The array of widgets for this entity browser.
@@ -64,6 +74,34 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * @var \Drupal\Core\Plugin\DefaultPluginBag
    */
   protected $widgetsBag;
+
+  /**
+   * The selection display plugin configuration.
+   *
+   * @var array
+   */
+  public $selectionDisplay;
+
+  /**
+   * Selection display plugin bag.
+   *
+   * @var \Drupal\Core\Plugin\DefaultSinglePluginBag
+   */
+  protected $selectionDisplayBag;
+
+  /**
+   * The widget selector plugin configuration.
+   *
+   * @var array
+   */
+  public $widgetSelector;
+
+  /**
+   * Widget selector plugin bag.
+   *
+   * @var \Drupal\Core\Plugin\DefaultSinglePluginBag
+   */
+  protected $widgetSelectorBag;
 
   /**
    * {@inheritdoc}
@@ -95,9 +133,22 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   }
 
   /**
+   * Returns display plugin bag.
+   *
+   * @return \Drupal\Core\Plugin\DefaultSinglePluginBag
+   *   The tag plugin bag.
+   */
+  protected function displayPluginBag() {
+    if (!$this->displayBag) {
+      $this->displayBag = new DefaultSinglePluginBag(\Drupal::service('plugin.manager.entity_browser.display'), $this->display['id'], $this->display);
+    }
+    return $this->displayBag;
+  }
+
+  /**
    * {@inheritdoc}
    */
-  public function setDisplay(EntityBrowserDisplayInterface $display) {
+  public function setDisplay(array $display) {
     $this->set('display', $display);
     return $this;
   }
@@ -142,6 +193,62 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   public function deleteWidget(EntityBrowserWidgetInterface $widget) {
     $this->getWidgets()->removeInstanceId($widget->getUuid());
     $this->save();
+    return $this;
+  }
+
+  /**
+   * Returns selection display plugin bag.
+   *
+   * @return \Drupal\Core\Plugin\DefaultSinglePluginBag
+   *   The tag plugin bag.
+   */
+  protected function selectionDisplayPluginBag() {
+    if (!$this->selectionDisplayBag) {
+      $this->selectionDisplayBag = new DefaultSinglePluginBag(\Drupal::service('plugin.manager.entity_browser.selection_display'), $this->selectionDisplay['id'], $this->selectionDisplay);
+    }
+    return $this->selectionDisplayBag;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSelectionDisplay() {
+    $this->selectionDisplayPluginBag()->get($this->selectionDisplay['id']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setSelectionDisplay(array $selection_display) {
+    $this->set('selectionDisplay', $selection_display);
+    return $this;
+  }
+
+  /**
+   * Returns widget selector plugin bag.
+   *
+   * @return \Drupal\Core\Plugin\DefaultSinglePluginBag
+   *   The tag plugin bag.
+   */
+  protected function widgetSelectorPluginBag() {
+    if (!$this->widgetSelectorBag) {
+      $this->widgetSelectorBag = new DefaultSinglePluginBag(\Drupal::service('plugin.manager.entity_browser.widget_selector'), $this->widgetSelector['id'], $this->widgetSelector);
+    }
+    return $this->widgetSelectorBag;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getWidgetSelector() {
+    $this->widgetSelectorPluginBag()->get($this->widgetSelector['id']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setWidgetSelector(array $widget_selector) {
+    $this->set('widgetSelector', $widget_selector);
     return $this;
   }
 
