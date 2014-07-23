@@ -11,11 +11,8 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityWithPluginBagsInterface;
 use Drupal\Core\Plugin\DefaultPluginBag;
 use Drupal\Core\Plugin\DefaultSinglePluginBag;
-use Drupal\entity_browser\EntityBrowserDisplayInterface;
 use Drupal\entity_browser\EntityBrowserInterface;
-use Drupal\entity_browser\EntityBrowserSelectionDisplayInterface;
 use Drupal\entity_browser\EntityBrowserWidgetInterface;
-use Drupal\entity_browser\EntityBrowserWidgetSelectorInterface;
 
 /**
  * Defines an entity browser configuration entity.
@@ -129,7 +126,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function getDisplay() {
-    return $this->get('display');
+    return $this->displayPluginBag()->get($this->display['id']);
   }
 
   /**
@@ -149,7 +146,8 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function setDisplay(array $display) {
-    $this->set('display', $display);
+    $this->display = $display;
+    $this->displayPluginBag()->addInstanceId($display['id']);
     return $this;
   }
 
@@ -157,7 +155,12 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function getPluginBags() {
-    return array('widgets' => $this->getWidgets());
+    return array(
+      'widgets' => $this->getWidgets(),
+      'widget_selector' => $this->widgetSelectorPluginBag(),
+      'display' => $this->displayPluginBag(),
+      'selection_display' => $this->selectionDisplayPluginBag(),
+    );
   }
 
   /**
@@ -213,14 +216,15 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function getSelectionDisplay() {
-    $this->selectionDisplayPluginBag()->get($this->selection_display['id']);
+    return $this->selectionDisplayPluginBag()->get($this->selection_display['id']);
   }
 
   /**
    * {@inheritdoc}
    */
   public function setSelectionDisplay(array $selection_display) {
-    $this->set('selectionDisplay', $selection_display);
+    $this->selection_display = $selection_display;
+    $this->selectionDisplayPluginBag()->addInstanceId($selection_display['id']);
     return $this;
   }
 
@@ -241,14 +245,15 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function getWidgetSelector() {
-    $this->widgetSelectorPluginBag()->get($this->widget_selector['id']);
+    return $this->widgetSelectorPluginBag()->get($this->widget_selector['id']);
   }
 
   /**
    * {@inheritdoc}
    */
   public function setWidgetSelector(array $widget_selector) {
-    $this->set('widgetSelector', $widget_selector);
+    $this->widget_selector = $widget_selector;
+    $this->widgetSelectorPluginBag()->addInstanceId($widget_selector['id']);
     return $this;
   }
 
