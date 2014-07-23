@@ -4,7 +4,7 @@
  * Contains \Drupal\entity_browser\Plugin\EntityBrowser\WidgetSelector\Standalone.
  */
 
-namespace Drupal\entity_browser\Plugin\EntityBrowser\Tabs;
+namespace Drupal\entity_browser\Plugin\EntityBrowser\WidgetSelector;
 
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\entity_browser\EntityBrowserWidgetSelectorInterface;
