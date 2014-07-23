@@ -28,7 +28,7 @@ class EntityBrowserDisplayManager extends DefaultPluginManager {
    *   The module handler.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/EntityBrowserDisplay', $namespaces, $module_handler, 'Drupal\entity_browser\Annotation\EntityBrowserDisplay');
+    parent::__construct('Plugin/EntityBrowser/Display', $namespaces, $module_handler, 'Drupal\entity_browser\Annotation\EntityBrowserDisplay');
 
     $this->alterInfo('entity_browser_display_info');
     $this->setCacheBackend($cache_backend, 'entity_browser_display_plugins');

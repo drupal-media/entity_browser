@@ -28,7 +28,7 @@ class EntityBrowserWidgetManager extends DefaultPluginManager {
    *   The module handler.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/EntityBrowserWidget', $namespaces, $module_handler, 'Drupal\entity_browser\Annotation\EntityBrowserWidget');
+    parent::__construct('Plugin/EntityBrowser/Widget', $namespaces, $module_handler, 'Drupal\entity_browser\Annotation\EntityBrowserWidget');
 
     $this->alterInfo('entity_browser_widget_info');
     $this->setCacheBackend($cache_backend, 'entity_browser_widget_plugins');
