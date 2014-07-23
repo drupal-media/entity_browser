@@ -1,0 +1,62 @@
+# Schema for configuration files of the Entity browser module.
+
+entity_browser.browser.*:
+  type: config_entity
+  label: 'Entity browser'
+  mapping:
+    name:
+      type: string
+      label: 'Machine name'
+    label:
+      type: label
+      label: 'Label'
+    display:
+      type: 'mapping'
+      label: 'Display'
+      mapping:
+        id:
+          type: string
+        uuid:
+          type: string
+        label:
+          type: string
+        settings:
+          type: entity_browser.browser.display.[%parent.id]
+    widgets:
+      type: sequence
+      label: 'Widgets'
+      sequence:
+        - type: mapping
+          mapping:
+            id:
+              type: string
+            uuid:
+              type: string
+            label:
+              type: string
+            weight:
+              type: integer
+            settings:
+              type: entity_browser.browser.widget.[%parent.id]
+    widget_selector:
+      type: mapping
+      mapping:
+        id:
+          type: string
+        uuid:
+          type: string
+        label:
+          type: string
+        settings:
+          type: entity_browser.browser.widget_selector.[%parent.id]
+    selection_display:
+      type: mapping
+      mapping:
+        id:
+          type: string
+        uuid:
+          type: string
+        label:
+          type: string
+        settings:
+          type: entity_browser.browser.selection_display.[%parent.id]
