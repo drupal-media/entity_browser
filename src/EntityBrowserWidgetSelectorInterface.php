@@ -22,12 +22,4 @@ interface EntityBrowserWidgetSelectorInterface extends PluginInspectionInterface
    */
   public function label();
 
-  /**
-   * Returns the unique ID representing the widget selector.
-   *
-   * @return string
-   *   The widget ID.
-   */
-  public function getUuid();
-
 }
