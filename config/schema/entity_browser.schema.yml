@@ -11,17 +11,20 @@ entity_browser.browser.*:
       type: label
       label: 'Label'
     display:
-      type: 'mapping'
-      label: 'Display'
-      mapping:
-        id:
-          type: string
-        uuid:
-          type: string
-        label:
-          type: string
-        settings:
-          type: entity_browser.browser.display.[%parent.id]
+      type: string
+      label: 'Display plugin ID'
+    display_configuration:
+      type: entity_browser.browser.display.[%display]
+    selection_display:
+      type: string
+      label: 'Selection display plugin ID'
+    selection_display_configuration:
+      type: entity_browser.browser.selection_display.[%selection_display]
+    widget_selector:
+      type: string
+      label: 'Widget selector plugin ID'
+    widget_selector_configuration:
+      type: entity_browser.browser.widget_selector.[%widget_selector]
     widgets:
       type: sequence
       label: 'Widgets'
@@ -38,25 +41,3 @@ entity_browser.browser.*:
               type: integer
             settings:
               type: entity_browser.browser.widget.[%parent.id]
-    widget_selector:
-      type: mapping
-      mapping:
-        id:
-          type: string
-        uuid:
-          type: string
-        label:
-          type: string
-        settings:
-          type: entity_browser.browser.widget_selector.[%parent.id]
-    selection_display:
-      type: mapping
-      mapping:
-        id:
-          type: string
-        uuid:
-          type: string
-        label:
-          type: string
-        settings:
-          type: entity_browser.browser.selection_display.[%parent.id]

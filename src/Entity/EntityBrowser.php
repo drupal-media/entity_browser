@@ -45,11 +45,18 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   public $label;
 
   /**
+   * The display plugin id.
+   *
+   * @var string
+   */
+  public $display;
+
+  /**
    * The display plugin configuration.
    *
    * @var array
    */
-  public $display;
+  public $display_configuraton = array();
 
   /**
    * Display plugin bag.
@@ -73,11 +80,18 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   protected $widgetsBag;
 
   /**
+   * The selection display plugin ID.
+   *
+   * @var string
+   */
+  public $selection_display;
+
+  /**
    * The selection display plugin configuration.
    *
    * @var array
    */
-  public $selection_display;
+  public $selection_display_configuration = array();
 
   /**
    * Selection display plugin bag.
@@ -87,11 +101,18 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   protected $selectionDisplayBag;
 
   /**
+   * The widget selector plugin ID.
+   *
+   * @var string
+   */
+  public $widget_selector;
+
+  /**
    * The widget selector plugin configuration.
    *
    * @var array
    */
-  public $widget_selector;
+  public $widget_selector_configuration = array();
 
   /**
    * Widget selector plugin bag.
@@ -126,7 +147,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function getDisplay() {
-    return $this->displayPluginBag()->get($this->display['id']);
+    return $this->displayPluginBag()->get($this->display);
   }
 
   /**
@@ -137,18 +158,9 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   protected function displayPluginBag() {
     if (!$this->displayBag) {
-      $this->displayBag = new DefaultSinglePluginBag(\Drupal::service('plugin.manager.entity_browser.display'), $this->display['id'], $this->display);
+      $this->displayBag = new DefaultSinglePluginBag(\Drupal::service('plugin.manager.entity_browser.display'), $this->display, $this->display_configuraton);
     }
     return $this->displayBag;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setDisplay(array $display) {
-    $this->display = $display;
-    $this->displayPluginBag()->addInstanceId($display['id']);
-    return $this;
   }
 
   /**
@@ -157,9 +169,9 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   public function getPluginBags() {
     return array(
       'widgets' => $this->getWidgets(),
-      'widget_selector' => $this->widgetSelectorPluginBag(),
-      'display' => $this->displayPluginBag(),
-      'selection_display' => $this->selectionDisplayPluginBag(),
+      'widget_selector_configuration' => $this->widgetSelectorPluginBag(),
+      'display_configuration' => $this->displayPluginBag(),
+      'selection_display_configuration' => $this->selectionDisplayPluginBag(),
     );
   }
 
@@ -207,7 +219,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   protected function selectionDisplayPluginBag() {
     if (!$this->selectionDisplayBag) {
-      $this->selectionDisplayBag = new DefaultSinglePluginBag(\Drupal::service('plugin.manager.entity_browser.selection_display'), $this->selection_display['id'], $this->selection_display);
+      $this->selectionDisplayBag = new DefaultSinglePluginBag(\Drupal::service('plugin.manager.entity_browser.selection_display'), $this->selection_display, $this->selection_display_configuration);
     }
     return $this->selectionDisplayBag;
   }
@@ -216,16 +228,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function getSelectionDisplay() {
-    return $this->selectionDisplayPluginBag()->get($this->selection_display['id']);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setSelectionDisplay(array $selection_display) {
-    $this->selection_display = $selection_display;
-    $this->selectionDisplayPluginBag()->addInstanceId($selection_display['id']);
-    return $this;
+    return $this->selectionDisplayPluginBag()->get($this->selection_display);
   }
 
   /**
@@ -236,7 +239,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   protected function widgetSelectorPluginBag() {
     if (!$this->widgetSelectorBag) {
-      $this->widgetSelectorBag = new DefaultSinglePluginBag(\Drupal::service('plugin.manager.entity_browser.widget_selector'), $this->widget_selector['id'], $this->widget_selector);
+      $this->widgetSelectorBag = new DefaultSinglePluginBag(\Drupal::service('plugin.manager.entity_browser.widget_selector'), $this->widget_selector, $this->widget_selector_configuration);
     }
     return $this->widgetSelectorBag;
   }
@@ -245,16 +248,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function getWidgetSelector() {
-    return $this->widgetSelectorPluginBag()->get($this->widget_selector['id']);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setWidgetSelector(array $widget_selector) {
-    $this->widget_selector = $widget_selector;
-    $this->widgetSelectorPluginBag()->addInstanceId($widget_selector['id']);
-    return $this;
+    return $this->widgetSelectorPluginBag()->get($this->widget_selector);
   }
 
 }
