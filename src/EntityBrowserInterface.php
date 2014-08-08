@@ -42,17 +42,6 @@ interface EntityBrowserInterface extends ConfigEntityInterface {
   public function getDisplay();
 
   /**
-   * Sets the display.
-   *
-   * @param array $display
-   *   The display configuration.
-   *
-   * @return \Drupal\entity_browser\EntityBrowserInterface
-   *   The class instance this method is called on.
-   */
-  public function setDisplay(array $display);
-
-  /**
    * Returns a specific widget.
    *
    * @param string $widget
@@ -101,34 +90,11 @@ interface EntityBrowserInterface extends ConfigEntityInterface {
   public function getSelectionDisplay();
 
   /**
-   * Sets the selection display.
-   *
-   * @param array $selection_display
-   *   The selection display configuration.
-   *
-   * @return \Drupal\entity_browser\EntityBrowserInterface
-   *   The class instance this method is called on.
-   */
-  public function setSelectionDisplay(array $selection_display);
-
-
-  /**
    * Returns the widget selector.
    *
    * @return \Drupal\entity_browser\EntityBrowserWidgetSelectorInterface
    *   The widget selector.
    */
   public function getWidgetSelector();
-
-  /**
-   * Sets the widget selector.
-   *
-   * @param array $widget_selector
-   *   The widget selector configuration.
-   *
-   * @return \Drupal\entity_browser\EntityBrowserInterface
-   *   The class instance this method is called on.
-   */
-  public function setWidgetSelector(array $widget_selector);
 
 }
