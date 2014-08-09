@@ -97,4 +97,44 @@ interface EntityBrowserInterface extends ConfigEntityInterface {
    */
   public function getWidgetSelector();
 
+  /**
+   * Returns entity browser's form representation.
+   *
+   * @return array
+   *   Form structure.
+   */
+  public function getForm();
+
+  /**
+   * Returns currently selected entities.
+   *
+   * @return array
+   *   Array of currently selected entities.
+   */
+  public function getSelectedEntities();
+
+  /**
+   * Sets currently selected entities.
+   *
+   * @param array $entities
+   *   Entities that are currently selected.
+   */
+  public function setSelectedEntities(array $entities);
+
+  /**
+   * Adds entities to currently selected entities.
+   *
+   * @param array $entities
+   *   Entities to be added to the list of currently selected entities.
+   */
+  public function addSelectedEntities(array $entities);
+
+  /**
+   * Indicates completed selection.
+   *
+   * Selection process is done and currently selected entities are sent to the
+   * initiating code.
+   */
+  public function selectionCompleted();
+
 }

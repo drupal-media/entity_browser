@@ -22,4 +22,19 @@ interface EntityBrowserWidgetSelectorInterface extends PluginInspectionInterface
    */
   public function label();
 
+  /**
+   * Returns widget selector form.
+   *
+   * @return array
+   *   Form structure.
+   */
+  public function getForm();
+
+  /**
+   * Returns ID of the widget that is currently selected.
+   *
+   * @return mixed
+   */
+  public function getCurrentWidget();
+
 }
