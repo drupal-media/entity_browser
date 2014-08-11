@@ -33,7 +33,8 @@ interface EntityBrowserWidgetSelectorInterface extends PluginInspectionInterface
   /**
    * Returns ID of the widget that is currently selected.
    *
-   * @return mixed
+   * @return string
+   *   ID of the currently selected widget.
    */
   public function getCurrentWidget();
 

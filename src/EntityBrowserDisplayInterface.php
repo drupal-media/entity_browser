@@ -23,7 +23,7 @@ interface EntityBrowserDisplayInterface extends PluginInspectionInterface {
   public function label();
 
   /**
-   * Display entity browser.
+   * Displays entity browser.
    *
    * This is the "entry point" for every non-entity browser code to interact
    * with it. It will take care about displaying entity browser in one way or
