@@ -1,7 +1,0 @@
-drupal.entity_browser:
-  version: 1.0
-  js:
-    entity_browser.js: {}
-  dependencies:
-    - core/jquery
-    - core/drupal
