@@ -1,7 +1,0 @@
-entity_browser.browser:
-  path: '/entity_browser/browser/{library}'
-  defaults:
-    _form: '\Drupal\entity_browser\Form\EntityBrowserDialog'
-    _title: 'Entity browser'
-  requirements:
-    _permission: 'access content'
