@@ -8,11 +8,12 @@
 namespace Drupal\entity_browser;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\Core\Form\FormInterface;
 
 /**
  * Provides an interface defining an entity browser entity.
  */
-interface EntityBrowserInterface extends ConfigEntityInterface {
+interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
 
   /**
    * Returns the entity browser name.
@@ -96,14 +97,6 @@ interface EntityBrowserInterface extends ConfigEntityInterface {
    *   The widget selector.
    */
   public function getWidgetSelector();
-
-  /**
-   * Returns entity browser's form representation.
-   *
-   * @return array
-   *   Form structure.
-   */
-  public function getForm();
 
   /**
    * Returns currently selected entities.
