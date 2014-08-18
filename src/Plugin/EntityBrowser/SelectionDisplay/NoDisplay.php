@@ -34,4 +34,11 @@ class NoDisplay extends PluginBase implements EntityBrowserSelectionDisplayInter
     $this->label;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getForm() {
+    // @TODO Implement it.
+  }
+
 }

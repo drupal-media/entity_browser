@@ -30,4 +30,12 @@ interface EntityBrowserWidgetInterface extends PluginInspectionInterface {
    */
   public function getWeight();
 
+  /**
+   * Returns widget form.
+   *
+   * @return array
+   *   Form structure.
+   */
+  public function getForm();
+
 }

@@ -22,4 +22,12 @@ interface EntityBrowserSelectionDisplayInterface extends PluginInspectionInterfa
    */
   public function label();
 
+  /**
+   * Returns selection display form.
+   *
+   * @return array
+   *   Form structure.
+   */
+  public function getForm();
+
 }

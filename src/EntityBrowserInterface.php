@@ -8,11 +8,12 @@
 namespace Drupal\entity_browser;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
+use Drupal\Core\Form\FormInterface;
 
 /**
  * Provides an interface defining an entity browser entity.
  */
-interface EntityBrowserInterface extends ConfigEntityInterface {
+interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
 
   /**
    * Returns the entity browser name.
@@ -96,5 +97,37 @@ interface EntityBrowserInterface extends ConfigEntityInterface {
    *   The widget selector.
    */
   public function getWidgetSelector();
+
+  /**
+   * Returns currently selected entities.
+   *
+   * @return array
+   *   Array of currently selected entities.
+   */
+  public function getSelectedEntities();
+
+  /**
+   * Sets currently selected entities.
+   *
+   * @param array $entities
+   *   Entities that are currently selected.
+   */
+  public function setSelectedEntities(array $entities);
+
+  /**
+   * Adds entities to currently selected entities.
+   *
+   * @param array $entities
+   *   Entities to be added to the list of currently selected entities.
+   */
+  public function addSelectedEntities(array $entities);
+
+  /**
+   * Indicates completed selection.
+   *
+   * Selection process is done and currently selected entities are sent to the
+   * initiating code.
+   */
+  public function selectionCompleted();
 
 }
