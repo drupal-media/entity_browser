@@ -33,4 +33,19 @@ class Tabs extends PluginBase implements EntityBrowserWidgetSelectorInterface {
   public function label() {
     return $this->label;
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getForm() {
+    // @TODO Implement it.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCurrentWidget() {
+    // @TODO Implement it.
+  }
+
 }

@@ -33,4 +33,19 @@ class Standalone extends PluginBase implements EntityBrowserDisplayInterface {
   public function label() {
     return $this->label;
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function displayEntityBrowser() {
+    // @TODO Implement it.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function selectionCompleted() {
+    // @TODO Implement it.
+  }
+
 }

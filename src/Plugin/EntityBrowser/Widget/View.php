@@ -48,4 +48,11 @@ class View extends PluginBase implements EntityBrowserWidgetInterface {
     return $this->weight;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getForm() {
+    // @TODO Implement it.
+  }
+
 }

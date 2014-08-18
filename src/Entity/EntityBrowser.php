@@ -9,6 +9,7 @@ namespace Drupal\entity_browser\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityWithPluginBagsInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\DefaultPluginBag;
 use Drupal\Core\Plugin\DefaultSinglePluginBag;
 use Drupal\entity_browser\EntityBrowserInterface;
@@ -249,6 +250,63 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function getWidgetSelector() {
     return $this->widgetSelectorPluginBag()->get($this->widget_selector);
+  }
+
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSelectedEntities() {
+    // @TODO Implement it.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setSelectedEntities(array $entities) {
+    // @TODO Implement it.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addSelectedEntities(array $entities) {
+    // @TODO Implement it.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function selectionCompleted() {
+    // @TODO Implement it.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormId() {
+    // @TODO Implement it.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    // @TODO Implement it.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    // @TODO Implement it.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    // @TODO Implement it.
   }
 
 }
