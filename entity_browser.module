@@ -5,15 +5,3 @@
  * Allows to flexibly create, browse and select entites.
  */
 
-/**
- * Implements hook_permission().
- */
-function entity_browser_permission() {
-  return array(
-    'administer entity browsers' => array(
-      'title' => t('Administer entity browsers'),
-      'description' => t('Create and modify entity browsers for generating browsing, creating and selecting entities.'),
-      'restrict access' => TRUE,
-    ),
-  );
-}

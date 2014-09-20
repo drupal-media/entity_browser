@@ -1,0 +1,4 @@
+administer entity browsers:
+  title: 'Administer entity browsers'
+  description: 'Create and modify entity browsers for generating browsing, creating and selecting entities.'
+  restrict access: TRUE
