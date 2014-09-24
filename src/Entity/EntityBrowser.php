@@ -14,6 +14,8 @@ use Drupal\Core\Plugin\DefaultPluginBag;
 use Drupal\Core\Plugin\DefaultSinglePluginBag;
 use Drupal\entity_browser\EntityBrowserInterface;
 use Drupal\entity_browser\EntityBrowserWidgetInterface;
+use Drupal\entity_browser\Plugin\EntityBrowser\Display\DisplayRouterInterface;
+use Symfony\Component\Routing\Route;
 
 /**
  * Defines an entity browser configuration entity.
@@ -57,7 +59,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    *
    * @var array
    */
-  public $display_configuraton = array();
+  public $display_configuration = array();
 
   /**
    * Display plugin bag.
@@ -159,7 +161,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   protected function displayPluginBag() {
     if (!$this->displayBag) {
-      $this->displayBag = new DefaultSinglePluginBag(\Drupal::service('plugin.manager.entity_browser.display'), $this->display, $this->display_configuraton);
+      $this->displayBag = new DefaultSinglePluginBag(\Drupal::service('plugin.manager.entity_browser.display'), $this->display, $this->display_configuration);
     }
     return $this->displayBag;
   }
@@ -307,6 +309,24 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // @TODO Implement it.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function route() {
+    $defaults = array(
+      '_controller' => 'Drupal\entity_browser\Controllers\StandalonePage::page',
+      'entity_browser_id' => $this->id(),
+    );
+    $display = $this->getDisplay();
+    if ($display instanceof DisplayRouterInterface) {
+      $path = $display->path();
+      //debug($path);
+      return new Route($path, $defaults);
+    }
+
+    return FALSE;
   }
 
 }

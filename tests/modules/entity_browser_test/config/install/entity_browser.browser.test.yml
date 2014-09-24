@@ -1,0 +1,15 @@
+name: test
+label: 'Test browser'
+display: standalone
+display_configuration:
+  path: '/entity-browser/test'
+selection_display: no_display
+selection_display_configuration: {  }
+widget_selector: tabs
+widget_selector_configuration: {  }
+widgets:
+  -
+    id: view
+    label: 'View widget'
+    weight: 0
+    settings: {  }
