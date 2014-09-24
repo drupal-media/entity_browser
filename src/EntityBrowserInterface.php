@@ -130,4 +130,12 @@ interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
    */
   public function selectionCompleted();
 
+  /**
+   * Gets route that matches this display.
+   *
+   * @return \Symfony\Component\Routing\Route|bool
+   *   Route object or FALSE if no route is used.
+   */
+  public function route();
+
 }

@@ -15,10 +15,11 @@ use Drupal\entity_browser\EntityBrowserDisplayInterface;
  * @EntityBrowserDisplay(
  *   id = "standalone",
  *   label = @Translation("Standalone form"),
- *   description = @Translation("Displays entity browser as a standalone form.")
+ *   description = @Translation("Displays entity browser as a standalone form."),
+ *   uses_route = TRUE
  * )
  */
-class Standalone extends PluginBase implements EntityBrowserDisplayInterface {
+class Standalone extends PluginBase implements EntityBrowserDisplayInterface, DisplayRouterInterface {
 
   /**
    * Plugin label.
@@ -46,6 +47,13 @@ class Standalone extends PluginBase implements EntityBrowserDisplayInterface {
    */
   public function selectionCompleted() {
     // @TODO Implement it.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function path() {
+    return $this->configuration['path'];
   }
 
 }

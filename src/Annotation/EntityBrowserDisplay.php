@@ -45,4 +45,11 @@ class EntityBrowserDisplay extends Plugin {
    */
   public $description = '';
 
+  /**
+   * Indicates that display uses route.
+   *
+   * @var string
+   */
+  public $uses_route = FALSE;
+
 }

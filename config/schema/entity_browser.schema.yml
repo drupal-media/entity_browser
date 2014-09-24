@@ -41,3 +41,11 @@ entity_browser.browser.*:
               type: integer
             settings:
               type: entity_browser.browser.widget.[%parent.id]
+
+entity_browser.browser.display.standalone:
+  type: mapping
+  label: 'Standalone display configuration'
+  mapping:
+    path:
+      type: string
+      label: 'Page path'

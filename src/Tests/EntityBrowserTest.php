@@ -29,7 +29,7 @@ class EntityBrowserTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = array('entity_browser');
+  public static $modules = array('system', 'entity_browser', 'entity_browser_test');
 
   /**
    * The entity browser storage.
@@ -38,11 +38,26 @@ class EntityBrowserTest extends KernelTestBase {
    */
   protected $controller;
 
+  /**
+   * Pre-generated UUID.
+   *
+   * @var string
+   */
+  protected $widgetUUID;
+
+  /**
+   * Route provider service.
+   *
+   * @var \Drupal\Core\Routing\RouteProviderInterface
+   */
+  protected $routeProvider;
+
   protected function setUp() {
     parent::setUp();
 
     $this->controller = $this->container->get('entity.manager')->getStorage('entity_browser');
-    $this->widget_uuid = $this->container->get('uuid')->generate();
+    $this->widgetUUID = $this->container->get('uuid')->generate();
+    $this->routeProvider = $this->container->get('router.route_provider');
   }
 
   /**
@@ -71,10 +86,10 @@ class EntityBrowserTest extends KernelTestBase {
       'widget_selector' => 'tabs',
       'widget_selector_configuration' => array(),
       'widgets' => array(
-        $this->widget_uuid => array(
+        $this->widgetUUID => array(
           'id' => 'view',
           'label' => 'View widget',
-          'uuid' => $this->widget_uuid,
+          'uuid' => $this->widgetUUID,
           'settings' => array(),
         ),
       ),
@@ -133,10 +148,10 @@ class EntityBrowserTest extends KernelTestBase {
       'widget_selector' => 'tabs',
       'widget_selector_configuration' => array(),
       'widgets' => array(
-        $this->widget_uuid => array(
+        $this->widgetUUID => array(
           'id' => 'view',
           'label' => 'View widget',
-          'uuid' => $this->widget_uuid,
+          'uuid' => $this->widgetUUID,
           'settings' => array(),
         ),
       ),
@@ -165,7 +180,7 @@ class EntityBrowserTest extends KernelTestBase {
     $plugin = $entity->getWidgetSelector();
     $this->assertTrue($plugin instanceof EntityBrowserWidgetSelectorInterface, 'Testing widget selector plugin.');
     $this->assertEqual($plugin->getPluginId(), 'tabs');
-    $plugin = $entity->getWidget($this->widget_uuid);
+    $plugin = $entity->getWidget($this->widgetUUID);
     $this->assertTrue($plugin instanceof EntityBrowserWidgetInterface, 'Testing widget plugin.');
     $this->assertEqual($plugin->getPluginId(), 'view');
   }
@@ -187,6 +202,34 @@ class EntityBrowserTest extends KernelTestBase {
     // Ensure that the storage is now empty.
     $config = $config_storage->listAll('entity_browser.browser.');
     $this->assertTrue(empty($config), 'There are no entity browsers in config storage.');
+  }
+
+  /**
+   * Tests dynamic routes.
+   */
+  protected function testDynamicRoutes() {
+    $this->installConfig(array('entity_browser_test'));
+    $this->installSchema('system', 'router');
+    $this->container->get('router.builder')->rebuild();
+    /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
+    $entity = $this->controller->load('test');
+    $route = $entity->route();
+
+    $this->assertEqual($route->getPath(), '/entity-browser/test', 'Dynamic path matches.');
+    $this->assertEqual($route->getDefault('entity_browser_id'), $entity->id(), 'Entity browser ID matches.');
+    $this->assertEqual($route->getDefault('_controller'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
+
+    try {
+      $registered_route = $this->routeProvider->getRouteByName('entity_browser.' . $entity->id());
+    }
+    catch (\Exception $e) {
+      $this->assert('fail', t('Expected route not found: @message', array('@message' => $e->getMessage())));
+      return;
+    }
+
+    $this->assertEqual($registered_route->getPath(), '/entity-browser/test', 'Dynamic path matches.');
+    $this->assertEqual($registered_route->getDefault('entity_browser_id'), $entity->id(), 'Entity browser ID matches.');
+    $this->assertEqual($registered_route->getDefault('_controller'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
   }
 
 }
