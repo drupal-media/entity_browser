@@ -8,6 +8,7 @@
 namespace Drupal\entity_browser\Tests;
 
 use Drupal\Component\Plugin\Exception\PluginException;
+use Drupal\Component\Utility\String;
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Core\Entity\EntityMalformedException;
 use Drupal\entity_browser\EntityBrowserDisplayInterface;
@@ -211,13 +212,16 @@ class EntityBrowserTest extends KernelTestBase {
     $this->installConfig(array('entity_browser_test'));
     $this->installSchema('system', 'router');
     $this->container->get('router.builder')->rebuild();
+
     /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
     $entity = $this->controller->load('test');
     $route = $entity->route();
 
     $this->assertEqual($route->getPath(), '/entity-browser/test', 'Dynamic path matches.');
     $this->assertEqual($route->getDefault('entity_browser_id'), $entity->id(), 'Entity browser ID matches.');
-    $this->assertEqual($route->getDefault('_controller'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
+    $this->assertEqual($route->getDefault('_content'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
+    $this->assertEqual($route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\StandalonePage::title', 'Title callback matches.');
+    $this->assertEqual($route->getRequirement('_permission'), 'access ' . String::checkPlain($entity->id()) . ' entity browser pages', 'Permission matches.');
 
     try {
       $registered_route = $this->routeProvider->getRouteByName('entity_browser.' . $entity->id());
@@ -229,7 +233,9 @@ class EntityBrowserTest extends KernelTestBase {
 
     $this->assertEqual($registered_route->getPath(), '/entity-browser/test', 'Dynamic path matches.');
     $this->assertEqual($registered_route->getDefault('entity_browser_id'), $entity->id(), 'Entity browser ID matches.');
-    $this->assertEqual($registered_route->getDefault('_controller'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
+    $this->assertEqual($registered_route->getDefault('_content'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
+    $this->assertEqual($registered_route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\StandalonePage::title', 'Title callback matches.');
+    $this->assertEqual($registered_route->getRequirement('_permission'), 'access ' . String::checkPlain($entity->id()) . ' entity browser pages', 'Permission matches.');
   }
 
 }
