@@ -38,14 +38,15 @@ class Tabs extends PluginBase implements EntityBrowserWidgetSelectorInterface {
    * {@inheritdoc}
    */
   public function getForm() {
-    // @TODO Implement it.
+    // TODO - Implement.
+    return array();
   }
 
   /**
    * {@inheritdoc}
    */
   public function getCurrentWidget() {
-    // @TODO Implement it.
+    return 'view';
   }
 
 }

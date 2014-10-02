@@ -13,9 +13,9 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-  /**
-   * Standalone entity browser page.
-   */
+/**
+ * Standalone entity browser page.
+ */
 class StandalonePage extends ControllerBase {
 
   /**
@@ -32,6 +32,14 @@ class StandalonePage extends ControllerBase {
    */
   protected $browserStorage;
 
+  /**
+   * Constructs StandalonePage route controller.
+   *
+   * @param RouteMatchInterface $route_match
+   *   Current route match service.
+   * @param EntityManagerInterface $entity_manager
+   *   Entity manager service.
+   */
   public function __construct(RouteMatchInterface $route_match, EntityManagerInterface $entity_manager) {
     $this->currentRouteMatch = $route_match;
     $this->browserStorage = $entity_manager->getStorage('entity_browser');

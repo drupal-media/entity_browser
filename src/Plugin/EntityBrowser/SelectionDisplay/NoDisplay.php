@@ -38,7 +38,7 @@ class NoDisplay extends PluginBase implements EntityBrowserSelectionDisplayInter
    * {@inheritdoc}
    */
   public function getForm() {
-    // @TODO Implement it.
+    return array();
   }
 
 }
