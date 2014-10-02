@@ -17,7 +17,7 @@ use Symfony\Component\Routing\RouteCollection;
 class RouteSubscriber {
 
   /**
-   * The view storage.
+   * The entity browser storage.
    *
    * @var \Drupal\Core\Entity\EntityStorageInterface
    */
