@@ -30,7 +30,7 @@ class EntityBrowserTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = array('system', 'entity_browser', 'entity_browser_test');
+  public static $modules = array('system', 'user', 'entity_browser', 'entity_browser_test');
 
   /**
    * The entity browser storage.
@@ -236,6 +236,26 @@ class EntityBrowserTest extends KernelTestBase {
     $this->assertEqual($registered_route->getDefault('_content'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
     $this->assertEqual($registered_route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\StandalonePage::title', 'Title callback matches.');
     $this->assertEqual($registered_route->getRequirement('_permission'), 'access ' . String::checkPlain($entity->id()) . ' entity browser pages', 'Permission matches.');
+  }
+
+  /**
+   * Tests dynamically generated permissions.
+   */
+  protected function testDynamicPermissions() {
+    $this->installConfig(array('entity_browser_test'));
+    $permissions = $this->container->get('user.permissions')->getPermissions();
+
+    /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
+    $entity = $this->controller->load('test');
+
+    $expected_permission_name = 'access ' . String::checkPlain($entity->id()) . ' entity browser pages';
+    $expected_permission = array(
+      'title' => $this->container->get('string_translation')->translate('Access @name pages', array('@name' => $entity->label())),
+      'description' => $this->container->get('string_translation')->translate('Access pages that %browser uses to operate.', array('%browser' => $entity->label())),
+      'provider' => 'entity_browser',
+    );
+
+    $this->assertIdentical($permissions[$expected_permission_name], $expected_permission, 'Dynamically generated permission found.');
   }
 
 }
