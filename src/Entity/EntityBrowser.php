@@ -7,6 +7,7 @@
 
 namespace Drupal\entity_browser\Entity;
 
+use Drupal\Component\Utility\String;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityWithPluginBagsInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -287,14 +288,19 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function getFormId() {
-    // @TODO Implement it.
+    return 'entity_browser_' . $this->id() . '_form';
   }
 
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    // @TODO Implement it.
+    $form['widget_selector'] = $this->getWidgetSelector()->getForm();
+    $active_widget = $this->getWidgetSelector()->getCurrentWidget();
+    $form['widget'] = $this->getWidget($active_widget)->getForm();
+    $form['selection_display'] = $this->getSelectionDisplay()->getForm();
+
+    return $form;
   }
 
   /**
@@ -316,14 +322,19 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function route() {
     $defaults = array(
-      '_controller' => 'Drupal\entity_browser\Controllers\StandalonePage::page',
+      '_content' => 'Drupal\entity_browser\Controllers\StandalonePage::page',
+      '_title_callback' => 'Drupal\entity_browser\Controllers\StandalonePage::title',
       'entity_browser_id' => $this->id(),
     );
+
+    $requirements = array(
+      '_permission' => 'access ' . String::checkPlain($this->id()) . ' entity browser pages',
+    );
+
     $display = $this->getDisplay();
     if ($display instanceof DisplayRouterInterface) {
       $path = $display->path();
-      //debug($path);
-      return new Route($path, $defaults);
+      return new Route($path, $defaults, $requirements);
     }
 
     return FALSE;
