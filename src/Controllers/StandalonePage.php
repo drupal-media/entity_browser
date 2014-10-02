@@ -1,9 +1,9 @@
 <?php
 
-  /**
-   * @file
-   * Contains \Drupal\entity_browser\Controllers\StandalonePage.
-   */
+/**
+ * @file
+ * Contains \Drupal\entity_browser\Controllers\StandalonePage.
+ */
 
 namespace Drupal\entity_browser\Controllers;
 
