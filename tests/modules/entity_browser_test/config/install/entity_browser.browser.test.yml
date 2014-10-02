@@ -8,7 +8,7 @@ selection_display_configuration: {  }
 widget_selector: tabs
 widget_selector_configuration: {  }
 widgets:
-  -
+  view:
     id: view
     label: 'View widget'
     weight: 0

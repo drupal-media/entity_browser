@@ -52,7 +52,8 @@ class View extends PluginBase implements EntityBrowserWidgetInterface {
    * {@inheritdoc}
    */
   public function getForm() {
-    // @TODO Implement it.
+    // TODO - Implement.
+    return array();
   }
 
 }

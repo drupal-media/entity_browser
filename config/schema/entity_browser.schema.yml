@@ -26,21 +26,21 @@ entity_browser.browser.*:
     widget_selector_configuration:
       type: entity_browser.browser.widget_selector.[%widget_selector]
     widgets:
-      type: sequence
+      type: mapping
       label: 'Widgets'
-      sequence:
-        - type: mapping
-          mapping:
-            id:
-              type: string
-            uuid:
-              type: string
-            label:
-              type: string
-            weight:
-              type: integer
-            settings:
-              type: entity_browser.browser.widget.[%parent.id]
+      mapping:
+        type: mapping
+        mapping:
+          id:
+            type: string
+          uuid:
+            type: string
+          label:
+            type: string
+          weight:
+            type: integer
+          settings:
+            type: entity_browser.browser.widget.[%parent.id]
 
 entity_browser.browser.display.standalone:
   type: mapping
