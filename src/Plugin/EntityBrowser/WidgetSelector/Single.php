@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Contains \Drupal\entity_browser\Plugin\EntityBrowser\WidgetSelector\Tabs.
+ * Contains \Drupal\entity_browser\Plugin\EntityBrowser\WidgetSelector\Single.
  */
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\WidgetSelector;
@@ -10,21 +10,20 @@ use Drupal\entity_browser\WidgetsBag;
 use Drupal\entity_browser\WidgetSelectorBase;
 
 /**
- * Displays entity browser widgets as tabs.
+ * Displays only first widget.
  *
  * @EntityBrowserWidgetSelector(
- *   id = "tabs",
- *   label = @Translation("Tabs"),
- *   description = @Translation("Displays entity browser widgets as tabs.")
+ *   id = "single",
+ *   label = @Translation("Single widget"),
+ *   description = @Translation("Displays first configured widget.")
  * )
  */
-class Tabs extends WidgetSelectorBase {
+class Single extends WidgetSelectorBase {
 
   /**
    * {@inheritdoc}
    */
   public function getForm() {
-    // TODO - Implement.
     return array();
   }
 
@@ -32,7 +31,7 @@ class Tabs extends WidgetSelectorBase {
    * {@inheritdoc}
    */
   public function getCurrentWidget(WidgetsBag $widgets) {
-    return '';
+    return $this->getFirstWidget($widgets);
   }
 
 }

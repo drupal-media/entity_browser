@@ -31,6 +31,17 @@ interface EntityBrowserWidgetInterface extends PluginInspectionInterface {
   public function getWeight();
 
   /**
+   * Sets the widget's weight.
+   *
+   * @param int $weight
+   *   New plugin weight.
+   *
+   * @return \Drupal\entity_browser\EntityBrowserWidgetInterface
+   *   This object.
+   */
+  public function setWeight($weight);
+
+  /**
    * Returns widget form.
    *
    * @return array

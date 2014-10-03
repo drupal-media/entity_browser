@@ -11,11 +11,11 @@ use Drupal\Component\Utility\String;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityWithPluginBagsInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Plugin\DefaultPluginBag;
 use Drupal\Core\Plugin\DefaultSinglePluginBag;
 use Drupal\entity_browser\EntityBrowserInterface;
 use Drupal\entity_browser\EntityBrowserWidgetInterface;
 use Drupal\entity_browser\Plugin\EntityBrowser\Display\DisplayRouterInterface;
+use Drupal\entity_browser\WidgetsBag;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -79,7 +79,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   /**
    * Holds the collection of widgetss that are used by this entity browser.
    *
-   * @var \Drupal\Core\Plugin\DefaultPluginBag
+   * @var \Drupal\entity_browser\WidgetsBag
    */
   protected $widgetsBag;
 
@@ -191,7 +191,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function getWidgets() {
     if (!$this->widgetsBag) {
-      $this->widgetsBag = new DefaultPluginBag(\Drupal::service('plugin.manager.entity_browser.widget'), $this->widgets);
+      $this->widgetsBag = new WidgetsBag(\Drupal::service('plugin.manager.entity_browser.widget'), $this->widgets);
       $this->widgetsBag->sort();
     }
     return $this->widgetsBag;
@@ -296,8 +296,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form['widget_selector'] = $this->getWidgetSelector()->getForm();
-    $active_widget = $this->getWidgetSelector()->getCurrentWidget();
-    $form['widget'] = $this->getWidget($active_widget)->getForm();
+    $form['widget'] = $this->getWidgetSelector()->getCurrentWidget($this->getWidgets())->getForm();
     $form['selection_display'] = $this->getSelectionDisplay()->getForm();
 
     return $form;

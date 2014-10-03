@@ -84,7 +84,7 @@ class EntityBrowserTest extends KernelTestBase {
       'display_configuration' => array(),
       'selection_display' => 'no_display',
       'selection_display_configuration' => array(),
-      'widget_selector' => 'tabs',
+      'widget_selector' => 'single',
       'widget_selector_configuration' => array(),
       'widgets' => array(
         $this->widgetUUID => array(
@@ -146,7 +146,7 @@ class EntityBrowserTest extends KernelTestBase {
       'display_configuration' => array(),
       'selection_display' => 'no_display',
       'selection_display_configuration' => array(),
-      'widget_selector' => 'tabs',
+      'widget_selector' => 'single',
       'widget_selector_configuration' => array(),
       'widgets' => array(
         $this->widgetUUID => array(
@@ -165,6 +165,7 @@ class EntityBrowserTest extends KernelTestBase {
    * Tests the loading of entity browser.
    */
   protected function loadTests() {
+    /** @var \Drupal\entity_browser\EntityBrowserInterface $entity */
     $entity = $this->controller->load('test_browser');
 
     $this->assertTrue($entity instanceof EntityBrowserInterface, 'The loaded entity is an entity browser.');
@@ -180,7 +181,7 @@ class EntityBrowserTest extends KernelTestBase {
     $this->assertEqual($plugin->getPluginId(), 'no_display');
     $plugin = $entity->getWidgetSelector();
     $this->assertTrue($plugin instanceof EntityBrowserWidgetSelectorInterface, 'Testing widget selector plugin.');
-    $this->assertEqual($plugin->getPluginId(), 'tabs');
+    $this->assertEqual($plugin->getPluginId(), 'single');
     $plugin = $entity->getWidget($this->widgetUUID);
     $this->assertTrue($plugin instanceof EntityBrowserWidgetInterface, 'Testing widget plugin.');
     $this->assertEqual($plugin->getPluginId(), 'view');
@@ -258,4 +259,21 @@ class EntityBrowserTest extends KernelTestBase {
     $this->assertIdentical($permissions[$expected_permission_name], $expected_permission, 'Dynamically generated permission found.');
   }
 
+  /**
+   * Test single widget selector.
+   */
+  protected function testSingleWidgetSelector() {
+    $this->installConfig(array('entity_browser_test'));
+
+    /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
+    $entity = $this->controller->load('test');
+
+    $widget = $entity->getWidgetSelector()->getCurrentWidget($entity->getWidgets());
+    $this->assertEqual($widget->label(), 'View widget nr. 1', 'First widget is active.');
+
+    // Change weight and expect second widget to become first.
+    $widget->setWeight(3);
+    $new_widget = $entity->getWidgetSelector()->getCurrentWidget($entity->getWidgets());
+    $this->assertEqual($new_widget->label(), 'View widget nr. 2', 'Second widget is active after changing weights.');
+  }
 }
