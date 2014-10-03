@@ -7,6 +7,7 @@
 
 namespace Drupal\entity_browser;
 
+use Drupal\Component\Plugin\PluginBag;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 
 /**
@@ -33,9 +34,12 @@ interface EntityBrowserWidgetSelectorInterface extends PluginInspectionInterface
   /**
    * Returns ID of the widget that is currently selected.
    *
-   * @return string
-   *   ID of the currently selected widget.
+   * @param \Drupal\entity_browser\WidgetsBag $widgets
+   *   Widgets plugin bag.
+   *
+   * @return \Drupal\entity_browser\EntityBrowserWidgetInterface
+   *   Currently selected widget.
    */
-  public function getCurrentWidget();
+  public function getCurrentWidget(WidgetsBag $widgets);
 
 }
