@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\entity_browser\EntityBrowserDisplayInterface.
+ * Contains \Drupal\entity_browser\DisplayInterface.
  */
 
 namespace Drupal\entity_browser;
@@ -12,7 +12,7 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
 /**
  * Defines the interface for entity browser displays.
  */
-interface EntityBrowserDisplayInterface extends PluginInspectionInterface {
+interface DisplayInterface extends PluginInspectionInterface {
 
   /**
    * Returns the display label.

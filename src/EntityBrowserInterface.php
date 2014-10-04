@@ -37,7 +37,7 @@ interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
   /**
    * Returns the display.
    *
-   * @return \Drupal\entity_browser\EntityBrowserDisplayInterface
+   * @return \Drupal\entity_browser\DisplayInterface
    *   The display.
    */
   public function getDisplay();

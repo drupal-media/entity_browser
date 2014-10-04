@@ -7,7 +7,7 @@
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Display;
 
 use Drupal\Component\Plugin\PluginBase;
-use Drupal\entity_browser\EntityBrowserDisplayInterface;
+use Drupal\entity_browser\DisplayInterface;
 
 /**
  * Presents entity browser as a standalone form.
@@ -19,7 +19,7 @@ use Drupal\entity_browser\EntityBrowserDisplayInterface;
  *   uses_route = TRUE
  * )
  */
-class Standalone extends PluginBase implements EntityBrowserDisplayInterface, DisplayRouterInterface {
+class Standalone extends PluginBase implements DisplayInterface, DisplayRouterInterface {
 
   /**
    * Plugin label.

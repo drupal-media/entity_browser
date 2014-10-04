@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\entity_browser\EntityBrowserDisplayManager.
+ * Contains \Drupal\entity_browser\DisplayManager.
  */
 
 namespace Drupal\entity_browser;
@@ -14,7 +14,7 @@ use Drupal\Core\Plugin\DefaultPluginManager;
 /**
  * Manages entity browser display plugins.
  */
-class EntityBrowserDisplayManager extends DefaultPluginManager {
+class DisplayManager extends DefaultPluginManager {
 
   /**
    * Constructs a new EntityBrowserDisplayManager.
@@ -28,7 +28,7 @@ class EntityBrowserDisplayManager extends DefaultPluginManager {
    *   The module handler.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/EntityBrowser/Display', $namespaces, $module_handler, 'Drupal\entity_browser\EntityBrowserDisplayInterface', 'Drupal\entity_browser\Annotation\EntityBrowserDisplay');
+    parent::__construct('Plugin/EntityBrowser/Display', $namespaces, $module_handler, 'Drupal\entity_browser\DisplayInterface', 'Drupal\entity_browser\Annotation\Display');
 
     $this->alterInfo('entity_browser_display_info');
     $this->setCacheBackend($cache_backend, 'entity_browser_display_plugins');
