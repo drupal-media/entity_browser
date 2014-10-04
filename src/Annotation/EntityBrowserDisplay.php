@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\entity_browser\Annotation\Display.
+ * Contains \Drupal\entity_browser\Annotation\EntityBrowserDisplay.
  */
 
 namespace Drupal\entity_browser\Annotation;
@@ -16,7 +16,7 @@ use Drupal\Component\Annotation\Plugin;
  *
  * @Annotation
  */
-class Display extends Plugin {
+class EntityBrowserDisplay extends Plugin {
 
   /**
    * The plugin ID.

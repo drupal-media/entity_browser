@@ -13,9 +13,9 @@ use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Core\Entity\EntityMalformedException;
 use Drupal\entity_browser\DisplayInterface;
 use Drupal\entity_browser\EntityBrowserInterface;
-use Drupal\entity_browser\EntityBrowserSelectionDisplayInterface;
 use Drupal\entity_browser\EntityBrowserWidgetInterface;
 use Drupal\entity_browser\EntityBrowserWidgetSelectorInterface;
+use Drupal\entity_browser\SelectionDisplayInterface;
 use Drupal\simpletest\KernelTestBase;
 
 /**
@@ -177,7 +177,7 @@ class EntityBrowserTest extends KernelTestBase {
     $this->assertTrue($plugin instanceof DisplayInterface, 'Testing display plugin.');
     $this->assertEqual($plugin->getPluginId(), 'standalone');
     $plugin = $entity->getSelectionDisplay();
-    $this->assertTrue($plugin instanceof EntityBrowserSelectionDisplayInterface, 'Testing selection display plugin.');
+    $this->assertTrue($plugin instanceof SelectionDisplayInterface, 'Testing selection display plugin.');
     $this->assertEqual($plugin->getPluginId(), 'no_display');
     $plugin = $entity->getWidgetSelector();
     $this->assertTrue($plugin instanceof EntityBrowserWidgetSelectorInterface, 'Testing widget selector plugin.');

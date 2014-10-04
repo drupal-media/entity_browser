@@ -85,7 +85,7 @@ interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
   /**
    * Returns the selection display.
    *
-   * @return \Drupal\entity_browser\EntityBrowserSelectionDisplayInterface
+   * @return \Drupal\entity_browser\SelectionDisplayInterface
    *   The display.
    */
   public function getSelectionDisplay();

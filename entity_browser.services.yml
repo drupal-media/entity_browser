@@ -3,7 +3,7 @@ services:
     class: Drupal\entity_browser\DisplayManager
     parent: default_plugin_manager
   plugin.manager.entity_browser.selection_display:
-    class: Drupal\entity_browser\EntityBrowserSelectionDisplayManager
+    class: Drupal\entity_browser\SelectionDisplayManager
     parent: default_plugin_manager
   plugin.manager.entity_browser.widget:
     class: Drupal\entity_browser\EntityBrowserWidgetManager
