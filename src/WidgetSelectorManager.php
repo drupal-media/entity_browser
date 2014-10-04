@@ -28,7 +28,7 @@ class WidgetSelectorManager extends DefaultPluginManager {
    *   The module handler.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/EntityBrowser/WidgetSelector', $namespaces, $module_handler, 'Drupal\entity_browser\SelectorInterface', 'Drupal\entity_browser\Annotation\EntityBrowserWidgetSelector');
+    parent::__construct('Plugin/EntityBrowser/WidgetSelector', $namespaces, $module_handler, 'Drupal\entity_browser\WidgetSelectorInterface', 'Drupal\entity_browser\Annotation\EntityBrowserWidgetSelector');
 
     $this->alterInfo('entity_browser_widget_selector_info');
     $this->setCacheBackend($cache_backend, 'entity_browser_widget_selector_plugins');
