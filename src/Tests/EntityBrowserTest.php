@@ -13,8 +13,8 @@ use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Core\Entity\EntityMalformedException;
 use Drupal\entity_browser\DisplayInterface;
 use Drupal\entity_browser\EntityBrowserInterface;
-use Drupal\entity_browser\EntityBrowserWidgetInterface;
-use Drupal\entity_browser\EntityBrowserWidgetSelectorInterface;
+use Drupal\entity_browser\WidgetInterface;
+use Drupal\entity_browser\WidgetSelectorInterface;
 use Drupal\entity_browser\SelectionDisplayInterface;
 use Drupal\simpletest\KernelTestBase;
 
@@ -180,10 +180,10 @@ class EntityBrowserTest extends KernelTestBase {
     $this->assertTrue($plugin instanceof SelectionDisplayInterface, 'Testing selection display plugin.');
     $this->assertEqual($plugin->getPluginId(), 'no_display');
     $plugin = $entity->getWidgetSelector();
-    $this->assertTrue($plugin instanceof EntityBrowserWidgetSelectorInterface, 'Testing widget selector plugin.');
+    $this->assertTrue($plugin instanceof WidgetSelectorInterface, 'Testing widget selector plugin.');
     $this->assertEqual($plugin->getPluginId(), 'single');
     $plugin = $entity->getWidget($this->widgetUUID);
-    $this->assertTrue($plugin instanceof EntityBrowserWidgetInterface, 'Testing widget plugin.');
+    $this->assertTrue($plugin instanceof WidgetInterface, 'Testing widget plugin.');
     $this->assertEqual($plugin->getPluginId(), 'view');
   }
 

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\entity_browser\EntityBrowserWidgetSelectorInterface.
+ * Contains \Drupal\entity_browser\WidgetSelectorInterface.
  */
 
 namespace Drupal\entity_browser;
@@ -13,7 +13,7 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
 /**
  * Defines the interface for entity browser widget selectors.
  */
-interface EntityBrowserWidgetSelectorInterface extends PluginInspectionInterface {
+interface WidgetSelectorInterface extends PluginInspectionInterface {
 
   /**
    * Returns the widget selector label.
@@ -37,7 +37,7 @@ interface EntityBrowserWidgetSelectorInterface extends PluginInspectionInterface
    * @param \Drupal\entity_browser\WidgetsBag $widgets
    *   Widgets plugin bag.
    *
-   * @return \Drupal\entity_browser\EntityBrowserWidgetInterface
+   * @return \Drupal\entity_browser\WidgetInterface
    *   Currently selected widget.
    */
   public function getCurrentWidget(WidgetsBag $widgets);

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\entity_browser\EntityBrowserWidgetInterface.
+ * Contains \Drupal\entity_browser\WidgetInterface.
  */
 
 namespace Drupal\entity_browser;
@@ -12,7 +12,7 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
 /**
  * Defines the interface for entity browser widgets.
  */
-interface EntityBrowserWidgetInterface extends PluginInspectionInterface {
+interface WidgetInterface extends PluginInspectionInterface {
 
   /**
    * Returns the widget label.
@@ -36,7 +36,7 @@ interface EntityBrowserWidgetInterface extends PluginInspectionInterface {
    * @param int $weight
    *   New plugin weight.
    *
-   * @return \Drupal\entity_browser\EntityBrowserWidgetInterface
+   * @return \Drupal\entity_browser\WidgetInterface
    *   This object.
    */
   public function setWeight($weight);
