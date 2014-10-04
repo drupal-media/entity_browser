@@ -295,7 +295,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['widget_selector'] = $this->getWidgetSelector()->getForm();
+    $form['widget_selector'] = $this->getWidgetSelector()->getForm($this->getWidgets());
     $form['widget'] = $this->getWidgetSelector()->getCurrentWidget($this->getWidgets())->getForm();
     $form['selection_display'] = $this->getSelectionDisplay()->getForm();
 

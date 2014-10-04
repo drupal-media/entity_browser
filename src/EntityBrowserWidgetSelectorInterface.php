@@ -29,7 +29,7 @@ interface EntityBrowserWidgetSelectorInterface extends PluginInspectionInterface
    * @return array
    *   Form structure.
    */
-  public function getForm();
+  public function getForm(WidgetsBag $widgets);
 
   /**
    * Returns ID of the widget that is currently selected.
