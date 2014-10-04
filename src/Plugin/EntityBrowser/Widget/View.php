@@ -24,12 +24,7 @@ class View extends WidgetBase {
    */
   public function getForm() {
     // TODO - Implement.
-    $element['test'] = array(
-      '#type' => 'markup',
-      '#markup' => 'View Widget',
-    );
-
-    return $element;
+    return array();
   }
 
 }

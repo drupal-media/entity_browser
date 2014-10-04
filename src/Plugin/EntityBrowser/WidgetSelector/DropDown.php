@@ -30,7 +30,7 @@ class DropDown extends WidgetSelectorBase {
     }
 
     $element['widgets'] = array(
-    	'#type' => 'select',
+      '#type' => 'select',
       '#options' => $options,
     );
 
