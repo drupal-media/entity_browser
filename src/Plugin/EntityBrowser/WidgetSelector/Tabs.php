@@ -23,7 +23,7 @@ class Tabs extends WidgetSelectorBase {
   /**
    * {@inheritdoc}
    */
-  public function getForm() {
+  public function getForm(WidgetsBag $widgets) {
     // TODO - Implement.
     return array();
   }

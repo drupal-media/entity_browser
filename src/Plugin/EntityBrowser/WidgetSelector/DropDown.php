@@ -13,25 +13,35 @@ use Drupal\entity_browser\WidgetSelectorBase;
  * Displays only first widget.
  *
  * @EntityBrowserWidgetSelector(
- *   id = "single",
- *   label = @Translation("Single widget"),
- *   description = @Translation("Displays first configured widget.")
+ *   id = "drop_down",
+ *   label = @Translation("Drop down widget"),
+ *   description = @Translation("Displays the widgets in a drop down.")
  * )
  */
-class Single extends WidgetSelectorBase {
+class DropDown extends WidgetSelectorBase {
 
   /**
    * {@inheritdoc}
    */
   public function getForm(WidgetsBag $widgets) {
-    return array();
+
+    foreach ($widgets->getInstanceIds() as $id) {
+      $options[$id] = $widgets->get($id)->label();
+    }
+
+    $element['widgets'] = array(
+    	'#type' => 'select',
+      '#options' => $options,
+    );
+
+    return $element;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getCurrentWidget(WidgetsBag $widgets) {
-    return $this->getFirstWidget($widgets);
+    return $this->getFirstWidget($widgets->sort());
   }
 
 }
