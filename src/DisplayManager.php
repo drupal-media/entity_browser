@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\entity_browser\EntityBrowserWidgetSelectorManager.
+ * Contains \Drupal\entity_browser\DisplayManager.
  */
 
 namespace Drupal\entity_browser;
@@ -12,12 +12,12 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
- * Manages entity browser widget selector plugins.
+ * Manages entity browser display plugins.
  */
-class EntityBrowserWidgetSelectorManager extends DefaultPluginManager {
+class DisplayManager extends DefaultPluginManager {
 
   /**
-   * Constructs a new EntityBrowserWidgetManager.
+   * Constructs a new EntityBrowserDisplayManager.
    *
    * @param \Traversable $namespaces
    *   An object that implements \Traversable which contains the root paths
@@ -28,10 +28,10 @@ class EntityBrowserWidgetSelectorManager extends DefaultPluginManager {
    *   The module handler.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/EntityBrowser/WidgetSelector', $namespaces, $module_handler, 'Drupal\entity_browser\EntityBrowserWidgetSelectorInterface', 'Drupal\entity_browser\Annotation\EntityBrowserWidgetSelector');
+    parent::__construct('Plugin/EntityBrowser/Display', $namespaces, $module_handler, 'Drupal\entity_browser\DisplayInterface', 'Drupal\entity_browser\Annotation\EntityBrowserDisplay');
 
-    $this->alterInfo('entity_browser_widget_selector_info');
-    $this->setCacheBackend($cache_backend, 'entity_browser_widget_selector_plugins');
+    $this->alterInfo('entity_browser_display_info');
+    $this->setCacheBackend($cache_backend, 'entity_browser_display_plugins');
   }
 
 }

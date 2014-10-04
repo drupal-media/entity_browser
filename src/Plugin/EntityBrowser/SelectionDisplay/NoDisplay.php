@@ -7,7 +7,7 @@
 namespace Drupal\entity_browser\Plugin\EntityBrowser\SelectionDisplay;
 
 use Drupal\Component\Plugin\PluginBase;
-use Drupal\entity_browser\EntityBrowserSelectionDisplayInterface;
+use Drupal\entity_browser\SelectionDisplayInterface;
 
 /**
  * Does not show current selection and immediately delivers selected entities.
@@ -18,7 +18,7 @@ use Drupal\entity_browser\EntityBrowserSelectionDisplayInterface;
  *   description = @Translation("Skips current selection display and immediately delivers selected entities.")
  * )
  */
-class NoDisplay extends PluginBase implements EntityBrowserSelectionDisplayInterface {
+class NoDisplay extends PluginBase implements SelectionDisplayInterface {
 
   /**
    * Plugin label.

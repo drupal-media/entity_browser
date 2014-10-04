@@ -31,7 +31,7 @@ function hook_entity_browser_widget_info_alter(&$widgets) {
 }
 
 /**
- * Alter the information provided in \Drupal\entity_browser\Annotation\EntityBrowserSelectionDisplay.
+ * Alter the information provided in \Drupal\entity_browser\Annotation\SelectionDisplay.
  *
  * @param $widgets
  *   The array of selection display plugins, keyed on the machine-readable name.

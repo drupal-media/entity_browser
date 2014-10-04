@@ -11,7 +11,7 @@ use Drupal\Component\Plugin\PluginBase;
 /**
  * Base class for widget plugins.
  */
-abstract class WidgetBase extends PluginBase implements EntityBrowserWidgetInterface {
+abstract class WidgetBase extends PluginBase implements WidgetInterface {
 
   /**
    * {@inheritdoc}

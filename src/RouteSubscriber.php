@@ -26,7 +26,7 @@ class RouteSubscriber {
   /**
    * Display plugin manager.
    *
-   * @var \Drupal\entity_browser\EntityBrowserDisplayManager
+   * @var \Drupal\entity_browser\DisplayManager
    */
   protected $displayManager;
 
@@ -43,7 +43,7 @@ class RouteSubscriber {
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   The entity manager.
    */
-  public function __construct(EntityManagerInterface $entity_manager, EntityBrowserDisplayManager $display_manager, QueryFactory $entity_query) {
+  public function __construct(EntityManagerInterface $entity_manager, DisplayManager $display_manager, QueryFactory $entity_query) {
     $this->browserStorage = $entity_manager->getStorage('entity_browser');
     $this->displayManager = $display_manager;
     $this->browserQuery = $entity_query->get('entity_browser');

@@ -37,7 +37,7 @@ interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
   /**
    * Returns the display.
    *
-   * @return \Drupal\entity_browser\EntityBrowserDisplayInterface
+   * @return \Drupal\entity_browser\DisplayInterface
    *   The display.
    */
   public function getDisplay();
@@ -48,7 +48,7 @@ interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
    * @param string $widget
    *   The widget ID.
    *
-   * @return \Drupal\entity_browser\EntityBrowserWidgetInterface
+   * @return \Drupal\entity_browser\WidgetInterface
    *   The widget object.
    */
   public function getWidget($widget);
@@ -75,17 +75,17 @@ interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
   /**
    * Deletes a widget from this entity browser.
    *
-   * @param \Drupal\entity_browser\EntityBrowserWidgetInterface $widget
+   * @param \Drupal\entity_browser\WidgetInterface $widget
    *   The widget object.
    *
    * @return $this
    */
-  public function deleteWidget(EntityBrowserWidgetInterface $widget);
+  public function deleteWidget(WidgetInterface $widget);
 
   /**
    * Returns the selection display.
    *
-   * @return \Drupal\entity_browser\EntityBrowserSelectionDisplayInterface
+   * @return \Drupal\entity_browser\SelectionDisplayInterface
    *   The display.
    */
   public function getSelectionDisplay();
@@ -93,7 +93,7 @@ interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
   /**
    * Returns the widget selector.
    *
-   * @return \Drupal\entity_browser\EntityBrowserWidgetSelectorInterface
+   * @return \Drupal\entity_browser\WidgetSelectorInterface
    *   The widget selector.
    */
   public function getWidgetSelector();

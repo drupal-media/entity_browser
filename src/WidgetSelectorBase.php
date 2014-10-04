@@ -11,7 +11,7 @@ use Drupal\Component\Plugin\PluginBase;
 /**
  * Base class for widget selector plugins.
  */
-abstract class WidgetSelectorBase extends PluginBase implements EntityBrowserWidgetSelectorInterface {
+abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorInterface {
 
   /**
    * Plugin label.
@@ -33,7 +33,7 @@ abstract class WidgetSelectorBase extends PluginBase implements EntityBrowserWid
    * @param \Drupal\entity_browser\WidgetsBag $widgets
    *   Widgets bag.
    *
-   * @return \Drupal\entity_browser\EntityBrowserWidgetInterface
+   * @return \Drupal\entity_browser\WidgetInterface
    *   First widget.
    */
   protected function getFirstWidget(WidgetsBag $widgets) {

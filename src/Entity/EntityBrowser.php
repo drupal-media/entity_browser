@@ -13,7 +13,7 @@ use Drupal\Core\Entity\EntityWithPluginBagsInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\DefaultSinglePluginBag;
 use Drupal\entity_browser\EntityBrowserInterface;
-use Drupal\entity_browser\EntityBrowserWidgetInterface;
+use Drupal\entity_browser\WidgetInterface;
 use Drupal\entity_browser\Plugin\EntityBrowser\Display\DisplayRouterInterface;
 use Drupal\entity_browser\WidgetsBag;
 use Symfony\Component\Routing\Route;
@@ -209,7 +209,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   /**
    * {@inheritdoc}
    */
-  public function deleteWidget(EntityBrowserWidgetInterface $widget) {
+  public function deleteWidget(WidgetInterface $widget) {
     $this->getWidgets()->removeInstanceId($widget->getUuid());
     $this->save();
     return $this;
