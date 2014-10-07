@@ -7,6 +7,7 @@
 namespace Drupal\entity_browser;
 
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Base class for widget selector plugins.
@@ -44,5 +45,15 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
     $widgets->rewind();
     return $widgets->current();
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validate(array &$form, FormStateInterface $form_state) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submit(array &$form, FormStateInterface $form_state) {}
 
 }

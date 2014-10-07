@@ -11,6 +11,7 @@ use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Component\Utility\String;
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Core\Entity\EntityMalformedException;
+use Drupal\Core\Form\FormState;
 use Drupal\entity_browser\DisplayInterface;
 use Drupal\entity_browser\EntityBrowserInterface;
 use Drupal\entity_browser\WidgetInterface;
@@ -275,5 +276,24 @@ class EntityBrowserTest extends KernelTestBase {
     $widget->setWeight(3);
     $new_widget = $entity->getWidgetSelector()->getCurrentWidget($entity->getWidgets());
     $this->assertEqual($new_widget->label(), 'View widget nr. 2', 'Second widget is active after changing weights.');
+  }
+
+  /**
+   * Test selected event dispatch.
+   */
+  protected function testSelectedEvent() {
+    $this->installConfig(array('entity_browser_test'));
+
+    /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
+    $entity = $this->controller->load('dummy_widget');
+    $entity->getWidgets()->current()->entity = $entity;
+
+    $form_state = new FormState();
+    $form = [];
+    $entity->submitForm($form, $form_state);
+
+    // Event should be dispatched from widget and added to list of selected entities.
+    $selected_entities = $entity->getSelectedEntities();
+    $this->assertEqual($selected_entities, [$entity], 'Expected selected entities detected.');
   }
 }

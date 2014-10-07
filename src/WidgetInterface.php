@@ -8,6 +8,7 @@
 namespace Drupal\entity_browser;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Defines the interface for entity browser widgets.
@@ -48,5 +49,25 @@ interface WidgetInterface extends PluginInspectionInterface {
    *   Form structure.
    */
   public function getForm();
+
+  /**
+   * Validates form.
+   *
+   * @param array $form
+   *   Form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state object.
+   */
+  public function validate(array &$form, FormStateInterface $form_state);
+
+  /**
+   * Submits form.
+   *
+   * @param array $form
+   *   Form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state object.
+   */
+  public function submit(array &$form, FormStateInterface $form_state);
 
 }

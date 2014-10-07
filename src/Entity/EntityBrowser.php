@@ -9,13 +9,17 @@ namespace Drupal\entity_browser\Entity;
 
 use Drupal\Component\Utility\String;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityWithPluginBagsInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\DefaultSinglePluginBag;
 use Drupal\entity_browser\EntityBrowserInterface;
+use Drupal\entity_browser\EntitySelectionEvent;
+use Drupal\entity_browser\Events;
 use Drupal\entity_browser\WidgetInterface;
 use Drupal\entity_browser\Plugin\EntityBrowser\Display\DisplayRouterInterface;
 use Drupal\entity_browser\WidgetsBag;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -126,6 +130,20 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   protected $widgetSelectorBag;
 
   /**
+   * Currently selected entities.
+   *
+   * @var \Drupal\Core\Entity\EntityInterface[]
+   */
+  protected $selectedEntities = array();
+
+  /**
+   * Indicates wether browser already subscribed to events.
+   *
+   * @var bool
+   */
+  protected $subscribedToEvents = FALSE;
+
+  /**
    * {@inheritdoc}
    */
   public function id() {
@@ -191,6 +209,9 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function getWidgets() {
     if (!$this->widgetsBag) {
+      foreach ($this->widgets as &$widget) {
+        $widget['settings']['entity_browser_id'] = $this->id();
+      }
       $this->widgetsBag = new WidgetsBag(\Drupal::service('plugin.manager.entity_browser.widget'), $this->widgets);
       $this->widgetsBag->sort();
     }
@@ -260,21 +281,21 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function getSelectedEntities() {
-    // @TODO Implement it.
+    return $this->selectedEntities;
   }
 
   /**
    * {@inheritdoc}
    */
   public function setSelectedEntities(array $entities) {
-    // @TODO Implement it.
+    $this->selectedEntities = $entities;
   }
 
   /**
    * {@inheritdoc}
    */
   public function addSelectedEntities(array $entities) {
-    // @TODO Implement it.
+    $this->selectedEntities = array_merge($this->selectedEntities, $entities);
   }
 
   /**
@@ -282,6 +303,49 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function selectionCompleted() {
     // @TODO Implement it.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function postCreate(EntityStorageInterface $storage) {
+    parent::postCreate($storage);
+    $this->subscribeEvents(\Drupal::service('event_dispatcher'));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function postLoad(EntityStorageInterface $storage, array &$entities) {
+    parent::postLoad($storage, $entities);
+    $event_dispatcher = \Drupal::service('event_dispatcher');
+    /** @var \Drupal\entity_browser\Entity\EntityBrowser $browser */
+    foreach ($entities as $browser) {
+      $browser->subscribeEvents($event_dispatcher);
+    }
+  }
+
+  /**
+   * Subscribes entity browser to events if needed.
+   *
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   */
+  public function subscribeEvents(EventDispatcherInterface $event_dispatcher) {
+    if (!$this->subscribedToEvents) {
+      $event_dispatcher->addListener(Events::SELECTED, [$this, 'onSelected']);
+      $this->subscribedToEvents = TRUE;
+    }
+  }
+
+  /**
+   * Responds to SELECTED event.
+   *
+   * @param \Drupal\entity_browser\EntitySelectionEvent $event
+   */
+  public function onSelected(EntitySelectionEvent $event) {
+    if ($event->getBrowserID() == $this->id()) {
+      $this->addSelectedEntities($event->getEntities());
+    }
   }
 
   /**
@@ -306,14 +370,18 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    // @TODO Implement it.
+    $this->getWidgetSelector()->validate($form, $form_state);
+    $this->getWidgetSelector()->getCurrentWidget($this->getWidgets())->validate($form, $form_state);
+    $this->getSelectionDisplay()->validate($form, $form_state);
   }
 
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // @TODO Implement it.
+    $this->getWidgetSelector()->submit($form, $form_state);
+    $this->getWidgetSelector()->getCurrentWidget($this->getWidgets())->submit($form, $form_state);
+    $this->getSelectionDisplay()->submit($form, $form_state);
   }
 
   /**
@@ -337,6 +405,19 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     }
 
     return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function preSave(EntityStorageInterface $storage) {
+    parent::preSave($storage);
+
+    // Entity browser ID was added when creating. No need to save that as it can
+    // always be calculated.
+    foreach ($this->widgets as &$widget) {
+      unset($widget['settings']['entity_browser_id']);
+    }
   }
 
 }

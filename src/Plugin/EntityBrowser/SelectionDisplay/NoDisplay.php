@@ -7,6 +7,7 @@
 namespace Drupal\entity_browser\Plugin\EntityBrowser\SelectionDisplay;
 
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_browser\SelectionDisplayInterface;
 
 /**
@@ -40,5 +41,15 @@ class NoDisplay extends PluginBase implements SelectionDisplayInterface {
   public function getForm() {
     return array();
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validate(array &$form, FormStateInterface $form_state) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submit(array &$form, FormStateInterface $form_state) {}
 
 }
