@@ -7,6 +7,7 @@
 namespace Drupal\entity_browser;
 
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -18,11 +19,32 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 abstract class WidgetBase extends PluginBase implements WidgetInterface, ContainerFactoryPluginInterface {
 
   /**
+   * Plugin label.
+   *
+   * @var string
+   */
+  protected $label;
+
+  /**
+   * Plugin weight.
+   *
+   * @var int
+   */
+  protected $weight;
+
+  /**
    * Event dispatcher service.
    *
    * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
    */
-  public $eventDispatcher;
+  protected $eventDispatcher;
+
+  /**
+   * Entity manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityManagerInterface
+   */
+  protected $entityManager;
 
   /**
    * Constructs widget plugin.
@@ -36,9 +58,10 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityManagerInterface $entity_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->eventDispatcher = $event_dispatcher;
+    $this->entityManager = $entity_manager;
   }
 
   /**
@@ -49,7 +72,8 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('event_dispatcher')
+      $container->get('event_dispatcher'),
+      $container->get('entity.manager')
     );
   }
 
