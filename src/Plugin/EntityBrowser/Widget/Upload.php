@@ -53,15 +53,11 @@ class Upload extends WidgetBase {
    * {@inheritdoc}
    */
   public function getForm() {
-    // TODO - Implement.
     $element['upload'] = array(
       '#name' => 'files[' . implode('_', $element['#parents']) . ']',
       '#type' => 'file',
       '#title' => t('Choose a file'),
       '#title_display' => 'invisible',
-      '#size' => 22,
-      '#theme_wrappers' => array(),
-      '#weight' => 0,
     );
 
     return $element;
