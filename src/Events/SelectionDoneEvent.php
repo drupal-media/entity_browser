@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Definition of Drupal\entity_browser\SelectionDoneEvent.
+ * Definition of Drupal\entity_browser\Events\SelectionDoneEvent.
  */
 
-namespace Drupal\entity_browser;
+namespace Drupal\entity_browser\Events;
 
 use Symfony\Component\EventDispatcher\Event;
 

@@ -10,6 +10,8 @@ use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\entity_browser\Events\EntitySelectionEvent;
+use Drupal\entity_browser\Events\Events;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 

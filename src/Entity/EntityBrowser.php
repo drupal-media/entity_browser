@@ -15,8 +15,9 @@ use Drupal\Core\Entity\EntityWithPluginBagsInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\DefaultSinglePluginBag;
 use Drupal\entity_browser\EntityBrowserInterface;
-use Drupal\entity_browser\EntitySelectionEvent;
-use Drupal\entity_browser\Events;
+use Drupal\entity_browser\Events\EntitySelectionEvent;
+use Drupal\entity_browser\Events\Events;
+use Drupal\entity_browser\Events\SelectionDoneEvent;
 use Drupal\entity_browser\WidgetInterface;
 use Drupal\entity_browser\Plugin\EntityBrowser\Display\DisplayRouterInterface;
 use Drupal\entity_browser\WidgetsBag;
@@ -310,13 +311,6 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   /**
    * {@inheritdoc}
    */
-  public function selectionCompleted() {
-    $this->selectionCompleted = TRUE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function postCreate(EntityStorageInterface $storage) {
     parent::postCreate($storage);
     $this->subscribeEvents(\Drupal::service('event_dispatcher'));
@@ -350,11 +344,22 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   /**
    * Responds to SELECTED event.
    *
-   * @param \Drupal\entity_browser\EntitySelectionEvent $event
+   * @param \Drupal\entity_browser\Events\EntitySelectionEvent $event
    */
   public function onSelected(EntitySelectionEvent $event) {
     if ($event->getBrowserID() == $this->id()) {
       $this->addSelectedEntities($event->getEntities());
+    }
+  }
+
+  /**
+   * Responds to DONE event.
+   *
+   * @param \Drupal\entity_browser\Events\SelectionDoneEvent $event
+   */
+  public function selectionCompleted(SelectionDoneEvent $event) {
+    if ($event->getBrowserID() == $this->id()) {
+      $this->selectionCompleted = TRUE;
     }
   }
 

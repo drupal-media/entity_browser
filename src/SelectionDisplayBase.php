@@ -9,6 +9,8 @@ namespace Drupal\entity_browser;
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\entity_browser\Events\Events;
+use Drupal\entity_browser\Events\SelectionDoneEvent;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 

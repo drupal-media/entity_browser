@@ -123,14 +123,6 @@ interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
   public function addSelectedEntities(array $entities);
 
   /**
-   * Indicates completed selection.
-   *
-   * Selection process is done and currently selected entities are sent to the
-   * initiating code.
-   */
-  public function selectionCompleted();
-
-  /**
    * Gets route that matches this display.
    *
    * @return \Symfony\Component\Routing\Route|bool

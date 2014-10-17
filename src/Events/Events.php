@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\entity_browser\Events.
+ * Contains \Drupal\entity_browser\Events\Events.
  */
 
-namespace Drupal\entity_browser;
+namespace Drupal\entity_browser\Events;
 
 /**
  * Contains all events thrown by entity browser.
