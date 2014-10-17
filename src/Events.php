@@ -20,4 +20,12 @@ final class Events {
    */
   const SELECTED = 'entity_browser.selected';
 
+  /**
+   * The DONE event occurs when selection process is done. While it can be emitted
+   * by any part of the system that will usually be done by selection display plugin.
+   *
+   * @var string
+   */
+  const DONE = 'entity_browser.done';
+
 }

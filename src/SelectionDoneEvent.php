@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Definition of Drupal\entity_browser\EntitySelectionEvent.
+ * Definition of Drupal\entity_browser\SelectionDoneEvent.
  */
 
 namespace Drupal\entity_browser;
@@ -10,9 +10,9 @@ namespace Drupal\entity_browser;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Represents entity selection as event.
+ * Represents finished selection as event.
  */
-class EntitySelectionEvent extends Event {
+class SelectionDoneEvent extends Event {
 
   /**
    * Entity browser id
@@ -22,21 +22,13 @@ class EntitySelectionEvent extends Event {
   protected $entityBrowserID;
 
   /**
-   * Entities being selected.
-   *
-   * @var \Drupal\Core\Entity\EntityInterface[]
-   */
-  protected $entities;
-
-  /**
    * Constructs a EntitySelectionEvent object.
    *
    * @param string $entity_browser_id
    *   Entity browser ID.
    */
-  public function __construct($entity_browser_id, array $entities) {
+  public function __construct($entity_browser_id) {
     $this->entityBrowserID = $entity_browser_id;
-    $this->entities = $entities;
   }
 
   /**
@@ -47,15 +39,6 @@ class EntitySelectionEvent extends Event {
    */
   public function getBrowserID() {
     return $this->entityBrowserID;
-  }
-
-  /**
-   * Gets selected entities.
-   *
-   * @return \Drupal\Core\Entity\EntityInterface[]
-   */
-  public function getEntities() {
-    return $this->entities;
   }
 
 }

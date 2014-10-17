@@ -7,6 +7,7 @@
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Widget;
 
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\entity_browser\EntityBrowserWidgetInterface;
@@ -35,11 +36,13 @@ class Upload extends WidgetBase {
       '#title_display' => 'invisible',
       '#upload_location' => empty($this->configuration['settings']['upload_location']) ? 'public://' : $this->configuration['settings']['upload_location'],
       '#multiple' => TRUE,
+      '#default_value' => NULL,
+      '#'
     );
 
     $form['submit'] = array(
       '#type' => 'submit',
-      '#value' => 'Upload',
+      '#value' => 'Upload - asfsdfsdf',
     );
 
     return $form;
@@ -57,7 +60,7 @@ class Upload extends WidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function submit(array &$form, FormStateInterface $form_state) {
+  public function submit(array &$element, array &$form, FormStateInterface $form_state) {
     $files = [];
 
     foreach ($form_state->getValue(array('upload'), []) as $fid) {
@@ -69,6 +72,11 @@ class Upload extends WidgetBase {
     }
 
     $this->selectEntities($files);
+
+    // We propagated entities to the other parts of the system. We can now remove
+    // them from our values.
+    $form_state->setValueForElement($element['upload']['fids'], '');
+    NestedArray::setValue($form_state->getUserInput(), $element['upload']['fids']['#parents'], '');
   }
 
 }
