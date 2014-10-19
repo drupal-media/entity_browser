@@ -31,13 +31,13 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
   /**
    * Gets first widget based on weights.
    *
-   * @param \Drupal\entity_browser\WidgetsBag $widgets
+   * @param \Drupal\entity_browser\WidgetsLazyPluginCollection $widgets
    *   Widgets bag.
    *
    * @return \Drupal\entity_browser\WidgetInterface
    *   First widget.
    */
-  protected function getFirstWidget(WidgetsBag $widgets) {
+  protected function getFirstWidget(WidgetsLazyPluginCollection $widgets) {
     if ($widgets->count() > 1) {
       $widgets->sort();
     }

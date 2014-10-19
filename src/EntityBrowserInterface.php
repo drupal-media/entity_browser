@@ -56,7 +56,7 @@ interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
   /**
    * Returns the widgets for this entity browser.
    *
-   * @return \Drupal\entity_browser\WidgetsBag
+   * @return \Drupal\entity_browser\WidgetsLazyPluginCollection
    *   The tag plugin bag.
    */
   public function getWidgets();

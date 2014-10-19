@@ -138,7 +138,7 @@ class EntityBrowserTest extends KernelTestBase {
 
     // Ensure that default values are filled in.
     $expected_properties = array(
-      'langcode' => $this->container->get('language_manager')->getDefaultLanguage()->id,
+      'langcode' => $this->container->get('language_manager')->getDefaultLanguage()->getId(),
       'status' => TRUE,
       'dependencies' => array(),
       'name' => 'test_browser',
@@ -290,6 +290,7 @@ class EntityBrowserTest extends KernelTestBase {
 
     $form_state = new FormState();
     $form = [];
+    $form = $entity->buildForm($form, new $form_state);
     $entity->submitForm($form, $form_state);
 
     // Event should be dispatched from widget and added to list of selected entities.

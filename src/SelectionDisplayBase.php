@@ -85,7 +85,7 @@ abstract class SelectionDisplayBase extends PluginBase implements SelectionDispl
    * Marks selection as done (dispatches event).
    */
   protected function selectionDone() {
-    $this->eventDispatcher->dispatch(Events::DONE, new SelectionDoneEvent($this->configuration['settings']['entity_browser_id']));
+    $this->eventDispatcher->dispatch(Events::DONE, new SelectionDoneEvent($this->configuration['entity_browser_id']));
   }
 
 }

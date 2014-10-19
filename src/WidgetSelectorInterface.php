@@ -35,13 +35,13 @@ interface WidgetSelectorInterface extends PluginInspectionInterface {
   /**
    * Returns ID of the widget that is currently selected.
    *
-   * @param \Drupal\entity_browser\WidgetsBag $widgets
+   * @param \Drupal\entity_browser\WidgetsLazyPluginCollection $widgets
    *   Widgets plugin bag.
    *
    * @return \Drupal\entity_browser\WidgetInterface
    *   Currently selected widget.
    */
-  public function getCurrentWidget(WidgetsBag $widgets);
+  public function getCurrentWidget(WidgetsLazyPluginCollection $widgets);
 
   /**
    * Validates form.
