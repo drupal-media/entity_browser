@@ -6,10 +6,9 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Display;
 
-use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
-use Drupal\entity_browser\DisplayInterface;
+use Drupal\entity_browser\DisplayBase\DisplayBase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -24,28 +23,7 @@ use Symfony\Component\HttpKernel\KernelEvents;
  *   uses_route = TRUE
  * )
  */
-class IFrame extends PluginBase implements DisplayInterface, DisplayRouterInterface {
-
-  /**
-   * Plugin label.
-   *
-   * @var string
-   */
-  protected $label;
-
-  /**
-   * Selected entities.
-   *
-   * @var \Drupal\Core\Entity\EntityInterface[]
-   */
-  protected $entities;
-
-  /**
-   * {@inheritdoc}
-   */
-  public function label() {
-    return $this->label;
-  }
+class IFrame extends DisplayBase implements DisplayRouterInterface {
 
   /**
    * {@inheritdoc}
@@ -68,7 +46,7 @@ class IFrame extends PluginBase implements DisplayInterface, DisplayRouterInterf
    */
   public function selectionCompleted(array $entities) {
     $this->entities = $entities;
-    \Drupal::service('event_dispatcher')->addListener(KernelEvents::RESPONSE, [$this, 'propagateSelection']);
+    $this->eventDispatcher->addListener(KernelEvents::RESPONSE, [$this, 'propagateSelection']);
   }
 
   /**
