@@ -408,11 +408,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     $this->getWidgetSelector()->submit($form, $form_state);
     $this->getWidgetSelector()->getCurrentWidget($this->getWidgets())->submit($form[$form['#browser_parts']['widget']], $form, $form_state);
     $this->getSelectionDisplay()->submit($form, $form_state);
-
-    // DEBUG
-    drupal_set_message(t('Selected: @selected', array('@selected' => implode(', ', array_map(function(EntityInterface $item) {return $item->label();}, $this->getSelectedEntities())))));
-    // DEBUG
-
+    
     if (!$this->selectionCompleted) {
       $form_state->setRebuild();
     }
