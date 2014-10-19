@@ -4,17 +4,17 @@
  * Contains \Drupal\entity_browser\DisplayBase.
  */
 
-namespace Drupal\entity_browser\DisplayBase;
+namespace Drupal\entity_browser;
 
 use Drupal\Component\Plugin\PluginBase;
-use Drupal\entity_browser\DisplayInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Base implementation for display plugins.
  */
-abstract class DisplayBase extends PluginBase implements DisplayInterface {
+abstract class DisplayBase extends PluginBase implements DisplayInterface, ContainerFactoryPluginInterface {
 
   /**
    * Plugin label.

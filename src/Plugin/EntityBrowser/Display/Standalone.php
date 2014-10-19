@@ -6,7 +6,7 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Display;
 
-use Drupal\entity_browser\DisplayBase\DisplayBase;
+use Drupal\entity_browser\DisplayBase;
 
 /**
  * Presents entity browser as a standalone form.

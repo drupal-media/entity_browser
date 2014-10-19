@@ -8,7 +8,7 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\Display;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
-use Drupal\entity_browser\DisplayBase\DisplayBase;
+use Drupal\entity_browser\DisplayBase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
