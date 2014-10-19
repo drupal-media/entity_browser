@@ -42,7 +42,7 @@ class Upload extends WidgetBase {
 
     $form['submit'] = array(
       '#type' => 'submit',
-      '#value' => 'Upload - asfsdfsdf',
+      '#value' => 'Upload',
     );
 
     return $form;

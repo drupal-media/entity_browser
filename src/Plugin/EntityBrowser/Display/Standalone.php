@@ -45,7 +45,7 @@ class Standalone extends PluginBase implements DisplayInterface, DisplayRouterIn
   /**
    * {@inheritdoc}
    */
-  public function selectionCompleted() {
+  public function selectionCompleted(array $entities) {
     // @TODO Implement it.
   }
 

@@ -413,6 +413,9 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     if (!$this->selectionCompleted) {
       $form_state->setRebuild();
     }
+    else {
+      $this->getDisplay()->selectionCompleted($this->getSelectedEntities());
+    }
   }
 
   /**

@@ -50,6 +50,17 @@ entity_browser.browser.display.standalone:
       type: string
       label: 'Page path'
 
+entity_browser.browser.display.iframe:
+  type: mapping
+  label: 'iFrame display configuration'
+  mapping:
+    width:
+      type: int
+      label: 'iFrame width'
+    height:
+      type: int
+      label: 'iFrame height'
+
 entity_browser.browser.widget.upload:
   type: mapping
   label: 'Upload widget configuration'

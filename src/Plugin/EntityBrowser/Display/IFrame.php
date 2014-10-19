@@ -7,8 +7,12 @@
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Display;
 
 use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
 use Drupal\entity_browser\DisplayInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Presents entity browser in an iFrame.
@@ -30,6 +34,13 @@ class IFrame extends PluginBase implements DisplayInterface, DisplayRouterInterf
   protected $label;
 
   /**
+   * Selected entities.
+   *
+   * @var \Drupal\Core\Entity\EntityInterface[]
+   */
+  protected $entities;
+
+  /**
    * {@inheritdoc}
    */
   public function label() {
@@ -45,7 +56,9 @@ class IFrame extends PluginBase implements DisplayInterface, DisplayRouterInterf
       '#tag' => 'iframe',
       '#value' => '',
       '#attributes' => array(
-        '#src' => Url::fromRoute('entity_browser.' . $this->configuration['entity_browser_id'])->toString(),
+        'src' => Url::fromRoute('entity_browser.' . $this->configuration['entity_browser_id'])->toString(),
+        'width' => empty($this->configuration['iframe_width']) ? 650 : $this->configuration['iframe_width'],
+        'height' => empty($this->configuration['iframe_height']) ? 500 : $this->configuration['iframe_height'],
       ),
     );
   }
@@ -53,8 +66,22 @@ class IFrame extends PluginBase implements DisplayInterface, DisplayRouterInterf
   /**
    * {@inheritdoc}
    */
-  public function selectionCompleted() {
-    // @TODO Implement it.
+  public function selectionCompleted(array $entities) {
+    $this->entities = $entities;
+    \Drupal::service('event_dispatcher')->addListener(KernelEvents::RESPONSE, [$this, 'propagateSelection']);
+  }
+
+  /**
+   * KernelEvents::RESPONSE listener. Intercepts default response and injects
+   * response that will trigger JS to propagate selected entities upstream.
+   *
+   * @param FilterResponseEvent $event
+   *   Response event.
+   */
+  public function propagateSelection(FilterResponseEvent $event) {
+    // TODO use real implementation.
+    $content = 'Labels: ' . implode(', ', array_map(function (EntityInterface $item) {return $item->label();}, $this->entities));
+    $event->setResponse(new Response($content));
   }
 
   /**
