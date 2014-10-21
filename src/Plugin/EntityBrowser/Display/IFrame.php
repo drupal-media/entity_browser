@@ -37,6 +37,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
       '#value' => '',
       '#attributes' => array(
         'src' => Url::fromRoute('entity_browser.' . $this->configuration['entity_browser_id'])->toString(),
+        // @TODO enforce default values - maybe vi CRUD UI once we have it?
         'width' => empty($this->configuration['iframe_width']) ? 650 : $this->configuration['iframe_width'],
         'height' => empty($this->configuration['iframe_height']) ? 500 : $this->configuration['iframe_height'],
       ),
