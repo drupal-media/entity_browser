@@ -6,7 +6,7 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\WidgetSelector;
 
-use Drupal\entity_browser\WidgetsLazyPluginCollection;
+use Drupal\entity_browser\WidgetsCollection;
 use Drupal\entity_browser\WidgetSelectorBase;
 
 /**
@@ -30,7 +30,7 @@ class Single extends WidgetSelectorBase {
   /**
    * {@inheritdoc}
    */
-  public function getCurrentWidget(WidgetsLazyPluginCollection $widgets) {
+  public function getCurrentWidget(WidgetsCollection $widgets) {
     return $this->getFirstWidget($widgets);
   }
 

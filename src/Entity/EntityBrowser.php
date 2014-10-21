@@ -20,7 +20,7 @@ use Drupal\entity_browser\Events\Events;
 use Drupal\entity_browser\Events\SelectionDoneEvent;
 use Drupal\entity_browser\WidgetInterface;
 use Drupal\entity_browser\Plugin\EntityBrowser\Display\DisplayRouterInterface;
-use Drupal\entity_browser\WidgetsLazyPluginCollection;
+use Drupal\entity_browser\WidgetsCollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Route;
 
@@ -69,7 +69,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   public $display_configuration = array();
 
   /**
-   * Display plugin bag.
+   * Display lazy plugin collection.
    *
    * @var \Drupal\Core\Plugin\DefaultSingleLazyPluginCollection
    */
@@ -83,11 +83,11 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   protected $widgets;
 
   /**
-   * Holds the collection of widgetss that are used by this entity browser.
+   * Holds the collection of widgets that are used by this entity browser.
    *
-   * @var \Drupal\entity_browser\WidgetsLazyPluginCollection
+   * @var \Drupal\entity_browser\WidgetsCollection
    */
-  protected $widgetsPluginCollection;
+  protected $widgetsCollection;
 
   /**
    * The selection display plugin ID.
@@ -104,11 +104,11 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   public $selection_display_configuration = array();
 
   /**
-   * Selection display plugin bag.
+   * Selection display plugin collection.
    *
    * @var \Drupal\Core\Plugin\DefaultSingleLazyPluginCollection
    */
-  protected $selectionDisplayPluginCollection;
+  protected $selectionDisplayCollection;
 
   /**
    * The widget selector plugin ID.
@@ -125,11 +125,11 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   public $widget_selector_configuration = array();
 
   /**
-   * Widget selector plugin bag.
+   * Widget selector plugin collection.
    *
    * @var \Drupal\Core\Plugin\DefaultSingleLazyPluginCollection
    */
-  protected $widgetSelectorPluginCollection;
+  protected $widgetSelectorCollection;
 
   /**
    * Currently selected entities.
@@ -185,18 +185,22 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * Returns display plugin collection.
    *
    * @return \Drupal\Core\Plugin\DefaultSingleLazyPluginCollection
-   *   The tag plugin bag.
+   *   The tag plugin collection.
    */
   protected function displayPluginCollection() {
     if (!$this->displayPluginCollection) {
       $this->display_configuration['entity_browser_id'] = $this->id();
-      $this->displayPluginCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.display'), $this->display, $this->display_configuration);
+      $this->displayCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.display'), $this->display, $this->display_configuration);
     }
     return $this->displayPluginCollection;
   }
 
   /**
-   * {@inheritdoc}
+   * Returns the plugin collections used by this entity.
+   *
+   * @return \Drupal\Component\Plugin\LazyPluginCollection[]
+   *   An array of plugin collections, keyed by the property name they use to
+   *   store their configuration.
    */
   public function getPluginCollections() {
     return array(
@@ -218,14 +222,14 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function getWidgets() {
-    if (!$this->widgetsPluginCollection) {
+    if (!$this->widgetsCollection) {
       foreach ($this->widgets as &$widget) {
         $widget['settings']['entity_browser_id'] = $this->id();
       }
-      $this->widgetsPluginCollection = new WidgetsLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.widget'), $this->widgets);
-      $this->widgetsPluginCollection->sort();
+      $this->widgetsCollection = new WidgetsCollection(\Drupal::service('plugin.manager.entity_browser.widget'), $this->widgets);
+      $this->widgetsCollection->sort();
     }
-    return $this->widgetsPluginCollection;
+    return $this->widgetsCollection;
   }
 
   /**
@@ -250,14 +254,14 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * Returns selection display plugin collection.
    *
    * @return \Drupal\Core\Plugin\DefaultSingleLazyPluginCollection
-   *   The tag plugin bag.
+   *   The tag plugin collection.
    */
   protected function selectionDisplayPluginCollection() {
-    if (!$this->selectionDisplayPluginCollection) {
+    if (!$this->selectionDisplayCollection) {
       $this->selection_display_configuration['entity_browser_id'] = $this->id();
-      $this->selectionDisplayPluginCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.selection_display'), $this->selection_display, $this->selection_display_configuration);
+      $this->selectionDisplayCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.selection_display'), $this->selection_display, $this->selection_display_configuration);
     }
-    return $this->selectionDisplayPluginCollection;
+    return $this->selectionDisplayCollection;
   }
 
   /**
@@ -271,13 +275,13 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * Returns widget selector plugin collection.
    *
    * @return \Drupal\Core\Plugin\DefaultSingleLazyPluginCollection
-   *   The tag plugin bag.
+   *   The tag plugin collection.
    */
   protected function widgetSelectorPluginCollection() {
-    if (!$this->widgetSelectorPluginCollection) {
-      $this->widgetSelectorPluginCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.widget_selector'), $this->widget_selector, $this->widget_selector_configuration);
+    if (!$this->widgetSelectorCollection) {
+      $this->widgetSelectorCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.widget_selector'), $this->widget_selector, $this->widget_selector_configuration);
     }
-    return $this->widgetSelectorPluginCollection;
+    return $this->widgetSelectorCollection;
   }
 
   /**
