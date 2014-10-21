@@ -37,7 +37,7 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
    * @return \Drupal\entity_browser\WidgetInterface
    *   First widget.
    */
-  protected function getFirstWidget(WidgetsBag $widgets) {
+  protected function getFirstWidget(WidgetsCollection $widgets) {
     if ($widgets->count() > 1) {
       $widgets->sort();
     }

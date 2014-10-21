@@ -31,7 +31,7 @@ class Tabs extends WidgetSelectorBase {
   /**
    * {@inheritdoc}
    */
-  public function getCurrentWidget(WidgetsBag $widgets) {
+  public function getCurrentWidget(WidgetsCollection $widgets) {
     return '';
   }
 

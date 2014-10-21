@@ -30,7 +30,7 @@ class Single extends WidgetSelectorBase {
   /**
    * {@inheritdoc}
    */
-  public function getCurrentWidget(WidgetsBag $widgets) {
+  public function getCurrentWidget(WidgetsCollection $widgets) {
     return $this->getFirstWidget($widgets);
   }
 

@@ -2,17 +2,17 @@
 
 /**
  * @file
- * Contains \Drupal\entity_browser\WidgetsBag.
+ * Contains \Drupal\entity_browser\WidgetsCollection.
  */
 
 namespace Drupal\entity_browser;
 
-use Drupal\Core\Plugin\DefaultPluginBag;
+use Drupal\Core\Plugin\DefaultLazyPluginCollection;
 
 /**
  * A collection of entity browser widgets.
  */
-class WidgetsBag extends DefaultPluginBag {
+class WidgetsCollection extends DefaultLazyPluginCollection {
 
   /**
    * Provides uasort() callback to sort plugins.

@@ -7,7 +7,7 @@
 
 namespace Drupal\entity_browser;
 
-use Drupal\Component\Plugin\PluginBag;
+use Drupal\Component\Plugin\LazyPluginCollection;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -41,7 +41,7 @@ interface WidgetSelectorInterface extends PluginInspectionInterface {
    * @return \Drupal\entity_browser\WidgetInterface
    *   Currently selected widget.
    */
-  public function getCurrentWidget(WidgetsBag $widgets);
+  public function getCurrentWidget(WidgetsCollection $widgets);
 
   /**
    * Validates form.
