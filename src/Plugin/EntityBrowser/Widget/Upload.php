@@ -37,7 +37,6 @@ class Upload extends WidgetBase {
       '#upload_location' => empty($this->configuration['settings']['upload_location']) ? 'public://' : $this->configuration['settings']['upload_location'],
       '#multiple' => TRUE,
       '#default_value' => NULL,
-      '#'
     );
 
     $form['submit'] = array(
@@ -52,7 +51,8 @@ class Upload extends WidgetBase {
    * {@inheritdoc}
    */
   public function validate(array &$form, FormStateInterface $form_state) {
-    if (count($form_state->getValue(array('upload'), [])) == 0) {
+    $uploaded_files = $form_state->getValue(array('upload'), []);
+    if (empty($uploaded_files)) {
       $form_state->setError($form['widget']['upload'], t('At least one file should be uploaded.'));
     }
   }

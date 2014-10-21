@@ -29,10 +29,8 @@ class EntityReference extends WidgetBase {
    * {@inheritdoc}
    */
   function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-    /** @var \Drupal\entity_browser\EntityBrowserInterface $eb */
-    $eb = \Drupal::entityManager()->getStorage('entity_browser')->load('iframe_test');
     return [
-      'entity_browser' => $eb->getDisplay()->displayEntityBrowser(),
+      'entity_browser' => \Drupal::entityManager()->getStorage('entity_browser')->load('iframe_test')->getDisplay()->displayEntityBrowser(),
       'target_id' => [
         '#type' => 'hidden',
       ],
