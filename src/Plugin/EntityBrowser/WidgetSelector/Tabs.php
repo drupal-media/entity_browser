@@ -6,7 +6,7 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\WidgetSelector;
 
-use Drupal\entity_browser\WidgetsBag;
+use Drupal\entity_browser\WidgetsCollection;
 use Drupal\entity_browser\WidgetSelectorBase;
 
 /**

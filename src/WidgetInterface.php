@@ -63,11 +63,13 @@ interface WidgetInterface extends PluginInspectionInterface {
   /**
    * Submits form.
    *
+   * @param array $element
+   *   Widget part of the form.
    * @param array $form
    *   Form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Form state object.
    */
-  public function submit(array &$form, FormStateInterface $form_state);
+  public function submit(array &$element, array &$form, FormStateInterface $form_state);
 
 }

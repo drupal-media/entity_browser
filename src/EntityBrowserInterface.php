@@ -56,7 +56,7 @@ interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
   /**
    * Returns the widgets for this entity browser.
    *
-   * @return \Drupal\entity_browser\WidgetsBag
+   * @return \Drupal\entity_browser\WidgetsLazyPluginCollection
    *   The tag plugin bag.
    */
   public function getWidgets();
@@ -121,14 +121,6 @@ interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
    *   Entities to be added to the list of currently selected entities.
    */
   public function addSelectedEntities(array $entities);
-
-  /**
-   * Indicates completed selection.
-   *
-   * Selection process is done and currently selected entities are sent to the
-   * initiating code.
-   */
-  public function selectionCompleted();
 
   /**
    * Gets route that matches this display.

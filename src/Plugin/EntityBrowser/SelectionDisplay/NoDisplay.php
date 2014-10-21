@@ -8,6 +8,7 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\SelectionDisplay;
 
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\entity_browser\SelectionDisplayBase;
 use Drupal\entity_browser\SelectionDisplayInterface;
 
 /**
@@ -19,21 +20,7 @@ use Drupal\entity_browser\SelectionDisplayInterface;
  *   description = @Translation("Skips current selection display and immediately delivers selected entities.")
  * )
  */
-class NoDisplay extends PluginBase implements SelectionDisplayInterface {
-
-  /**
-   * Plugin label.
-   *
-   * @var string
-   */
-  protected $label;
-
-  /**
-   * {@inheritdoc}
-   */
-  public function label() {
-    $this->label;
-  }
+class NoDisplay extends SelectionDisplayBase {
 
   /**
    * {@inheritdoc}
@@ -45,11 +32,8 @@ class NoDisplay extends PluginBase implements SelectionDisplayInterface {
   /**
    * {@inheritdoc}
    */
-  public function validate(array &$form, FormStateInterface $form_state) {}
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submit(array &$form, FormStateInterface $form_state) {}
+  public function submit(array &$form, FormStateInterface $form_state) {
+    $this->selectionDone();
+  }
 
 }

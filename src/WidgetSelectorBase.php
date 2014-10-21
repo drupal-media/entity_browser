@@ -31,7 +31,7 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
   /**
    * Gets first widget based on weights.
    *
-   * @param \Drupal\entity_browser\WidgetsBag $widgets
+   * @param \Drupal\entity_browser\WidgetsCollection $widgets
    *   Widgets bag.
    *
    * @return \Drupal\entity_browser\WidgetInterface

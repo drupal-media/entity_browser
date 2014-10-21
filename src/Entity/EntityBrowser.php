@@ -9,13 +9,15 @@ namespace Drupal\entity_browser\Entity;
 
 use Drupal\Component\Utility\String;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\DefaultSingleLazyPluginCollection;
 use Drupal\entity_browser\EntityBrowserInterface;
-use Drupal\entity_browser\EntitySelectionEvent;
-use Drupal\entity_browser\Events;
+use Drupal\entity_browser\Events\EntitySelectionEvent;
+use Drupal\entity_browser\Events\Events;
+use Drupal\entity_browser\Events\SelectionDoneEvent;
 use Drupal\entity_browser\WidgetInterface;
 use Drupal\entity_browser\Plugin\EntityBrowser\Display\DisplayRouterInterface;
 use Drupal\entity_browser\WidgetsCollection;
@@ -144,6 +146,13 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   protected $subscribedToEvents = FALSE;
 
   /**
+   * Indicates selection is done.
+   *
+   * @var bool
+   */
+  protected $selectionCompleted = FALSE;
+
+  /**
    * {@inheritdoc}
    */
   public function id() {
@@ -180,7 +189,8 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   protected function displayPluginCollection() {
     if (!$this->displayPluginCollection) {
-      $this->displayCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.display'), $this->display, $this->display_configuration);
+      $this->display_configuration['entity_browser_id'] = $this->id();
+      $this->displayPluginCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.display'), $this->display, $this->display_configuration);
     }
     return $this->displayPluginCollection;
   }
@@ -248,6 +258,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   protected function selectionDisplayPluginCollection() {
     if (!$this->selectionDisplayCollection) {
+      $this->selection_display_configuration['entity_browser_id'] = $this->id();
       $this->selectionDisplayCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.selection_display'), $this->selection_display, $this->selection_display_configuration);
     }
     return $this->selectionDisplayCollection;
@@ -305,13 +316,6 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   /**
    * {@inheritdoc}
    */
-  public function selectionCompleted() {
-    // @TODO Implement it.
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function postCreate(EntityStorageInterface $storage) {
     parent::postCreate($storage);
     $this->subscribeEvents(\Drupal::service('event_dispatcher'));
@@ -337,6 +341,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   public function subscribeEvents(EventDispatcherInterface $event_dispatcher) {
     if (!$this->subscribedToEvents) {
       $event_dispatcher->addListener(Events::SELECTED, [$this, 'onSelected']);
+      $event_dispatcher->addListener(Events::DONE, [$this, 'selectionCompleted']);
       $this->subscribedToEvents = TRUE;
     }
   }
@@ -344,11 +349,22 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   /**
    * Responds to SELECTED event.
    *
-   * @param \Drupal\entity_browser\EntitySelectionEvent $event
+   * @param \Drupal\entity_browser\Events\EntitySelectionEvent $event
    */
   public function onSelected(EntitySelectionEvent $event) {
     if ($event->getBrowserID() == $this->id()) {
       $this->addSelectedEntities($event->getEntities());
+    }
+  }
+
+  /**
+   * Responds to DONE event.
+   *
+   * @param \Drupal\entity_browser\Events\SelectionDoneEvent $event
+   */
+  public function selectionCompleted(SelectionDoneEvent $event) {
+    if ($event->getBrowserID() == $this->id()) {
+      $this->selectionCompleted = TRUE;
     }
   }
 
@@ -363,9 +379,20 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['widget_selector'] = $this->getWidgetSelector()->getForm();
-    $form['widget'] = $this->getWidgetSelector()->getCurrentWidget($this->getWidgets())->getForm();
-    $form['selection_display'] = $this->getSelectionDisplay()->getForm();
+    $form['#browser_parts'] = array(
+      'widget_selector' => 'widget_selector',
+      'widget' => 'widget',
+      'selection_display' => 'selection_display',
+    );
+
+    $form['selected_entities'] = array(
+      '#type' => 'value',
+      '#value' => array_map(function(EntityInterface $item) {return $item->id();}, $this->getSelectedEntities())
+    );
+
+    $form[$form['#browser_parts']['widget_selector']] = $this->getWidgetSelector()->getForm();
+    $form[$form['#browser_parts']['widget']] = $this->getWidgetSelector()->getCurrentWidget($this->getWidgets())->getForm();
+    $form[$form['#browser_parts']['selection_display']] = $this->getSelectionDisplay()->getForm();
 
     return $form;
   }
@@ -384,8 +411,15 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->getWidgetSelector()->submit($form, $form_state);
-    $this->getWidgetSelector()->getCurrentWidget($this->getWidgets())->submit($form, $form_state);
+    $this->getWidgetSelector()->getCurrentWidget($this->getWidgets())->submit($form[$form['#browser_parts']['widget']], $form, $form_state);
     $this->getSelectionDisplay()->submit($form, $form_state);
+
+    if (!$this->selectionCompleted) {
+      $form_state->setRebuild();
+    }
+    else {
+      $this->getDisplay()->selectionCompleted($this->getSelectedEntities());
+    }
   }
 
   /**
@@ -422,6 +456,8 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     foreach ($this->widgets as &$widget) {
       unset($widget['settings']['entity_browser_id']);
     }
+    unset($this->selection_display_configuration['entity_browser_id']);
+    unset($this->display_configuration['entity_browser_id']);
   }
 
 }

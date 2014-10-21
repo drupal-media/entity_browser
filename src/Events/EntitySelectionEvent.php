@@ -2,25 +2,15 @@
 
 /**
  * @file
- * Definition of Drupal\entity_browser\EntitySelectionEvent.
+ * Definition of Drupal\entity_browser\Events\EntitySelectionEvent.
  */
 
-namespace Drupal\entity_browser;
-
-use Drupal\Core\Entity\EntityInterface;
-use Symfony\Component\EventDispatcher\Event;
+namespace Drupal\entity_browser\Events;
 
 /**
  * Represents entity selection as event.
  */
-class EntitySelectionEvent extends Event {
-
-  /**
-   * Entity browser id
-   *
-   * @var string
-   */
-  protected $entityBrowserID;
+class EntitySelectionEvent extends EventBase {
 
   /**
    * Entities being selected.
@@ -36,18 +26,8 @@ class EntitySelectionEvent extends Event {
    *   Entity browser ID.
    */
   public function __construct($entity_browser_id, array $entities) {
-    $this->entityBrowserID = $entity_browser_id;
+    parent::__construct($entity_browser_id);
     $this->entities = $entities;
-  }
-
-  /**
-   * Gets the entity browser ID:
-   *
-   * @return string
-   *   Entity browser ID.
-   */
-  public function getBrowserID() {
-    return $this->entityBrowserID;
   }
 
   /**

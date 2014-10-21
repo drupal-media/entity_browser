@@ -40,7 +40,10 @@ interface DisplayInterface extends PluginInspectionInterface {
    * Entity browser will call this function when selection is done. Display
    * plugin is responsible for fetching selected entities and sending them to
    * the initiating code.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface[] $entities
+   *
    */
-  public function selectionCompleted();
+  public function selectionCompleted(array $entities);
 
 }

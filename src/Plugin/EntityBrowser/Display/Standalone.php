@@ -6,8 +6,7 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Display;
 
-use Drupal\Component\Plugin\PluginBase;
-use Drupal\entity_browser\DisplayInterface;
+use Drupal\entity_browser\DisplayBase;
 
 /**
  * Presents entity browser as a standalone form.
@@ -19,21 +18,7 @@ use Drupal\entity_browser\DisplayInterface;
  *   uses_route = TRUE
  * )
  */
-class Standalone extends PluginBase implements DisplayInterface, DisplayRouterInterface {
-
-  /**
-   * Plugin label.
-   *
-   * @var string
-   */
-  protected $label;
-
-  /**
-   * {@inheritdoc}
-   */
-  public function label() {
-    return $this->label;
-  }
+class Standalone extends DisplayBase implements DisplayRouterInterface {
 
   /**
    * {@inheritdoc}
@@ -45,7 +30,7 @@ class Standalone extends PluginBase implements DisplayInterface, DisplayRouterIn
   /**
    * {@inheritdoc}
    */
-  public function selectionCompleted() {
+  public function selectionCompleted(array $entities) {
     // @TODO Implement it.
   }
 
