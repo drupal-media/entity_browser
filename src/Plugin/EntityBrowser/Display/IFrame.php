@@ -7,6 +7,8 @@
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Display;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Page\HtmlFragment;
+use Drupal\Core\Page\HtmlPage;
 use Drupal\Core\Url;
 use Drupal\entity_browser\DisplayBase;
 use Symfony\Component\HttpFoundation\Response;
@@ -58,8 +60,30 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
    */
   public function propagateSelection(FilterResponseEvent $event) {
     // TODO use real implementation.
-    $content = 'Labels: ' . implode(', ', array_map(function (EntityInterface $item) {return $item->label();}, $this->entities));
-    $event->setResponse(new Response($content));
+
+    $render = [
+      'labels' => [
+        '#markup' => 'Labels: ' . implode(', ', array_map(function (EntityInterface $item) {return $item->label();}, $this->entities)),
+        '#attached' => [
+          'js' => [
+            0 => [
+              'type' => 'setting',
+              'data' => [
+                'entity_browser' => [
+                  'iframe' => array_map(function (EntityInterface $item) {return [$item->id(), $item->uuid(), $item->getEntityTypeId()];}, $this->entities),
+                ],
+              ],
+            ],
+          ],
+        ],
+      ],
+    ];
+
+    $content = new HtmlPage('');
+    $content->setContent(drupal_render($render));
+    drupal_process_attached($render);
+
+    $event->setResponse(new Response(\Drupal::service('html_page_renderer')->render($content)));
   }
 
   /**
