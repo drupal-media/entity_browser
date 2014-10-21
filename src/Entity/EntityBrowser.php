@@ -104,7 +104,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   /**
    * Selection display plugin collection.
    *
-   * @var \Drupal\Core\Plugin\DefaultLazyPluginCollection
+   * @var \Drupal\Core\Plugin\DefaultSingleLazyPluginCollection
    */
   protected $selectionDisplayCollection;
 
@@ -125,7 +125,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   /**
    * Widget selector plugin collection.
    *
-   * @var \Drupal\Core\Plugin\DefaultLazyPluginCollection
+   * @var \Drupal\Core\Plugin\DefaultSingleLazyPluginCollection
    */
   protected $widgetSelectorCollection;
 
@@ -175,7 +175,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   /**
    * Returns display plugin collection.
    *
-   * @return \Drupal\Core\Plugin\DefaultLazyPluginCollection
+   * @return \Drupal\Core\Plugin\DefaultSingleLazyPluginCollection
    *   The tag plugin collection.
    */
   protected function displayPluginCollection() {
@@ -243,12 +243,12 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   /**
    * Returns selection display plugin collection.
    *
-   * @return \Drupal\Core\Plugin\DefaultLazyPluginCollection
+   * @return \Drupal\Core\Plugin\DefaultSingleLazyPluginCollection
    *   The tag plugin collection.
    */
   protected function selectionDisplayPluginCollection() {
     if (!$this->selectionDisplayCollection) {
-      $this->selectionDisplayCollection = new DefaultLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.selection_display'), $this->selection_display, $this->selection_display_configuration);
+      $this->selectionDisplayCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.selection_display'), $this->selection_display, $this->selection_display_configuration);
     }
     return $this->selectionDisplayCollection;
   }
@@ -263,12 +263,12 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   /**
    * Returns widget selector plugin collection.
    *
-   * @return \Drupal\Core\Plugin\DefaultLazyPluginCollection
+   * @return \Drupal\Core\Plugin\DefaultSingleLazyPluginCollection
    *   The tag plugin collection.
    */
   protected function widgetSelectorPluginCollection() {
     if (!$this->widgetSelectorCollection) {
-      $this->widgetSelectorCollection = new DefaultLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.widget_selector'), $this->widget_selector, $this->widget_selector_configuration);
+      $this->widgetSelectorCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.widget_selector'), $this->widget_selector, $this->widget_selector_configuration);
     }
     return $this->widgetSelectorCollection;
   }
