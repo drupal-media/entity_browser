@@ -29,12 +29,21 @@ class Upload extends WidgetBase {
   /**
    * {@inheritdoc}
    */
+  public function defaultConfiguration() {
+    return array(
+      'upload_location' => 'public://',
+    ) + parent::defaultConfiguration();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getForm() {
     $form['upload'] = array(
       '#type' => 'managed_file',
       '#title' => t('Choose a file'),
       '#title_display' => 'invisible',
-      '#upload_location' => empty($this->configuration['settings']['upload_location']) ? 'public://' : $this->configuration['settings']['upload_location'],
+      '#upload_location' => $this->configuration['upload_location'],
       '#multiple' => TRUE,
       '#default_value' => NULL,
     );

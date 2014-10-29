@@ -62,6 +62,7 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityManagerInterface $entity_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->configuration += $this->defaultConfiguration();
     $this->eventDispatcher = $event_dispatcher;
     $this->entityManager = $entity_manager;
   }
@@ -77,6 +78,34 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
       $container->get('event_dispatcher'),
       $container->get('entity.manager')
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function defaultConfiguration() {
+    return array();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getConfiguration() {
+    return $this->configuration;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setConfiguration(array $configuration) {
+    $this->configuration = $configuration;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function calculateDependencies() {
+    return array();
   }
 
   /**
