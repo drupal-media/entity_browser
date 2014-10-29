@@ -22,6 +22,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   id = "entity_browser_entity_reference",
  *   label = @Translation("Entity browser"),
  *   description = @Translation("Uses entity browser to select entities."),
+ *   multiple_values = TRUE,
  *   field_types = {
  *     "entity_reference"
  *   }
@@ -116,12 +117,34 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
    * {@inheritdoc}
    */
   function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+    $current = [];
+    foreach ($items as $item) {
+      $current[] = $item->target_id;
+    }
     return [
-      'entity_browser' => $this->browserStorage->load($this->getSetting('entity_browser'))->getDisplay()->displayEntityBrowser(),
       'target_id' => [
         '#type' => 'hidden',
+        '#default_value' => $current,
+      ],
+      'entity_browser' => $this->browserStorage->load($this->getSetting('entity_browser'))->getDisplay()->displayEntityBrowser(),
+      'current' => [
+        // TODO - create better display of current entities
+        '#markup' => '<div class="current-markup">' . implode(', ', $current) . '</div>',
       ],
     ];
+  }
+  
+  /**
+   * {@inheritdoc}
+   */
+  public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
+    $ids = explode(' ', $values['target_id']);
+    $return = [];
+    foreach ($ids as $id) {
+      $return[]['target_id'] = $id;
+    }
+
+    return $return;
   }
 
 }
