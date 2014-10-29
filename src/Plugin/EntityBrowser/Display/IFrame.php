@@ -30,6 +30,16 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
   /**
    * {@inheritdoc}
    */
+  public function defaultConfiguration() {
+    return array(
+      'width' => 650,
+      'height' => 500,
+    ) + parent::defaultConfiguration();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function displayEntityBrowser() {
     return array(
       '#type' => 'html_tag',
@@ -37,9 +47,8 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
       '#value' => '',
       '#attributes' => array(
         'src' => Url::fromRoute('entity_browser.' . $this->configuration['entity_browser_id'])->toString(),
-        // @TODO enforce default values - maybe vi CRUD UI once we have it?
-        'width' => empty($this->configuration['iframe_width']) ? 650 : $this->configuration['iframe_width'],
-        'height' => empty($this->configuration['iframe_height']) ? 500 : $this->configuration['iframe_height'],
+        'width' => $this->configuration['width'],
+        'height' => $this->configuration['height'],
       ),
     );
   }
@@ -60,8 +69,6 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
    *   Response event.
    */
   public function propagateSelection(FilterResponseEvent $event) {
-    // TODO use real implementation.
-
     $render = [
       'labels' => [
         '#markup' => 'Labels: ' . implode(', ', array_map(function (EntityInterface $item) {return $item->label();}, $this->entities)),
@@ -80,6 +87,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
       ],
     ];
 
+    // TODO: Use custom HTML template to remove unecessary items.
     $content = new HtmlPage('');
     $content->setContent(drupal_render($render));
     drupal_process_attached($render);
