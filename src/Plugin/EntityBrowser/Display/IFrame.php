@@ -14,6 +14,8 @@ use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\entity_browser\DisplayBase;
+use Drupal\entity_browser\Events\Events;
+use Drupal\entity_browser\Events\RegisterJSCallbacks;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -97,6 +99,8 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
    * {@inheritdoc}
    */
   public function displayEntityBrowser() {
+    /** @var \Drupal\entity_browser\Events\RegisterJSCallbacks $event */
+    $event = $this->eventDispatcher->dispatch(Events::REGISTER_JS_CALLBACKS, new RegisterJSCallbacks($this->configuration['entity_browser_id']));
     $uuid = $this->uuid->generate();
     return [
       '#theme_wrappers' => ['container'],
@@ -121,6 +125,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
                       'src' => Url::fromRoute('entity_browser.' . $this->configuration['entity_browser_id'], [], ['query' => ['uuid' => $uuid]])->toString(),
                       'width' => $this->configuration['width'],
                       'height' => $this->configuration['height'],
+                      'js_callbacks' => $event->getCallbacks(),
                     ]
                   ]
                 ]
@@ -173,7 +178,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
       ],
     ];
 
-    // TODO: Use custom HTML template to remove unecessary items.
+    // TODO: Use custom HTML template to remove unecessary items. See: https://www.drupal.org/node/2365455
     $content = new HtmlPage('');
     $content->setContent(drupal_render($render));
     drupal_process_attached($render);

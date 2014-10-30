@@ -7,13 +7,16 @@
 
 namespace Drupal\entity_browser\Plugin\Field\FieldWidget;
 
-use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\entity_browser\Events\Events;
+use Drupal\entity_browser\Events\RegisterJSCallbacks;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Plugin implementation of the 'entity_reference' widget for entity browser.
@@ -31,11 +34,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class EntityReference extends WidgetBase implements ContainerFactoryPluginInterface {
 
   /**
-   * Entity browser storage.
+   * Entity manager service
    *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
+   * @var \Drupal\Core\Entity\EntityManagerInterface
    */
-  protected $browserStorage;
+  protected $entityManager;
 
   /**
    * Constructs widget plugin.
@@ -48,10 +51,17 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
    *   The plugin implementation definition.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher service.
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   *   Entity manager service.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   Event dispatcher.
+   *
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityStorageInterface $browser_storage) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityManagerInterface $entity_manager, EventDispatcherInterface $event_dispatcher) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
-    $this->browserStorage = $browser_storage;
+    $this->entityManager = $entity_manager;
+
+    $event_dispatcher->addListener(Events::REGISTER_JS_CALLBACKS, [$this, 'registerJSCallback']);
   }
 
   /**
@@ -64,7 +74,8 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       $configuration['field_definition'],
       $configuration['settings'],
       $configuration['third_party_settings'],
-      $container->get('entity.manager')->getStorage('entity_browser')
+      $container->get('entity.manager'),
+      $container->get('event_dispatcher')
     );
   }
 
@@ -85,7 +96,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
 
     $options = [];
     /** @var \Drupal\entity_browser\EntityBrowserInterface $browser */
-    foreach ($this->browserStorage->loadMultiple() as $browser) {
+    foreach ($this->entityManager->getStorage('entity_browser')->loadMultiple() as $browser) {
       $options[$browser->id()] = $browser->label();
     }
 
@@ -108,7 +119,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       return [t('No entity browser selected.')];
     }
 
-    $browser = $this->browserStorage->load($entity_browser_id);
+    $browser = $this->entityManager->getStorage('entity_browser')->load($entity_browser_id);
     return [t('Entity browser: @browser', ['@browser' => $browser->label()])];
 
   }
@@ -117,23 +128,30 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
    * {@inheritdoc}
    */
   function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
-    $current = [];
+    $ids = [];
     foreach ($items as $item) {
-      $current[] = $item->target_id;
+      $ids[] = $item->target_id;
     }
+
     return [
       'target_id' => [
         '#type' => 'hidden',
-        '#default_value' => $current,
+        '#default_value' => $ids,
       ],
-      'entity_browser' => $this->browserStorage->load($this->getSetting('entity_browser'))->getDisplay()->displayEntityBrowser(),
+      'entity_browser' => $this->entityManager->getStorage('entity_browser')->load($this->getSetting('entity_browser'))->getDisplay()->displayEntityBrowser(),
+      '#attached' => [
+        'js' => [
+          drupal_get_path('module', 'entity_browser') . '/js/entity_browser.entity_reference.js',
+        ],
+      ],
       'current' => [
-        // TODO - create better display of current entities
-        '#markup' => '<div class="current-markup">' . implode(', ', $current) . '</div>',
+        // TODO - create better display of current entities (possibly using a view)
+        // See: https://www.drupal.org/node/2366241
+        '#markup' => '<strong>Selected:</strong> <div class="current-markup">' . implode(' ', $ids) . '</div>',
       ],
     ];
   }
-  
+
   /**
    * {@inheritdoc}
    */
@@ -147,4 +165,13 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     return $return;
   }
 
+  /**
+   * Registers JS callback that gets entities from entity browser and updates
+   * form values accordingly.
+   */
+  public function registerJSCallback(RegisterJSCallbacks $event) {
+    if ($event->getBrowserID() == $this->getSetting('entity_browser')) {
+      $event->registerCallback('Drupal.entityBrowserEntityReference.selectionCompleted');
+    }
+  }
 }

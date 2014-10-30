@@ -35,45 +35,28 @@
       }
     );
 
-    $(iframe).bind('entities-selected', Drupal.entityBrowserIFrame.selectionCompleted);
+    // JS callbacks are registred as strings. We need to split their names and
+    // find actual functions.
+    // TODO - move to standalone function as other displays might need the same
+    // functionality
+    if (drupalSettings.entity_browser.iframe[uuid].js_callbacks || false) {
+      for (var i = 0; i < drupalSettings.entity_browser.iframe[uuid].js_callbacks.length; i++) {
+        var callback = drupalSettings.entity_browser.iframe[uuid].js_callbacks[i].split('.');
+        var fn = window;
+
+        for (var j = 0; j < callback.length; j++) {
+          fn = fn[callback[j]];
+        }
+
+        if (typeof fn === 'function') {
+          $(iframe).bind('entities-selected', fn);
+        }
+      }
+    }
+
     $(this).parent().append(iframe);
     $(this).hide();
   };
 
-  /**
-   * Reacts on "entities selected" event.
-   *
-   * @param event
-   *   Event object.
-   * @param entities
-   *   Array of selected entities.
-   */
-  Drupal.entityBrowserIFrame.selectionCompleted = function(event, entities) {
-    //TODO - move this to widget-specific JS code.
-    var uuid = $(this).attr('data-uuid');
-    $(this).parent().find('a[data-uuid*=' + uuid + ']').show();
-
-    // Value
-    var current = $(this).parent().parent().find('input[type*=hidden]').val();
-    if (current.length != 0) {
-      current = current + ' ';
-    }
-
-    current = current + $.map(entities, function(item) {return item[0]}).join(' ');
-    $(this).parent().parent().find('input[type*=hidden]').val(current);
-
-
-    // Markup
-    var current_a = $(this).parent().parent().find('div.current-markup').html();
-    if (current_a.length != 0) {
-      current_a = current_a + ', ';
-    }
-
-    current_a = current_a + $.map(entities, function(item) {return item[0]}).join(', ');
-    $(this).parent().parent().find('div.current-markup').html(current_a);
-
-
-    $(this).remove();
-  }
 
 }(jQuery, Drupal, drupalSettings));
