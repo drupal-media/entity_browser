@@ -18,6 +18,7 @@ use Drupal\entity_browser\Events\Events;
 use Drupal\entity_browser\Events\RegisterJSCallbacks;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -49,6 +50,13 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
   protected $uuid;
 
   /**
+   * Current request.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request
+   */
+  protected $request;
+
+  /**
    * Constructs display plugin.
    *
    * @param array $configuration
@@ -59,15 +67,18 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
    *   The plugin implementation definition.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher service.
-   * @return \Drupal\Core\Routing\RouteMatchInterface
+   * @param \Drupal\Core\Routing\RouteMatchInterface
    *   The currently active route match object.
-   * @return \Drupal\Component\Uuid\UuidInterface
+   * @param \Drupal\Component\Uuid\UuidInterface
    *   UUID generator interface.
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   Current request.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, RouteMatchInterface $current_route_match, UuidInterface $uuid) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, RouteMatchInterface $current_route_match, UuidInterface $uuid, Request $request) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher);
     $this->currentRouteMatch = $current_route_match;
     $this->uuid = $uuid;
+    $this->request = $request;
   }
 
   /**
@@ -80,7 +91,8 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
       $plugin_definition,
       $container->get('event_dispatcher'),
       $container->get('current_route_match'),
-      $container->get('uuid')
+      $container->get('uuid'),
+      $container->get('request_stack')->getCurrentRequest()
     );
   }
 
@@ -164,7 +176,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
                 'entity_browser' => [
                   'iframe' => [
                     'entities' => array_map(function (EntityInterface $item) {return [$item->id(), $item->uuid(), $item->getEntityTypeId()];}, $this->entities),
-                    'uuid' => $_GET['uuid'],
+                    'uuid' => $this->request->query->get('uuid'),
                   ],
                 ],
               ],
