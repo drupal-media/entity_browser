@@ -147,7 +147,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       'current' => [
         // TODO - create better display of current entities (possibly using a view)
         // See: https://www.drupal.org/node/2366241
-        '#markup' => '<strong>Selected:</strong> <div class="current-markup">' . implode(' ', $ids) . '</div>',
+        '#markup' => '<strong>'. t('Selected:') . '</strong> <div class="current-markup">' . implode(' ', $ids) . '</div>',
       ],
     ];
   }
