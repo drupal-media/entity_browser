@@ -7,13 +7,14 @@
 
 namespace Drupal\entity_browser;
 
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Defines the interface for entity browser widgets.
  */
-interface WidgetInterface extends PluginInspectionInterface {
+interface WidgetInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
 
   /**
    * Returns the widget label.

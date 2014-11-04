@@ -28,4 +28,13 @@ final class Events {
    */
   const DONE = 'entity_browser.done';
 
+  /**
+   * The REGISTER_JS_CALLBACKS collects JS callbacks that need to be notified when
+   * we bring selected entities back to the form. Callbacks are responsible to
+   * propagate selection further to entitiy fields, etc.
+   *
+   * @var string
+   */
+  const REGISTER_JS_CALLBACKS = 'entity_browser.register_js_callbacks';
+
 }
