@@ -427,24 +427,25 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function route() {
     // TODO: Allow displays to define more than just path.
-    $defaults = [
-      '_content' => 'Drupal\entity_browser\Controllers\StandalonePage::page',
-      '_title_callback' => 'Drupal\entity_browser\Controllers\StandalonePage::title',
-      'entity_browser_id' => $this->id(),
-    ];
-
-    $requirements = [
-      '_permission' => 'access ' . String::checkPlain($this->id()) . ' entity browser pages',
-    ];
-
-    $options = [
-      '_admin_route' => TRUE,
-    ];
+    // See: https://www.drupal.org/node/2364193
 
     $display = $this->getDisplay();
     if ($display instanceof DisplayRouterInterface) {
       $path = $display->path();
-      return new Route($path, $defaults, $requirements, $options);
+      return new Route(
+        $path,
+        [
+          '_content' => 'Drupal\entity_browser\Controllers\StandalonePage::page',
+          '_title_callback' => 'Drupal\entity_browser\Controllers\StandalonePage::title',
+          'entity_browser_id' => $this->id(),
+        ],
+        [
+          '_permission' => 'access ' . String::checkPlain($this->id()) . ' entity browser pages',
+        ],
+        [
+          '_admin_route' => TRUE,
+        ]
+      );
     }
 
     return FALSE;
