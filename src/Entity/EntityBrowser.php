@@ -280,7 +280,6 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   protected function widgetSelectorPluginCollection() {
     if (!$this->widgetSelectorCollection) {
       $this->widget_selector_configuration['widgets'] = $this->getWidgets();
-      $this->widget_selector_configuration['form_id'] = $this->getFormId();
       $this->widgetSelectorCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.widget_selector'), $this->widget_selector, $this->widget_selector_configuration);
     }
     return $this->widgetSelectorCollection;
