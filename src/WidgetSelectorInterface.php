@@ -30,7 +30,7 @@ interface WidgetSelectorInterface extends PluginInspectionInterface {
    * @return array
    *   Form structure.
    */
-  public function getForm();
+  public function getForm(WidgetsCollection $widgets);
 
   /**
    * Returns ID of the widget that is currently selected.

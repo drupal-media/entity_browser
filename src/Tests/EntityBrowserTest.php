@@ -238,6 +238,30 @@ class EntityBrowserTest extends KernelTestBase {
     $this->assertEqual($registered_route->getDefault('_content'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
     $this->assertEqual($registered_route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\StandalonePage::title', 'Title callback matches.');
     $this->assertEqual($registered_route->getRequirement('_permission'), 'access ' . String::checkPlain($entity->id()) . ' entity browser pages', 'Permission matches.');
+
+    /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
+    $entity = $this->controller->load('test_dropdown');
+    $route = $entity->route();
+
+    $this->assertEqual($route->getPath(), '/entity-browser/test-dropdown', 'Dynamic path matches.');
+    $this->assertEqual($route->getDefault('entity_browser_id'), $entity->id(), 'Entity browser ID matches.');
+    $this->assertEqual($route->getDefault('_content'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
+    $this->assertEqual($route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\StandalonePage::title', 'Title callback matches.');
+    $this->assertEqual($route->getRequirement('_permission'), 'access ' . String::checkPlain($entity->id()) . ' entity browser pages', 'Permission matches.');
+
+    try {
+      $registered_route = $this->routeProvider->getRouteByName('entity_browser.' . $entity->id());
+    }
+    catch (\Exception $e) {
+      $this->assert('fail', t('Expected route not found: @message', array('@message' => $e->getMessage())));
+      return;
+    }
+
+    $this->assertEqual($registered_route->getPath(), '/entity-browser/test-dropdown', 'Dynamic path matches.');
+    $this->assertEqual($registered_route->getDefault('entity_browser_id'), $entity->id(), 'Entity browser ID matches.');
+    $this->assertEqual($registered_route->getDefault('_content'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
+    $this->assertEqual($registered_route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\StandalonePage::title', 'Title callback matches.');
+    $this->assertEqual($registered_route->getRequirement('_permission'), 'access ' . String::checkPlain($entity->id()) . ' entity browser pages', 'Permission matches.');
   }
 
   /**
@@ -271,6 +295,24 @@ class EntityBrowserTest extends KernelTestBase {
 
     $widget = $entity->getWidgetSelector()->getCurrentWidget($entity->getWidgets());
     $this->assertEqual($widget->label(), 'View widget nr. 1', 'First widget is active.');
+
+    // Change weight and expect second widget to become first.
+    $widget->setWeight(3);
+    $new_widget = $entity->getWidgetSelector()->getCurrentWidget($entity->getWidgets());
+    $this->assertEqual($new_widget->label(), 'View widget nr. 2', 'Second widget is active after changing weights.');
+  }
+
+/**
+   * Test drop_down widget selector.
+   */
+  protected function testDropDownWidgetSelector() {
+    $this->installConfig(array('entity_browser_test'));
+
+    /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
+    $entity = $this->controller->load('test_dropdown');
+
+    $widget = $entity->getWidgetSelector()->getCurrentWidget($entity->getWidgets());
+    $this->assertEqual($widget->label(), 'Upload', 'First widget is active.');
 
     // Change weight and expect second widget to become first.
     $widget->setWeight(3);
