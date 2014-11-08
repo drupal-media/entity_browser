@@ -279,6 +279,8 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   protected function widgetSelectorPluginCollection() {
     if (!$this->widgetSelectorCollection) {
+      $this->widget_selector_configuration['widgets'] = $this->getWidgets();
+      $this->widget_selector_configuration['form_id'] = $this->getFormId();
       $this->widgetSelectorCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.widget_selector'), $this->widget_selector, $this->widget_selector_configuration);
     }
     return $this->widgetSelectorCollection;
@@ -290,7 +292,6 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   public function getWidgetSelector() {
     return $this->widgetSelectorPluginCollection()->get($this->widget_selector);
   }
-
 
   /**
    * {@inheritdoc}
@@ -390,8 +391,12 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
       '#value' => array_map(function(EntityInterface $item) {return $item->id();}, $this->getSelectedEntities())
     );
 
-    $form[$form['#browser_parts']['widget_selector']] = $this->getWidgetSelector()->getForm($this->getWidgets());
-    $form[$form['#browser_parts']['widget']] = $this->getWidgetSelector()->getCurrentWidget($this->getWidgets())->getForm();
+    $form['widget_selector_class'] = array(
+    	'#type' => 'value',
+      '#value' => $this->getWidgetSelector(),
+    );
+    $form[$form['#browser_parts']['widget_selector']] = $this->getWidgetSelector()->getForm($form, $form_state);
+    $form[$form['#browser_parts']['widget']] = $this->getWidgetSelector()->getCurrentWidget()->getForm();
     $form[$form['#browser_parts']['selection_display']] = $this->getSelectionDisplay()->getForm();
 
     return $form;
