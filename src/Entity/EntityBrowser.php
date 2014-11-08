@@ -390,10 +390,6 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
       '#value' => array_map(function(EntityInterface $item) {return $item->id();}, $this->getSelectedEntities())
     );
 
-    $form['widget_selector_class'] = array(
-    	'#type' => 'value',
-      '#value' => $this->getWidgetSelector(),
-    );
     $form[$form['#browser_parts']['widget_selector']] = $this->getWidgetSelector()->getForm($form, $form_state);
     $form[$form['#browser_parts']['widget']] = $this->getWidgetSelector()->getCurrentWidget()->getForm();
     $form[$form['#browser_parts']['selection_display']] = $this->getSelectionDisplay()->getForm();
