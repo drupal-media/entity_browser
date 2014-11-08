@@ -42,7 +42,8 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
    */
   function __construct($configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->widgets = $this->configuration['widgets'];
+      $this->widgets = new WidgetsCollection(\Drupal::service('plugin.manager.entity_browser.widget'), $this->configuration['widgets']);
+      $this->widgets->sort();
   }
 
   /**

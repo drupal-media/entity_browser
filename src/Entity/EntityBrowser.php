@@ -279,7 +279,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   protected function widgetSelectorPluginCollection() {
     if (!$this->widgetSelectorCollection) {
-      $this->widget_selector_configuration['widgets'] = $this->getWidgets();
+      $this->widget_selector_configuration['widgets'] = $this->widgets; //$this->getWidgets();
       $this->widgetSelectorCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.widget_selector'), $this->widget_selector, $this->widget_selector_configuration);
     }
     return $this->widgetSelectorCollection;
@@ -411,7 +411,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->getWidgetSelector()->submit($form, $form_state);
-    $this->getWidgetSelector()->getCurrentWidget($this->getWidgets())->submit($form[$form['#browser_parts']['widget']], $form, $form_state);
+    $this->getWidgetSelector()->getCurrentWidget()->submit($form[$form['#browser_parts']['widget']], $form, $form_state);
     $this->getSelectionDisplay()->submit($form, $form_state);
 
     if (!$this->selectionCompleted) {
