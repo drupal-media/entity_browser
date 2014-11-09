@@ -290,7 +290,7 @@ class EntityBrowserTest extends KernelTestBase {
     $this->assertEqual($entity->getWidgetSelector()->getCurrentWidget()->label(), 'View widget nr. 2', 'Second widget is active after changing widgets');
   }
 
-/**
+  /**
    * Test drop_down widget selector.
    */
   protected function testDropDownWidgetSelector() {

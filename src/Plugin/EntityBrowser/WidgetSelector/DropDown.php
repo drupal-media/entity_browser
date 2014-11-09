@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Contains \Drupal\entity_browser\Plugin\EntityBrowser\WidgetSelector\Single.
+ * Contains \Drupal\entity_browser\Plugin\EntityBrowser\WidgetSelector\DropDown.
  */
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\WidgetSelector;
@@ -11,7 +11,7 @@ use Drupal\entity_browser\WidgetSelectorBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Displays only first widget.
+ * Displays widgets in a select list.
  *
  * @EntityBrowserWidgetSelector(
  *   id = "drop_down",
@@ -40,20 +40,20 @@ class DropDown extends WidgetSelectorBase {
     }
 
     $element['widget'] = array(
-  	  '#type' => 'select',
+      '#type' => 'select',
       '#options' => $options,
       '#default_value' => $this->getCurrentWidget()->configuration['uuid'],
     );
 
     $element['change'] = array(
-  	  '#type' => 'submit',
+      '#type' => 'submit',
       '#name' => 'change',
       '#value' => t('Change'),
       '#submit' => array(array($this, 'changeWidgetSubmit')),
       '#limit_validation_errors' => array(array('widget')),
       '#ajax' => array(
         'callback' => array($this, 'changeWidgetCallback'),
-  	     'wrapper' => 'entity-browser-form',
+        'wrapper' => 'entity-browser-form',
       ),
     );
 
@@ -61,9 +61,19 @@ class DropDown extends WidgetSelectorBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Submit function for change widget button.
+   *
+   * @param array $form
+   *   Form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state object.
    */
   public function changeWidgetSubmit(array &$form, FormStateInterface $form_state) {
+    // If we've submitted the form, update the current widget.
+    if ($form_state->getValue('widget')) {
+      $this->setCurrentWidget($this->widgets->get($form_state->getValue('widget')));
+    }
+
     $form_state->setRebuild();
   }
 
