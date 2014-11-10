@@ -34,11 +34,6 @@ class DropDown extends WidgetSelectorBase {
     $form['#prefix'] = '<div id="entity-browser-form">';
     $form['#suffix'] = '</div>';
 
-    // If we've submitted the form, update the current widget.
-    if ($form_state->getValue('widget')) {
-      $this->setCurrentWidget($this->widgets->get($form_state->getValue('widget')));
-    }
-
     $element['widget'] = array(
       '#type' => 'select',
       '#options' => $options,
@@ -49,7 +44,6 @@ class DropDown extends WidgetSelectorBase {
       '#type' => 'submit',
       '#name' => 'change',
       '#value' => t('Change'),
-      '#submit' => array(array($this, 'changeWidgetSubmit')),
       '#limit_validation_errors' => array(array('widget')),
       '#ajax' => array(
         'callback' => array($this, 'changeWidgetCallback'),
@@ -61,14 +55,9 @@ class DropDown extends WidgetSelectorBase {
   }
 
   /**
-   * Submit function for change widget button.
-   *
-   * @param array $form
-   *   Form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Form state object.
+   * {@inheritdoc}
    */
-  public function changeWidgetSubmit(array &$form, FormStateInterface $form_state) {
+  public function submit(array &$form, FormStateInterface $form_state) {
     // If we've submitted the form, update the current widget.
     if ($form_state->getValue('widget')) {
       $this->setCurrentWidget($this->widgets->get($form_state->getValue('widget')));

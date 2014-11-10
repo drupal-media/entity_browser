@@ -402,7 +402,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $this->getWidgetSelector()->validate($form, $form_state);
-    $this->getWidgetSelector()->getCurrentWidget($this->getWidgets())->validate($form, $form_state);
+    $this->getWidgetSelector()->getCurrentWidget()->validate($form, $form_state);
     $this->getSelectionDisplay()->validate($form, $form_state);
   }
 
@@ -410,15 +410,20 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    $original_widget = $this->getWidgetSelector()->getCurrentWidget();
     $this->getWidgetSelector()->submit($form, $form_state);
-    $this->getWidgetSelector()->getCurrentWidget()->submit($form[$form['#browser_parts']['widget']], $form, $form_state);
-    $this->getSelectionDisplay()->submit($form, $form_state);
+    
+    // Only call widget submit if we didn't change the widget
+    if ($original_widget == $this->getWidgetSelector()->getCurrentWidget()) {
+      $this->getWidgetSelector()->getCurrentWidget()->submit($form[$form['#browser_parts']['widget']], $form, $form_state);
+      $this->getSelectionDisplay()->submit($form, $form_state);
 
-    if (!$this->selectionCompleted) {
-      $form_state->setRebuild();
-    }
-    else {
-      $this->getDisplay()->selectionCompleted($this->getSelectedEntities());
+      if (!$this->selectionCompleted) {
+        $form_state->setRebuild();
+      }
+      else {
+        $this->getDisplay()->selectionCompleted($this->getSelectedEntities());
+      }
     }
   }
 
