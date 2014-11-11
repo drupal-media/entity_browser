@@ -414,7 +414,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $this->getWidgetSelector()->validate($form, $form_state);
-    $this->getWidgets()->get($this->getWidgetSelector() ->getCurrentWidget())->validate($form, $form_state);
+    $this->getWidgets()->get($this->getWidgetSelector()->getCurrentWidget())->validate($form, $form_state);
     $this->getSelectionDisplay()->validate($form, $form_state);
   }
 
