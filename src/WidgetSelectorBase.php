@@ -26,14 +26,14 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
   /**
    * Available widgets
    *
-   * @var \Drupal\entity_browser\WidgetsCollection
+   * @var array()
    */
-  protected $widgets;
+  protected $widgets_options;
 
   /**
-   * Current Widget.
+   * Id of Current Widget.
    *
-   * @var \Drupal\entity_browser\WidgetInterface
+   * @var string
    */
   protected $currentWidget;
 
@@ -42,8 +42,7 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
    */
   function __construct($configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->widgets = new WidgetsCollection(\Drupal::service('plugin.manager.entity_browser.widget'), $this->configuration['widgets']);
-    $this->widgets->sort();
+    $this->widget_options = $this->configuration['widget_options'];
   }
 
   /**
@@ -58,7 +57,7 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
    */
   public function getCurrentWidget() {
     if (!$this->currentWidget) {
-      $this->currentWidget = $this->getFirstWidget($this->widgets);
+      $this->currentWidget = $this->getFirstWidget($this->widget_options);
     }
 
     return $this->currentWidget;
@@ -67,26 +66,23 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
   /**
    * {@inheritdoc}
    */
-  public function setCurrentWidget(WidgetInterface $widget) {
+  public function setCurrentWidget($widget) {
     $this->currentWidget = $widget;
   }
 
   /**
    * Gets first widget based on weights.
    *
-   * @param \Drupal\entity_browser\WidgetsCollection $widgets
-   *   Widgets bag.
+   * @param array $widget_options
+   *   Array of all the widgets.
    *
-   * @return \Drupal\entity_browser\WidgetInterface
-   *   First widget.
+   * @return array
+   *   First element of the array.
    */
-  protected function getFirstWidget(WidgetsCollection $widgets) {
-    if ($widgets->count() > 1) {
-      $widgets->sort();
-    }
-
-    $widgets->rewind();
-    return $widgets->current();
+  protected function getFirstWidget(array $widget_options) {
+    reset($widget_options);
+    
+    return key($widget_options);
   }
 
   /**

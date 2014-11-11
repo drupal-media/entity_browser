@@ -25,19 +25,14 @@ class DropDown extends WidgetSelectorBase {
    * {@inheritdoc}
    */
   public function getForm(array &$form = array(), FormStateInterface &$form_state = NULL) {
-
-    foreach ($this->widgets->getInstanceIds() as $id) {
-      $options[$id] = $this->widgets->get($id)->label();
-    }
-
     // Set a wrapper container for us to replace the form on ajax call.
     $form['#prefix'] = '<div id="entity-browser-form">';
     $form['#suffix'] = '</div>';
 
     $element['widget'] = array(
       '#type' => 'select',
-      '#options' => $options,
-      '#default_value' => $this->getCurrentWidget()->configuration['uuid'],
+      '#options' => $this->widget_options,
+      '#default_value' => $this->getCurrentWidget(),
     );
 
     $element['change'] = array(
@@ -60,7 +55,7 @@ class DropDown extends WidgetSelectorBase {
   public function submit(array &$form, FormStateInterface $form_state) {
     // If we've submitted the form, update the current widget.
     if ($form_state->getValue('widget')) {
-      $this->setCurrentWidget($this->widgets->get($form_state->getValue('widget')));
+      $this->setCurrentWidget($form_state->getValue('widget'));
     }
 
     $form_state->setRebuild();

@@ -35,18 +35,18 @@ interface WidgetSelectorInterface extends PluginInspectionInterface {
   /**
    * Returns the widget that is currently selected.
    *
-   * @return \Drupal\entity_browser\WidgetInterface
-   *   Currently selected widget.
+   * @return string
+   *   ID of currently selected widget.
    */
   public function getCurrentWidget();
 
   /**
    * Sets the current widget.
    *
-   * @param WidgetInterface $widget
-   *   Widget to set as the current widget.
+   * @param string $widget
+   *   Id of widget to set as the current widget.
    */
-  public function setCurrentWidget(WidgetInterface $widget);
+  public function setCurrentWidget($widget);
 
   /**
    * Validates form.
