@@ -8,6 +8,7 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\WidgetSelector;
 
 use Drupal\entity_browser\WidgetsCollection;
 use Drupal\entity_browser\WidgetSelectorBase;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Displays entity browser widgets as tabs.
@@ -23,16 +24,10 @@ class Tabs extends WidgetSelectorBase {
   /**
    * {@inheritdoc}
    */
-  public function getForm() {
+  public function getForm(array &$form, FormStateInterface &$form_state) {
     // TODO - Implement.
     return array();
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getCurrentWidget(WidgetsCollection $widgets) {
-    return '';
-  }
 
 }
