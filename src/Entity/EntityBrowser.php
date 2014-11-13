@@ -291,7 +291,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
       foreach ($this->getWidgets()->getInstanceIds() as $id) {
         $options[$id] = $this->getWidgets()->get($id)->label();
       }
-      $this->widget_selector_configuration['widget_options'] = $options;
+      $this->widget_selector_configuration['widget_ids'] = $options;
       $this->widgetSelectorCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.widget_selector'), $this->widget_selector, $this->widget_selector_configuration);
     }
     return $this->widgetSelectorCollection;
@@ -429,13 +429,13 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     if ($original_widget == $this->getWidgetSelector()->getCurrentWidget()) {
       $this->getWidgets()->get($this->getWidgetSelector()->getCurrentWidget())->submit($form[$form['#browser_parts']['widget']], $form, $form_state);
       $this->getSelectionDisplay()->submit($form, $form_state);
-
-      if (!$this->selectionCompleted) {
-        $form_state->setRebuild();
-      }
-      else {
-        $this->getDisplay()->selectionCompleted($this->getSelectedEntities());
-      }
+    }
+    
+    if (!$this->selectionCompleted) {
+      $form_state->setRebuild();
+    }
+    else {
+      $this->getDisplay()->selectionCompleted($this->getSelectedEntities());
     }
   }
 
@@ -481,7 +481,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     }
     unset($this->selection_display_configuration['entity_browser_id']);
     unset($this->display_configuration['entity_browser_id']);
-    unset($this->widget_selector_configuration['widget_options']);
+    unset($this->widget_selector_configuration['widget_ids']);
   }
 
 }

@@ -42,7 +42,7 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
    */
   function __construct($configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->widget_options = $this->configuration['widget_options'];
+    $this->widget_ids = $this->configuration['widget_ids'];
   }
 
   /**
@@ -57,7 +57,7 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
    */
   public function getCurrentWidget() {
     if (!$this->currentWidget) {
-      $this->currentWidget = $this->getFirstWidget($this->widget_options);
+      $this->currentWidget = $this->getFirstWidget($this->widget_ids);
     }
 
     return $this->currentWidget;
@@ -73,16 +73,16 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
   /**
    * Gets first widget based on weights.
    *
-   * @param array $widget_options
+   * @param array $widget_ids
    *   Array of all the widgets.
    *
    * @return array
    *   First element of the array.
    */
-  protected function getFirstWidget(array $widget_options) {
-    reset($widget_options);
+  protected function getFirstWidget(array $widget_ids) {
+    reset($widget_ids);
     
-    return key($widget_options);
+    return key($widget_ids);
   }
 
   /**

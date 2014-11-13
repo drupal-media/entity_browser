@@ -31,7 +31,7 @@ class DropDown extends WidgetSelectorBase {
 
     $element['widget'] = array(
       '#type' => 'select',
-      '#options' => $this->widget_options,
+      '#options' => $this->widget_ids,
       '#default_value' => $this->getCurrentWidget(),
     );
 
