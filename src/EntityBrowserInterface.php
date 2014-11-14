@@ -71,7 +71,7 @@ interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
    *   The widget ID.
    */
   public function addWidget(array $configuration);
-
+  
   /**
    * Deletes a widget from this entity browser.
    *
@@ -82,6 +82,13 @@ interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
    */
   public function deleteWidget(WidgetInterface $widget);
 
+  /**
+   * Resets widgets on the entity browser.
+   *
+   * Used when widgets configurations change, such as changing weights.
+   */
+  public function resetWidgets();
+  
   /**
    * Returns the selection display.
    *

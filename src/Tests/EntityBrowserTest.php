@@ -12,6 +12,7 @@ use Drupal\Component\Utility\String;
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Core\Entity\EntityMalformedException;
 use Drupal\Core\Form\FormState;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_browser\DisplayInterface;
 use Drupal\entity_browser\EntityBrowserInterface;
 use Drupal\entity_browser\WidgetInterface;
@@ -269,13 +270,33 @@ class EntityBrowserTest extends KernelTestBase {
     /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
     $entity = $this->controller->load('test');
 
-    $widget = $entity->getWidgetSelector()->getCurrentWidget($entity->getWidgets());
+    $widget = $entity->getWidgets()->get($entity->getWidgetSelector()->getCurrentWidget());
     $this->assertEqual($widget->label(), 'View widget nr. 1', 'First widget is active.');
 
     // Change weight and expect second widget to become first.
     $widget->setWeight(3);
-    $new_widget = $entity->getWidgetSelector()->getCurrentWidget($entity->getWidgets());
-    $this->assertEqual($new_widget->label(), 'View widget nr. 2', 'Second widget is active after changing weights.');
+    $entity->resetWidgets();
+    $new_widget = $entity->getWidgets()->get($entity->getWidgetSelector()->getCurrentWidget());
+    $this->assertEqual($new_widget->label(), 'View widget nr. 2', 'Second widget is active after changing widgets');
+  }
+
+  /**
+   * Test drop_down widget selector.
+   */
+  protected function testDropDownWidgetSelector() {
+    $this->installConfig(array('entity_browser_test'));
+
+    /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
+    $entity = $this->controller->load('test_dropdown');
+
+    $widget = $widget = $entity->getWidgets()->get($entity->getWidgetSelector()->getCurrentWidget());
+    $this->assertEqual($widget->label(), 'Upload', 'First widget is active.');
+
+    // Change weight and expect second widget to become first.
+    $widget->setWeight(3);
+    $entity->resetWidgets();
+    $new_widget = $entity->getWidgets()->get($entity->getWidgetSelector()->getCurrentWidget());
+    $this->assertEqual($new_widget->label(), 'View widget nr. 2', 'Second widget is active after changing widgets');
   }
 
   /**
@@ -286,7 +307,7 @@ class EntityBrowserTest extends KernelTestBase {
 
     /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
     $entity = $this->controller->load('dummy_widget');
-    $entity->getWidgets()->current()->entity = $entity;
+    $entity->getWidgets()->get($entity->getWidgetSelector()->getCurrentWidget())->entity = $entity;
 
     $form_state = new FormState();
     $form = [];

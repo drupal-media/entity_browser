@@ -61,7 +61,9 @@ class Upload extends WidgetBase {
    */
   public function validate(array &$form, FormStateInterface $form_state) {
     $uploaded_files = $form_state->getValue(array('upload'), []);
-    if (empty($uploaded_files)) {
+    $trigger = $form_state->getTriggeringElement();
+    // Only validate if we are uploading a file.
+    if (empty($uploaded_files)  && $trigger['#value'] == 'Upload') {
       $form_state->setError($form['widget']['upload'], t('At least one file should be uploaded.'));
     }
   }

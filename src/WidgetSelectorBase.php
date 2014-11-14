@@ -8,11 +8,13 @@ namespace Drupal\entity_browser;
 
 use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base class for widget selector plugins.
  */
 abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorInterface {
+
 
   /**
    * Plugin label.
@@ -22,6 +24,28 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
   protected $label;
 
   /**
+   * Available widgets
+   *
+   * @var array()
+   */
+  protected $widgets_options;
+
+  /**
+   * Id of Current Widget.
+   *
+   * @var string
+   */
+  protected $currentWidget;
+
+  /**
+   * {@inheritdoc}
+   */
+  function __construct($configuration, $plugin_id, $plugin_definition) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->widget_ids = $this->configuration['widget_ids'];
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function label() {
@@ -29,21 +53,36 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
   }
 
   /**
-   * Gets first widget based on weights.
-   *
-   * @param \Drupal\entity_browser\WidgetsCollection $widgets
-   *   Widgets bag.
-   *
-   * @return \Drupal\entity_browser\WidgetInterface
-   *   First widget.
+   * {@inheritdoc}
    */
-  protected function getFirstWidget(WidgetsCollection $widgets) {
-    if ($widgets->count() > 1) {
-      $widgets->sort();
+  public function getCurrentWidget() {
+    if (!$this->currentWidget) {
+      $this->currentWidget = $this->getFirstWidget($this->widget_ids);
     }
 
-    $widgets->rewind();
-    return $widgets->current();
+    return $this->currentWidget;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setCurrentWidget($widget) {
+    $this->currentWidget = $widget;
+  }
+
+  /**
+   * Gets first widget based on weights.
+   *
+   * @param array $widget_ids
+   *   Array of all the widgets.
+   *
+   * @return array
+   *   First element of the array.
+   */
+  protected function getFirstWidget(array $widget_ids) {
+    reset($widget_ids);
+    
+    return key($widget_ids);
   }
 
   /**
