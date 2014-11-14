@@ -31,7 +31,9 @@ class Upload extends WidgetBase {
    */
   public function defaultConfiguration() {
     return array(
-      'upload_location' => 'public://',
+      'settings' => [
+        'upload_location' => 'public://',
+      ]
     ) + parent::defaultConfiguration();
   }
 
@@ -43,7 +45,7 @@ class Upload extends WidgetBase {
       '#type' => 'managed_file',
       '#title' => t('Choose a file'),
       '#title_display' => 'invisible',
-      '#upload_location' => $this->configuration['upload_location'],
+      '#upload_location' => $this->configuration['settings']['upload_location'],
       '#multiple' => TRUE,
       '#default_value' => NULL,
     );
