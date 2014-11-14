@@ -67,7 +67,7 @@ class SelectForm extends FieldPluginBase {
   }
 
   /**
-   * Overrides \Drupal\views\Plugin\views\Plugin\field\FieldPluginBase::query().
+   * {@inheritdoc}
    */
   public function query() {}
 

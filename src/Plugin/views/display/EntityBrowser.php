@@ -29,13 +29,8 @@ class EntityBrowser extends DisplayPluginBase {
    */
   public function execute() {
     parent::execute();
-
-    $render = [
-      'view' => $this->view->render(),
-    ];
-
+    $render = ['view' => $this->view->render()];
     $this->handleForm($render);
-
     return $render;
   }
 
