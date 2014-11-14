@@ -24,15 +24,27 @@ class View extends WidgetBase {
   /**
    * {@inheritdoc}
    */
+  public function defaultConfiguration() {
+    return array(
+      'view' => NULL,
+      'view_display' => NULL,
+    ) + parent::defaultConfiguration();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getForm(array &$original_form, FormStateInterface $form_state) {
+    // TODO - do we need better error handling for view and view_display (in case
+    // either of those is nonexistent or display not of correct type)?
     $storage = &$form_state->getStorage();
     if (empty($storage['view']) || $form_state->isRebuilding()) {
       $storage['view'] = \Drupal::service('entity.manager')
         ->getStorage('view')
-        ->load('nodes_for_selection')
+        ->load($this->configuration['view'])
         ->getExecutable();
     }
-    $form['view'] = $storage['view']->executeDisplay('entity_browser_1');
+    $form['view'] = $storage['view']->executeDisplay($this->configuration['view_display']);
 
     // When rebuilding makes no sense to keep checkboxes that were previously
     // selected.
