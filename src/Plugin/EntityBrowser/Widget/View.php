@@ -39,7 +39,7 @@ class View extends WidgetBase {
     // either of those is nonexistent or display not of correct type)?
     $storage = &$form_state->getStorage();
     if (empty($storage['view']) || $form_state->isRebuilding()) {
-      $storage['view'] = \Drupal::service('entity.manager')
+      $storage['view'] = $this->entityManager
         ->getStorage('view')
         ->load($this->configuration['view'])
         ->getExecutable();
