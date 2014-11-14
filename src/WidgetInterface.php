@@ -46,10 +46,17 @@ interface WidgetInterface extends PluginInspectionInterface, ConfigurablePluginI
   /**
    * Returns widget form.
    *
+   * @param array $original_form
+   *   Entire form bult up to this point. Form elements for widget should generally
+   *   not be added directly to it but returned from funciton as a separated
+   *   unit.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state object.
+   *
    * @return array
    *   Form structure.
    */
-  public function getForm($form, FormStateInterface $form_state);
+  public function getForm(array &$original_form, FormStateInterface $form_state);
 
   /**
    * Validates form.

@@ -24,7 +24,7 @@ class View extends WidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function getForm($original_form, FormStateInterface $form_state) {
+  public function getForm(array &$original_form, FormStateInterface $form_state) {
     $storage = &$form_state->getStorage();
     if (empty($storage['view']) || $form_state->isRebuilding()) {
       $storage['view'] = \Drupal::service('entity.manager')
