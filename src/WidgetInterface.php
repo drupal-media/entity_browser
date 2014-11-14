@@ -49,7 +49,7 @@ interface WidgetInterface extends PluginInspectionInterface, ConfigurablePluginI
    * @return array
    *   Form structure.
    */
-  public function getForm();
+  public function getForm($form, FormStateInterface $form_state);
 
   /**
    * Validates form.

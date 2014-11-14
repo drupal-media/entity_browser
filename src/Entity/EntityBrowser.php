@@ -391,7 +391,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     );
 
     $form[$form['#browser_parts']['widget_selector']] = $this->getWidgetSelector()->getForm();
-    $form[$form['#browser_parts']['widget']] = $this->getWidgetSelector()->getCurrentWidget($this->getWidgets())->getForm();
+    $form[$form['#browser_parts']['widget']] = $this->getWidgetSelector()->getCurrentWidget($this->getWidgets())->getForm($form, $form_state);
     $form[$form['#browser_parts']['selection_display']] = $this->getSelectionDisplay()->getForm();
 
     return $form;
