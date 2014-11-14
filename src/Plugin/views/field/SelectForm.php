@@ -56,12 +56,12 @@ class SelectForm extends FieldPluginBase {
       $render[$this->options['id']]['#tree'] = TRUE;
       $render[$this->options['id']]['#printed'] = TRUE;
       foreach ($this->view->result as $row_index => $row) {
-        $render[$this->options['id']][$row_index] = array(
+        $render[$this->options['id']][$row_index] = [
           '#type' => 'checkbox',
           '#title' => $this->t('Select this item'),
           '#title_display' => 'invisible',
           '#default_value' => NULL,
-        );
+        ];
       }
     }
   }
@@ -74,8 +74,6 @@ class SelectForm extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function clickSortable() {
-    return FALSE;
-  }
+  public function clickSortable() { return FALSE; }
 
 }

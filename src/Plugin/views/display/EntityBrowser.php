@@ -56,15 +56,15 @@ class EntityBrowser extends DisplayPluginBase {
 
     // Force a render array so CSS/JS can be attached.
     if (!is_array($element['#rows'])) {
-      $element['#rows'] = array('#markup' => $element['#rows']);
+      $element['#rows'] = ['#markup' => $element['#rows']];
     }
 
     $element['#header'] = $view->display_handler->renderArea('header', $empty);
     $element['#footer'] = $view->display_handler->renderArea('footer', $empty);
-    $element['#empty'] = $empty ? $view->display_handler->renderArea('empty', $empty) : array();
-    $element['#exposed'] = !empty($view->exposed_widgets) ? $view->exposed_widgets : array();
+    $element['#empty'] = $empty ? $view->display_handler->renderArea('empty', $empty) : [];
+    $element['#exposed'] = !empty($view->exposed_widgets) ? $view->exposed_widgets : [];
     $element['#more'] = $view->display_handler->renderMoreLink();
-    $element['#feed_icons'] = !empty($view->feedIcons) ? $view->feedIcons : array();
+    $element['#feed_icons'] = !empty($view->feedIcons) ? $view->feedIcons : [];
 
     if ($view->display_handler->renderPager()) {
       $exposed_input = isset($view->exposed_raw_input) ? $view->exposed_raw_input : NULL;
@@ -116,8 +116,7 @@ class EntityBrowser extends DisplayPluginBase {
    */
   public static function postRender($content, $element) {
     // Placeholders and their substitutions (usually rendered form elements).
-    $search = array();
-    $replace = array();
+    $search = $replace = [];
 
     // Add in substitutions provided by the form.
     foreach ($element['#substitutions']['#value'] as $substitution) {
