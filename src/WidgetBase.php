@@ -21,6 +21,19 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 abstract class WidgetBase extends PluginBase implements WidgetInterface, ContainerFactoryPluginInterface {
 
   /**
+   * Plugin id.
+   *
+   * @var string
+   */
+  protected $id;
+
+  /**
+   * Plugin uuid.
+   *
+   * @var string
+   */
+  protected $uuid;
+  /**
    * Plugin label.
    *
    * @var string
@@ -62,9 +75,9 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityManagerInterface $entity_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->configuration += $this->defaultConfiguration();
     $this->eventDispatcher = $event_dispatcher;
     $this->entityManager = $entity_manager;
+    $this->setConfiguration($configuration);
   }
 
   /**
@@ -84,49 +97,81 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return array();
+    return [];
   }
 
   /**
    * {@inheritdoc}
    */
   public function getConfiguration() {
-    return $this->configuration;
+    return [
+      'settings' => $this->configuration,
+      'uuid' => $this->uuid(),
+      'weight' => $this->getWeight(),
+      'label' => $this->label(),
+      'id' => $this->id(),
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
   public function setConfiguration(array $configuration) {
-    $this->configuration = $configuration;
+    $configuration += [
+      'settings' => [],
+      'uuid' => '',
+      'weight' => '',
+      'label' => '',
+      'id' => '',
+    ];
+
+    $this->configuration = $configuration['settings'] + $this->defaultConfiguration();
+    $this->label = $configuration['label'];
+    $this->weight = $configuration['weight'];
+    $this->uuid = $configuration['uuid'];
+    $this->id = $configuration['id'];
   }
 
   /**
    * {@inheritdoc}
    */
   public function calculateDependencies() {
-    return array();
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function id() {
+    return $this->id;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function uuid() {
+    return $this->uuid;
   }
 
   /**
    * {@inheritdoc}
    */
   public function label() {
-    return $this->configuration['label'];
+    return $this->label;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getWeight() {
-    return $this->configuration['weight'];
+    return $this->weight;
   }
 
   /**
    * {@inheritdoc}
    */
   public function setWeight($weight) {
-    $this->configuration['weight'] = $weight;
+    $this->weight = $weight;
     return $this;
   }
 
@@ -147,6 +192,6 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    *   Array of entities.
    */
   protected function selectEntities(array $entities) {
-    $this->eventDispatcher->dispatch(Events::SELECTED, new EntitySelectionEvent($this->configuration['settings']['entity_browser_id'], $entities));
+    $this->eventDispatcher->dispatch(Events::SELECTED, new EntitySelectionEvent($this->configuration['entity_browser_id'], $entities));
   }
 }

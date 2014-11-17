@@ -6,6 +6,8 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Widget;
 
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Element;
 use Drupal\entity_browser\WidgetBase;
 
 /**
@@ -22,9 +24,66 @@ class View extends WidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function getForm() {
-    // TODO - Implement.
-    return array();
+  public function defaultConfiguration() {
+    return array(
+      'view' => NULL,
+      'view_display' => NULL,
+    ) + parent::defaultConfiguration();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getForm(array &$original_form, FormStateInterface $form_state) {
+    // TODO - do we need better error handling for view and view_display (in case
+    // either of those is nonexistent or display not of correct type)?
+    $storage = &$form_state->getStorage();
+    if (empty($storage['view']) || $form_state->isRebuilding()) {
+      $storage['view'] = $this->entityManager
+        ->getStorage('view')
+        ->load($this->configuration['view'])
+        ->getExecutable();
+    }
+
+    $form['view'] = $storage['view']->executeDisplay($this->configuration['view_display']);
+
+    if (empty($storage['view']->field['entity_browser_select'])) {
+      return [
+        // TODO - link to view admin page if allowed to.
+        '#markup' => t('Entity browser select form field not found on a view. Go fix it!'),
+      ];
+    }
+
+    // When rebuilding makes no sense to keep checkboxes that were previously
+    // selected.
+    if (!empty($form['view']['entity_browser_select']) && $form_state->isRebuilding()) {
+      foreach (Element::children($form['view']['entity_browser_select']) as $child) {
+        $form['view']['entity_browser_select'][$child]['#value'] = 0;
+      }
+    }
+
+    $form['actions'] = [
+      'submit' => [
+        '#type' => 'submit',
+        '#value' => t('Select'),
+      ],
+    ];
+
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submit(array &$element, array &$form, FormStateInterface $form_state) {
+    $selected_rows = array_keys(array_filter($form_state->getValue('entity_browser_select')));
+    $entities = [];
+    $storage = $form_state->getStorage();
+    foreach ($selected_rows as $row) {
+      $entities[] = $storage['view']->result[$row]->_entity;
+    }
+
+    $this->selectEntities($entities);
   }
 
 }

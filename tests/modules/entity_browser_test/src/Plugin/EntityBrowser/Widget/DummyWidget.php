@@ -30,7 +30,7 @@ class DummyWidget extends WidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function getForm() {
+  public function getForm(array &$original_form, FormStateInterface $form_state) {
     return array();
   }
 

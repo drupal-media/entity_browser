@@ -17,6 +17,22 @@ use Drupal\Core\Form\FormStateInterface;
 interface WidgetInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
 
   /**
+   * Returns the widget id.
+   *
+   * @return string
+   *   The widget id.
+   */
+  public function id();
+
+  /**
+   * Returns the widget UUID.
+   *
+   * @return string
+   *   The widget UUID.
+   */
+  public function uuid();
+
+  /**
    * Returns the widget label.
    *
    * @return string
@@ -46,10 +62,17 @@ interface WidgetInterface extends PluginInspectionInterface, ConfigurablePluginI
   /**
    * Returns widget form.
    *
+   * @param array $original_form
+   *   Entire form bult up to this point. Form elements for widget should generally
+   *   not be added directly to it but returned from funciton as a separated
+   *   unit.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state object.
+   *
    * @return array
    *   Form structure.
    */
-  public function getForm();
+  public function getForm(array &$original_form, FormStateInterface $form_state);
 
   /**
    * Validates form.
