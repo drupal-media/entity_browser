@@ -26,10 +26,8 @@ class View extends WidgetBase {
    */
   public function defaultConfiguration() {
     return array(
-      'settings' => [
-        'view' => NULL,
-        'view_display' => NULL,
-      ]
+      'view' => NULL,
+      'view_display' => NULL,
     ) + parent::defaultConfiguration();
   }
 
@@ -43,7 +41,7 @@ class View extends WidgetBase {
     if (empty($storage['view']) || $form_state->isRebuilding()) {
       $storage['view'] = $this->entityManager
         ->getStorage('view')
-        ->load($this->configuration['settings']['view'])
+        ->load($this->configuration['view'])
         ->getExecutable();
     }
 
@@ -54,7 +52,7 @@ class View extends WidgetBase {
       ];
     }
 
-    $form['view'] = $storage['view']->executeDisplay($this->configuration['settings']['view_display']);
+    $form['view'] = $storage['view']->executeDisplay($this->configuration['view_display']);
 
     // When rebuilding makes no sense to keep checkboxes that were previously
     // selected.

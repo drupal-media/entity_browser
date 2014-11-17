@@ -78,26 +78,30 @@ class EntityBrowserTest extends KernelTestBase {
    * Tests the creation of entity_browser.
    */
   protected function createTests() {
-    $plugin = array(
+    $plugin = [
       'name' => 'test_browser',
       'label' => 'Testing entity browser instance',
       'display' => 'standalone',
-      'display_configuration' => array(),
+      'display_configuration' => [],
       'selection_display' => 'no_display',
-      'selection_display_configuration' => array(),
+      'selection_display_configuration' => [],
       'widget_selector' => 'single',
-      'widget_selector_configuration' => array(),
-      'widgets' => array(
-        $this->widgetUUID => array(
+      'widget_selector_configuration' => [],
+      'widgets' => [
+        $this->widgetUUID => [
           'id' => 'view',
           'label' => 'View widget',
           'uuid' => $this->widgetUUID,
-          'settings' => array(),
-        ),
-      ),
-    );
+          'weight' => 0,
+          'settings' => [
+            'view' => 'test_view',
+            'view_display' => 'test_display',
+          ],
+        ],
+      ],
+    ];
 
-    foreach (array('display' => 'getDisplay', 'selection_display' => 'getSelectionDisplay', 'widget_selector' => 'getWidgetSelector') as $plugin_type => $function_name) {
+    foreach (['display' => 'getDisplay', 'selection_display' => 'getSelectionDisplay', 'widget_selector' => 'getWidgetSelector'] as $plugin_type => $function_name) {
       $current_plugin = $plugin;
       unset($current_plugin[$plugin_type]);
 
@@ -137,29 +141,33 @@ class EntityBrowserTest extends KernelTestBase {
     unset($actual_properties['uuid']);
 
     // Ensure that default values are filled in.
-    $expected_properties = array(
+    $expected_properties = [
       'langcode' => $this->container->get('language_manager')->getDefaultLanguage()->getId(),
       'status' => TRUE,
-      'dependencies' => array(),
+      'dependencies' => [],
       'name' => 'test_browser',
       'label' => 'Testing entity browser instance',
       'display' => 'standalone',
-      'display_configuration' => array(),
+      'display_configuration' => [],
       'selection_display' => 'no_display',
-      'selection_display_configuration' => array(),
+      'selection_display_configuration' => [],
       'widget_selector' => 'single',
-      'widget_selector_configuration' => array(),
-      'widgets' => array(
-        $this->widgetUUID => array(
+      'widget_selector_configuration' => [],
+      'widgets' => [
+        $this->widgetUUID => [
           'id' => 'view',
           'label' => 'View widget',
           'uuid' => $this->widgetUUID,
-          'settings' => array(),
-        ),
-      ),
-    );
+          'weight' => 0,
+          'settings' => [
+            'view' => 'test_view',
+            'view_display' => 'test_display',
+          ],
+        ],
+      ],
+    ];
 
-    $this->assertIdentical($actual_properties, $expected_properties, 'Actual config properties are structured as expected.');
+    $this->assertEqual($actual_properties, $expected_properties, 'Actual config properties are structured as expected.');
   }
 
   /**

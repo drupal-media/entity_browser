@@ -17,6 +17,22 @@ use Drupal\Core\Form\FormStateInterface;
 interface WidgetInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
 
   /**
+   * Returns the widget id.
+   *
+   * @return string
+   *   The widget id.
+   */
+  public function id();
+
+  /**
+   * Returns the widget UUID.
+   *
+   * @return string
+   *   The widget UUID.
+   */
+  public function uuid();
+
+  /**
    * Returns the widget label.
    *
    * @return string
