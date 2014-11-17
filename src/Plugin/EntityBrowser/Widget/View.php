@@ -45,6 +45,8 @@ class View extends WidgetBase {
         ->getExecutable();
     }
 
+    $form['view'] = $storage['view']->executeDisplay($this->configuration['view_display']);
+
     if (empty($storage['view']->field['entity_browser_select'])) {
       return [
         // TODO - link to view admin page if allowed to.
@@ -52,11 +54,9 @@ class View extends WidgetBase {
       ];
     }
 
-    $form['view'] = $storage['view']->executeDisplay($this->configuration['view_display']);
-
     // When rebuilding makes no sense to keep checkboxes that were previously
     // selected.
-    if ($form_state->isRebuilding()) {
+    if (!empty($form['view']['entity_browser_select']) && $form_state->isRebuilding()) {
       foreach (Element::children($form['view']['entity_browser_select']) as $child) {
         $form['view']['entity_browser_select'][$child]['#value'] = 0;
       }
