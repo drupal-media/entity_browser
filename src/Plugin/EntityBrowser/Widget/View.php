@@ -46,6 +46,14 @@ class View extends WidgetBase {
         ->load($this->configuration['settings']['view'])
         ->getExecutable();
     }
+
+    if (empty($storage['view']->field['entity_browser_select'])) {
+      return [
+        // TODO - link to view admin page if allowed to.
+        '#markup' => t('Entity browser select form field not found on a view. Go fix it!'),
+      ];
+    }
+
     $form['view'] = $storage['view']->executeDisplay($this->configuration['settings']['view_display']);
 
     // When rebuilding makes no sense to keep checkboxes that were previously
@@ -54,13 +62,6 @@ class View extends WidgetBase {
       foreach (Element::children($form['view']['entity_browser_select']) as $child) {
         $form['view']['entity_browser_select'][$child]['#value'] = 0;
       }
-    }
-
-    if (empty($storage['view']->field['entity_browser_select'])) {
-      return [
-        // TODO - link to view admin page if allowed to.
-        '#markup' => t('Entity browser select form field not found on a view. Go fix it!'),
-      ];
     }
 
     $form['actions'] = [

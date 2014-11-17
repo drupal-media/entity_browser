@@ -12,7 +12,6 @@ use Drupal\Component\Utility\String;
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Core\Entity\EntityMalformedException;
 use Drupal\Core\Form\FormState;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_browser\DisplayInterface;
 use Drupal\entity_browser\EntityBrowserInterface;
 use Drupal\entity_browser\WidgetInterface;
