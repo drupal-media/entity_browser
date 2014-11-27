@@ -18,8 +18,8 @@
    * @param entities
    *   Array of selected entities.
    */
-  Drupal.entityBrowserEntityReference.selectionCompleted = function(event, entities) {
-    var uuid = $(this).attr('data-uuid');
+  Drupal.entityBrowserEntityReference.selectionCompleted = function(event, uuid, entities) {
+    //var uuid = $(this).attr('data-uuid');
 
     // Update value form element with new entity IDs.
     var entity_ids = $(this).parent().parent().find('input[type*=hidden]').val();
@@ -36,8 +36,8 @@
     $(this).parent().parent().find('div.current-markup').html(entity_ids);
 
     // Display "Select entities" link and destroy iFrame.
-    $(this).parent().find('a[data-uuid*=' + uuid + ']').show();
-    $(this).remove();
+//    $(this).parent().find('a[data-uuid*=' + uuid + ']').show();
+//    $(this).remove();
   }
 
 }(jQuery, Drupal, drupalSettings));
