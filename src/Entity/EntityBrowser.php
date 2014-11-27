@@ -411,6 +411,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     if ($this->getDisplay() instanceOf DisplayAjaxInterface) {
       $this->getDisplay()->addAjax($form);
     }
+
     
     return $form;
   }

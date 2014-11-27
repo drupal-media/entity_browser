@@ -30,8 +30,10 @@
         if (typeof fn === 'function') {
           $('a[data-uuid="' + drupalSettings.entity_browser.modal.uuid + '"]').not('.entity-browser-processed')
           .bind('entities-selected', fn).addClass('entity-browser-processed');
+
         }
       }
     }
   }
+
 }(jQuery, Drupal, drupalSettings));
