@@ -8,10 +8,19 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\Display;
 
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Entity\EntityInterface;
+<<<<<<< HEAD
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\entity_browser\DisplayBase;
 use \Drupal\entity_browser\DisplayAjaxInterface;
+=======
+use Drupal\Core\Page\HtmlFragment;
+use Drupal\Core\Page\HtmlPage;
+use Drupal\Core\Routing\RouteMatch;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+use Drupal\entity_browser\DisplayBase;
+>>>>>>> 2291249 implementing Modal display
 use Drupal\entity_browser\Events\Events;
 use Drupal\entity_browser\Events\RegisterJSCallbacks;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -36,7 +45,11 @@ use Drupal\Core\Form\FormStateInterface;
  *   uses_route = TRUE
  * )
  */
+<<<<<<< HEAD
 class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxInterface {
+=======
+class Modal extends DisplayBase implements DisplayRouterInterface {
+>>>>>>> 2291249 implementing Modal display
 
   /**
    * Current route match service.

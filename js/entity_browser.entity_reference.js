@@ -32,6 +32,10 @@
     // TODO - temporary solution. See: https://www.drupal.org/node/2366241 and
     // \Drupal\entity_browser\Plugin\Field\Widget\EntityReference.
     $(this).parent().parent().find('div.current-markup').html(entity_ids);
+
+    // Display "Select entities" link and destroy iFrame.
+//    $(this).parent().find('a[data-uuid*=' + uuid + ']').show();
+//    $(this).remove();
   }
 
 }(jQuery, Drupal, drupalSettings));
