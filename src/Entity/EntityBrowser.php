@@ -396,6 +396,8 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     $form[$form['#browser_parts']['widget']] = $this->getWidgets()->get($this->getWidgetSelector()->getCurrentWidget())->getForm($form, $form_state);
     $form[$form['#browser_parts']['selection_display']] = $this->getSelectionDisplay()->getForm();
 
+    $this->getDisplay()->addAjax($form);
+    
     return $form;
   }
 
