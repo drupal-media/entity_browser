@@ -393,7 +393,6 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $display = $this->getDisplay();
     $form['#browser_parts'] = array(
       'widget_selector' => 'widget_selector',
       'widget' => 'widget',
@@ -409,7 +408,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     $form[$form['#browser_parts']['widget']] = $this->getWidgets()->get($this->getWidgetSelector()->getCurrentWidget())->getForm($form, $form_state);
     $form[$form['#browser_parts']['selection_display']] = $this->getSelectionDisplay()->getForm();
 
-    if ($display instanceOf DisplayAjaxInterface) {
+    if ($this->getDisplay() instanceOf DisplayAjaxInterface) {
       $this->getDisplay()->addAjax($form);
     }
     
