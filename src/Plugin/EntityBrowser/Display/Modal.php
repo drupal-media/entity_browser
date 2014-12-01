@@ -166,6 +166,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
    * {@inheritdoc}
    */
   public function addAjax(array &$form) {
+    
     // Add the browser id to use in the FormAjaxController.
     $form['browser_id'] = array(
       '#type' => 'hidden',
