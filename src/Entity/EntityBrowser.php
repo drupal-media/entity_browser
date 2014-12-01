@@ -23,6 +23,7 @@ use Drupal\entity_browser\Plugin\EntityBrowser\Display\DisplayRouterInterface;
 use Drupal\entity_browser\WidgetsCollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Route;
+use Drupal\entity_browser\DisplayAjaxInterface;
 
 /**
  * Defines an entity browser configuration entity.
@@ -381,6 +382,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    $display = $this->getDisplay();
     $form['#browser_parts'] = array(
       'widget_selector' => 'widget_selector',
       'widget' => 'widget',
@@ -396,7 +398,9 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     $form[$form['#browser_parts']['widget']] = $this->getWidgets()->get($this->getWidgetSelector()->getCurrentWidget())->getForm($form, $form_state);
     $form[$form['#browser_parts']['selection_display']] = $this->getSelectionDisplay()->getForm();
 
-    $this->getDisplay()->addAjax($form);
+    if ($display instanceOf DisplayAjaxInterface) {
+      $this->getDisplay()->addAjax($form);
+    }
     
     return $form;
   }

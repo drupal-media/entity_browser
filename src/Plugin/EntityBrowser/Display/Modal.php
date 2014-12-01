@@ -14,6 +14,7 @@ use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\entity_browser\DisplayBase;
+use \Drupal\entity_browser\DisplayAjaxInterface;
 use Drupal\entity_browser\Events\Events;
 use Drupal\entity_browser\Events\RegisterJSCallbacks;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -38,7 +39,7 @@ use Drupal\Core\Form\FormStateInterface;
  *   uses_route = TRUE
  * )
  */
-class Modal extends DisplayBase implements DisplayRouterInterface {
+class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxInterface {
 
   /**
    * Current route match service.

@@ -101,12 +101,5 @@ abstract class DisplayBase extends PluginBase implements DisplayInterface, Conta
   public function label() {
     return $this->label;
   }
-  
-  /**
-   * {@inheritdoc}
-   */
-  public function addAjax(array &$form) {
-    // This is left blank.  Plugins that need it will implement it.
-  }
 
 }
