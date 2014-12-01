@@ -36,15 +36,7 @@ use Drupal\Core\Form\FormStateInterface;
  *   uses_route = TRUE
  * )
  */
-<<<<<<< HEAD
-<<<<<<< HEAD
 class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxInterface {
-=======
-class Modal extends DisplayBase implements DisplayRouterInterface {
->>>>>>> 2291249 implementing Modal display
-=======
-class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxInterface {
->>>>>>> 2991249 added DisplayAjaxInterface
 
   /**
    * Current route match service.
