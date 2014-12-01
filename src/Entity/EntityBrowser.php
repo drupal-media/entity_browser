@@ -408,13 +408,9 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     $form[$form['#browser_parts']['widget']] = $this->getWidgets()->get($this->getWidgetSelector()->getCurrentWidget())->getForm($form, $form_state);
     $form[$form['#browser_parts']['selection_display']] = $this->getSelectionDisplay()->getForm();
 
-<<<<<<< HEAD
     if ($this->getDisplay() instanceOf DisplayAjaxInterface) {
       $this->getDisplay()->addAjax($form);
     }
-=======
-    $this->getDisplay()->addAjax($form);
->>>>>>> 2291249 implementing Modal display
     
     return $form;
   }

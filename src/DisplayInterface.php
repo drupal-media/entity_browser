@@ -46,8 +46,6 @@ interface DisplayInterface extends PluginInspectionInterface, ConfigurablePlugin
    *
    */
   public function selectionCompleted(array $entities);
-<<<<<<< HEAD
-=======
   
   /**
    * Adds ajax capabilities to the entity browser form.
@@ -61,5 +59,4 @@ interface DisplayInterface extends PluginInspectionInterface, ConfigurablePlugin
    */
   public function addAjax(array &$form);
 
->>>>>>> 2291249 implementing Modal display
 }
