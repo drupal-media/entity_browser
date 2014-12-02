@@ -229,7 +229,7 @@ class EntityBrowserTest extends KernelTestBase {
 
     $this->assertEqual($route->getPath(), '/entity-browser/test', 'Dynamic path matches.');
     $this->assertEqual($route->getDefault('entity_browser_id'), $entity->id(), 'Entity browser ID matches.');
-    $this->assertEqual($route->getDefault('_content'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
+    $this->assertEqual($route->getDefault('_controller'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
     $this->assertEqual($route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\StandalonePage::title', 'Title callback matches.');
     $this->assertEqual($route->getRequirement('_permission'), 'access ' . String::checkPlain($entity->id()) . ' entity browser pages', 'Permission matches.');
 
@@ -243,7 +243,7 @@ class EntityBrowserTest extends KernelTestBase {
 
     $this->assertEqual($registered_route->getPath(), '/entity-browser/test', 'Dynamic path matches.');
     $this->assertEqual($registered_route->getDefault('entity_browser_id'), $entity->id(), 'Entity browser ID matches.');
-    $this->assertEqual($registered_route->getDefault('_content'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
+    $this->assertEqual($registered_route->getDefault('_controller'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
     $this->assertEqual($registered_route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\StandalonePage::title', 'Title callback matches.');
     $this->assertEqual($registered_route->getRequirement('_permission'), 'access ' . String::checkPlain($entity->id()) . ' entity browser pages', 'Permission matches.');
   }
