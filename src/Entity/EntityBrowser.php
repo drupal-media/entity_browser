@@ -457,7 +457,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
       return new Route(
         $path,
         [
-          '_content' => 'Drupal\entity_browser\Controllers\StandalonePage::page',
+          '_controller' => 'Drupal\entity_browser\Controllers\StandalonePage::page',
           '_title_callback' => 'Drupal\entity_browser\Controllers\StandalonePage::title',
           'entity_browser_id' => $this->id(),
         ],
