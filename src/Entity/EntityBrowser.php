@@ -66,14 +66,14 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    *
    * @var array
    */
-  public $display_configuration = array();
+  public $display_configuration = [];
 
   /**
    * Display lazy plugin collection.
    *
    * @var \Drupal\Core\Plugin\DefaultSingleLazyPluginCollection
    */
-  protected $displayPluginCollection;
+  protected $displayCollection;
 
   /**
    * The array of widgets for this entity browser.
@@ -101,7 +101,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    *
    * @var array
    */
-  public $selection_display_configuration = array();
+  public $selection_display_configuration = [];
 
   /**
    * Selection display plugin collection.
@@ -122,7 +122,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    *
    * @var array
    */
-  public $widget_selector_configuration = array();
+  public $widget_selector_configuration = [];
 
   /**
    * Widget selector plugin collection.
@@ -136,14 +136,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    *
    * @var \Drupal\Core\Entity\EntityInterface[]
    */
-  protected $selectedEntities = array();
-
-  /**
-   * Indicates wether browser already subscribed to events.
-   *
-   * @var bool
-   */
-  protected $subscribedToEvents = FALSE;
+  protected $selectedEntities = [];
 
   /**
    * Indicates selection is done.
@@ -188,11 +181,11 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    *   The tag plugin collection.
    */
   protected function displayPluginCollection() {
-    if (!$this->displayPluginCollection) {
+    if (!$this->displayCollection) {
       $this->display_configuration['entity_browser_id'] = $this->id();
-      $this->displayPluginCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.display'), $this->display, $this->display_configuration);
+      $this->displayCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.display'), $this->display, $this->display_configuration);
     }
-    return $this->displayPluginCollection;
+    return $this->displayCollection;
   }
 
   /**
@@ -351,11 +344,8 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    */
   public function subscribeEvents(EventDispatcherInterface $event_dispatcher) {
-    if (!$this->subscribedToEvents) {
-      $event_dispatcher->addListener(Events::SELECTED, [$this, 'onSelected']);
-      $event_dispatcher->addListener(Events::DONE, [$this, 'selectionCompleted']);
-      $this->subscribedToEvents = TRUE;
-    }
+    $event_dispatcher->addListener(Events::SELECTED, [$this, 'onSelected']);
+    $event_dispatcher->addListener(Events::DONE, [$this, 'selectionCompleted']);
   }
 
   /**
@@ -484,4 +474,47 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     unset($this->widget_selector_configuration['widget_ids']);
   }
 
+  /**
+   * Prevent plugin collections from being serialized and correctly serialize
+   * selected entities.
+   */
+  function __sleep() {
+    // Save configuration for all plugins.
+    $this->widgets = $this->getWidgets()->getConfiguration();
+    $this->widget_selector_configuration = $this->widgetSelectorPluginCollection()->getConfiguration();
+    $this->display_configuration = $this->widgetSelectorPluginCollection()->getConfiguration();
+    $this->selection_display_configuration = $this->selectionDisplayPluginCollection()->getConfiguration();
+
+    // For selected entites only store entity type and id.
+    $this->_selected_entities = [];
+    foreach ($this->selectedEntities as $entity) {
+      $this->_selected_entities[] = [
+        $entity->getEntityTypeId(),
+        $entity->id(),
+      ];
+    }
+
+    return array_diff(
+      array_keys(get_object_vars($this)),
+      [
+        'widgetsCollection',
+        'widgetSelectorCollection',
+        'displayPluginCollection',
+        'selectionDisplayCollection',
+        'selectedEntities'
+      ]
+    );
+  }
+
+  /**
+   * Re-register event listeners and load selected entities.
+   */
+  function __wakeup() {
+    $this->subscribeEvents(\Drupal::service('event_dispatcher'));
+
+    $this->selectedEntities = [];
+    foreach ($this->_selected_entities as $entity) {
+      $this->selectedEntities[] = \Drupal::entityManager()->getStorage($entity['type'])->load($entity['id']);
+    }
+  }
 }
