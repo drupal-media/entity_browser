@@ -8,9 +8,6 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\Display;
 
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Page\HtmlFragment;
-use Drupal\Core\Page\HtmlPage;
-use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\entity_browser\DisplayBase;
@@ -190,12 +187,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
       ],
     ];
 
-    // TODO: Use custom HTML template to remove unecessary items. See: https://www.drupal.org/node/2365455
-    $content = new HtmlPage('');
-    $content->setContent(drupal_render($render));
-    drupal_process_attached($render);
-
-    $event->setResponse(new Response(\Drupal::service('html_page_renderer')->render($content)));
+    $event->setResponse(new Response(\Drupal::service('bare_html_page_renderer')->renderBarePage($render, 'Entity browser', 'entity_browser_propagation')));
   }
 
   /**
