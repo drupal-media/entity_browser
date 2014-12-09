@@ -8,9 +8,6 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\Display;
 
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Page\HtmlFragment;
-use Drupal\Core\Page\HtmlPage;
-use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\entity_browser\DisplayBase;
