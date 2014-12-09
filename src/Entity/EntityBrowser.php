@@ -381,6 +381,8 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    $form_state->disableCache();
+
     $form['#browser_parts'] = array(
       'widget_selector' => 'widget_selector',
       'widget' => 'widget',
