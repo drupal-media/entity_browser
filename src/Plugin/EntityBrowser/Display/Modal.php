@@ -166,13 +166,12 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
    * {@inheritdoc}
    */
   public function addAjax(array &$form) {
-    
     // Add the browser id to use in the FormAjaxController.
     $form['browser_id'] = array(
       '#type' => 'hidden',
       '#value' => $this->configuration['entity_browser_id'],
     );
-    // @TODO find more generic way of doing this.
+
     $form[$form['#browser_parts']['widget']]['actions']['submit']['#ajax'] = array(
       'callback' => array($this, 'widgetAjaxCallback'),
       'wrapper' =>  $this->configuration['entity_browser_id'],

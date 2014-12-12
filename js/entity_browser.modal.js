@@ -9,6 +9,7 @@
   
   Drupal.AjaxCommands.prototype.select_entities = function (ajax, response, status) {
     var uuid = drupalSettings.entity_browser.modal.uuid;
+
     $('a[data-uuid="' + uuid + '"]').trigger('entities-selected', [uuid, response.entities])
     .removeClass('entity-browser-processed').unbind('entities-selected');
   };
