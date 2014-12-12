@@ -9,7 +9,8 @@
   
   Drupal.AjaxCommands.prototype.select_entities = function (ajax, response, status) {
     var uuid = drupalSettings.entity_browser.modal.uuid;
-    $('a[data-uuid="' + uuid + '"]').trigger('entities-selected', [uuid, response.entities]).unbind('entities-selected');
+    $('a[data-uuid="' + uuid + '"]').trigger('entities-selected', [uuid, response.entities])
+    .removeClass('entity-browser-processed').unbind('entities-selected');
   };
 
 
@@ -28,7 +29,8 @@
         }
 
         if (typeof fn === 'function') {
-          $('a[data-uuid="' + drupalSettings.entity_browser.modal.uuid + '"]').bind('entities-selected', fn);
+          $('a[data-uuid="' + drupalSettings.entity_browser.modal.uuid + '"]').not('.entity-browser-processed')
+          .bind('entities-selected', fn).addClass('entity-browser-processed');
         }
       }
     }
