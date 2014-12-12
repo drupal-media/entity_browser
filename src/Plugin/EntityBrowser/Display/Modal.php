@@ -159,13 +159,17 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
    */
   public function selectionCompleted(array $entities) {
     $this->entities = $entities;
-    //$this->eventDispatcher->addListener(KernelEvents::RESPONSE, [$this, 'propagateSelection']);
   }
   
   /**
    * {@inheritdoc}
    */
   public function addAjax(array &$form) {
+    // Add the browser id to use in the FormAjaxController.
+    $form['browser_id'] = array(
+      '#type' => 'hidden',
+      '#value' => $this->configuration['entity_browser_id'],
+    );
     $form[$form['#browser_parts']['widget']]['actions']['submit']['#ajax'] = array(
       'callback' => array($this, 'widgetAjaxCallback'),
       'wrapper' =>  $this->configuration['entity_browser_id'],

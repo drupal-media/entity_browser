@@ -20,6 +20,7 @@
    */
   Drupal.entityBrowserEntityReference.selectionCompleted = function(event, uuid, entities) {
     // Update value form element with new entity IDs.
+	  debugger;
     var entity_ids = $(this).parent().parent().find('input[type*=hidden]').val();
     if (entity_ids.length != 0) {
       entity_ids = entity_ids + ' ';

@@ -13,4 +13,6 @@ services:
     parent: default_plugin_manager
   entity_browser.route_subscriber:
     class: Drupal\entity_browser\RouteSubscriber
+    tags: 
+     - { name: event_subscriber }
     arguments: ['@entity.manager', '@plugin.manager.entity_browser.display', '@entity.query']
