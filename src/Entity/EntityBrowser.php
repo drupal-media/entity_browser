@@ -19,7 +19,7 @@ use Drupal\entity_browser\Events\EntitySelectionEvent;
 use Drupal\entity_browser\Events\Events;
 use Drupal\entity_browser\Events\SelectionDoneEvent;
 use Drupal\entity_browser\WidgetInterface;
-use Drupal\entity_browser\Plugin\EntityBrowser\Display\DisplayRouterInterface;
+use Drupal\entity_browser\DisplayRouterInterface;
 use Drupal\entity_browser\WidgetsCollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Route;
