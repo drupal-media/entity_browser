@@ -10,7 +10,6 @@ namespace Drupal\entity_browser;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Symfony\Component\Routing\RouteCollection;
-//use \Drupal\Core\Routing\RouteSubscriberBase;
 
 /**
  * Generates routes for entity browsers.
@@ -91,13 +90,5 @@ class RouteSubscriber {
       ->condition("display", $ids, 'IN')
       ->execute();
   }
-  
-//   public function alterRoutes(RouteCollection $collection) {
-//     if ($route = $collection->get('system.ajax')) {
-//       $route->addDefaults(
-//           [ '_controller' => '\Drupal\entity_browser\Controllers\FormAjaxController::content' ]
-//       );
-//     }
-//   }
 
 }
