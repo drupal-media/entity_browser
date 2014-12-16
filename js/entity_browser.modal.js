@@ -13,7 +13,6 @@
     .removeClass('entity-browser-processed').unbind('entities-selected');
   };
 
-
   /**
    * Registers behaviours related to modal display.
    */
