@@ -14,7 +14,6 @@ use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\system\FileAjaxForm;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
-
 use \Drupal\system\Controller\FormAjaxController as CoreFormAjaxController;
 
 class FormAjaxController extends CoreFormAjaxController {
@@ -42,15 +41,15 @@ class FormAjaxController extends CoreFormAjaxController {
     $form = $this->formBuilder->getForm($browser);
 
     $form_build_id = $request->request->get('form_build_id');
-  
     $form_id = $request->request->get('form_id');
   
-      $browser_id =  $request->request->get('browser_id');
-      $browser = \Drupal::entityManager()->getStorage('entity_browser')->load($browser_id);
-      $form = $this->formBuilder->getForm($browser);
+    $browser_id =  $request->request->get('browser_id');
+    $browser = \Drupal::entityManager()->getStorage('entity_browser')->load($browser_id);
+    $form = $this->formBuilder->getForm($browser);
 
     $form_state->setUserInput($request->request->all());
     $form_id = $form['#form_id'];
+    $form_build_id = $form['#build_id'];
   
     return new FileAjaxForm($form, $form_state, $form_id, $form_build_id, $commands);
   }

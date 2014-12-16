@@ -35,5 +35,4 @@
       }
     }
   }
-
 }(jQuery, Drupal, drupalSettings));
