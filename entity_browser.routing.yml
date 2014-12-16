@@ -9,4 +9,3 @@ entity_browser.ajax:
     _theme: ajax_base_page
   requirements:
     _access: 'TRUE'
-    
