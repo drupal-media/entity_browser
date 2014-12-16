@@ -1,2 +1,11 @@
 route_callbacks:
   - 'entity_browser.route_subscriber:routes'
+  
+entity_browser.ajax:
+  path: '/entity-browser/ajax'
+  defaults:
+    _controller: '\Drupal\entity_browser\Controllers\FormAjaxController::content'
+  options:
+    _theme: ajax_base_page
+  requirements:
+    _access: 'TRUE'
