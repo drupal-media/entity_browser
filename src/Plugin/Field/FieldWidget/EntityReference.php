@@ -139,11 +139,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
         '#default_value' => $ids,
       ],
       'entity_browser' => $this->entityManager->getStorage('entity_browser')->load($this->getSetting('entity_browser'))->getDisplay()->displayEntityBrowser(),
-      '#attached' => [
-        'js' => [
-          drupal_get_path('module', 'entity_browser') . '/js/entity_browser.entity_reference.js',
-        ],
-      ],
+      '#attached' => ['library' => ['entity_browser/entity_reference']],
       'current' => [
         // TODO - create better display of current entities (possibly using a view)
         // See: https://www.drupal.org/node/2366241
