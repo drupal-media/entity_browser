@@ -123,24 +123,19 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
           'data-uuid' => $uuid,
         ],
         '#attached' => [
-          'js' => [
-            drupal_get_path('module', 'entity_browser') . '/js/entity_browser.iframe.js',
-            [
-              'type' => 'setting',
-              'data' => [
-                'entity_browser' => [
-                  'iframe' => [
-                    $uuid => [
-                      'src' => Url::fromRoute('entity_browser.' . $this->configuration['entity_browser_id'], [], ['query' => ['uuid' => $uuid]])->toString(),
-                      'width' => $this->configuration['width'],
-                      'height' => $this->configuration['height'],
-                      'js_callbacks' => $event->getCallbacks(),
-                    ]
-                  ]
-                ]
+          'library' => ['entity_browser/iframe'],
+          'drupalSettings' => [
+            'entity_browser' => [
+              'iframe' => [
+                $uuid => [
+                  'src' => Url::fromRoute('entity_browser.' . $this->configuration['entity_browser_id'], [], ['query' => ['uuid' => $uuid]])->toString(),
+                  'width' => $this->configuration['width'],
+                  'height' => $this->configuration['height'],
+                  'js_callbacks' => $event->getCallbacks(),
+                ],
               ],
-            ]
-          ],
+            ],
+          ]
         ],
       ],
     ];
@@ -166,22 +161,14 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
       'labels' => [
         '#markup' => 'Labels: ' . implode(', ', array_map(function (EntityInterface $item) {return $item->label();}, $this->entities)),
         '#attached' => [
-          'js' => [
-            [
-              'type' => 'setting',
-              'data' => [
-                'entity_browser' => [
-                  'iframe' => [
-                    'entities' => array_map(function (EntityInterface $item) {return [$item->id(), $item->uuid(), $item->getEntityTypeId()];}, $this->entities),
-                    'uuid' => $this->request->query->get('uuid'),
-                  ],
-                ],
+          'library' => ['core/drupalSettings', 'entity_browser/iframe_selection'],
+          'drupalSettings' => [
+            'entity_browser' => [
+              'iframe' => [
+                'entities' => array_map(function (EntityInterface $item) {return [$item->id(), $item->uuid(), $item->getEntityTypeId()];}, $this->entities),
+                'uuid' => $this->request->query->get('uuid'),
               ],
             ],
-            drupal_get_path('module', 'entity_browser') . '/js/entity_browser.iframe_selection.js',
-          ],
-          'library' => [
-            'core/drupalSettings',
           ],
         ],
       ],
