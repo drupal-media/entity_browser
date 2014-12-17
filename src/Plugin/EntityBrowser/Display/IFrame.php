@@ -161,7 +161,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
       'labels' => [
         '#markup' => 'Labels: ' . implode(', ', array_map(function (EntityInterface $item) {return $item->label();}, $this->entities)),
         '#attached' => [
-          'library' => ['core/drupalSettings', 'entity_browser/iframe_selection'],
+          'library' => ['entity_browser/iframe_selection'],
           'drupalSettings' => [
             'entity_browser' => [
               'iframe' => [
