@@ -1,0 +1,30 @@
+uuid: dcf59045-164b-4995-ae8d-6b949ec76742
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_nodes
+    - node.type.entity_browser_test
+  module:
+    - entity_reference
+id: node.entity_browser_test.field_nodes
+field_name: field_nodes
+entity_type: node
+bundle: entity_browser_test
+label: Nodes
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: default
+  handler_settings:
+    target_bundles:
+      article: article
+      entity_browser_test: entity_browser_test
+      page: page
+    sort:
+      field: _none
+third_party_settings: {  }
+field_type: entity_reference
