@@ -29,20 +29,29 @@ class Upload extends WidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function getForm() {
-    $form['upload'] = array(
+  public function defaultConfiguration() {
+    return [
+      'upload_location' => 'public://',
+    ] + parent::defaultConfiguration();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getForm(array &$original_form, FormStateInterface $form_state) {
+    $form['upload'] = [
       '#type' => 'managed_file',
       '#title' => t('Choose a file'),
       '#title_display' => 'invisible',
-      '#upload_location' => empty($this->configuration['settings']['upload_location']) ? 'public://' : $this->configuration['settings']['upload_location'],
+      '#upload_location' => $this->configuration['upload_location'],
       '#multiple' => TRUE,
-      '#default_value' => NULL,
-    );
+      //'#default_value' => NULL,
+    ];
 
-    $form['submit'] = array(
+    $form['submit'] = [
       '#type' => 'submit',
       '#value' => 'Upload',
-    );
+    ];
 
     return $form;
   }
@@ -51,8 +60,10 @@ class Upload extends WidgetBase {
    * {@inheritdoc}
    */
   public function validate(array &$form, FormStateInterface $form_state) {
-    $uploaded_files = $form_state->getValue(array('upload'), []);
-    if (empty($uploaded_files)) {
+    $uploaded_files = $form_state->getValue(['upload'], []);
+    $trigger = $form_state->getTriggeringElement();
+    // Only validate if we are uploading a file.
+    if (empty($uploaded_files)  && $trigger['#value'] == 'Upload') {
       $form_state->setError($form['widget']['upload'], t('At least one file should be uploaded.'));
     }
   }
@@ -63,7 +74,7 @@ class Upload extends WidgetBase {
   public function submit(array &$element, array &$form, FormStateInterface $form_state) {
     $files = [];
 
-    foreach ($form_state->getValue(array('upload'), []) as $fid) {
+    foreach ($form_state->getValue(['upload'], []) as $fid) {
       /** @var \Drupal\file\FileInterface $file */
       $file = $this->entityManager->getStorage('file')->load($fid);
       $file->setPermanent();

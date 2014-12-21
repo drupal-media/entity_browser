@@ -78,26 +78,30 @@ class EntityBrowserTest extends KernelTestBase {
    * Tests the creation of entity_browser.
    */
   protected function createTests() {
-    $plugin = array(
+    $plugin = [
       'name' => 'test_browser',
       'label' => 'Testing entity browser instance',
       'display' => 'standalone',
-      'display_configuration' => array(),
+      'display_configuration' => [],
       'selection_display' => 'no_display',
-      'selection_display_configuration' => array(),
+      'selection_display_configuration' => [],
       'widget_selector' => 'single',
-      'widget_selector_configuration' => array(),
-      'widgets' => array(
-        $this->widgetUUID => array(
+      'widget_selector_configuration' => [],
+      'widgets' => [
+        $this->widgetUUID => [
           'id' => 'view',
           'label' => 'View widget',
           'uuid' => $this->widgetUUID,
-          'settings' => array(),
-        ),
-      ),
-    );
+          'weight' => 0,
+          'settings' => [
+            'view' => 'test_view',
+            'view_display' => 'test_display',
+          ],
+        ],
+      ],
+    ];
 
-    foreach (array('display' => 'getDisplay', 'selection_display' => 'getSelectionDisplay', 'widget_selector' => 'getWidgetSelector') as $plugin_type => $function_name) {
+    foreach (['display' => 'getDisplay', 'selection_display' => 'getSelectionDisplay', 'widget_selector' => 'getWidgetSelector'] as $plugin_type => $function_name) {
       $current_plugin = $plugin;
       unset($current_plugin[$plugin_type]);
 
@@ -137,29 +141,33 @@ class EntityBrowserTest extends KernelTestBase {
     unset($actual_properties['uuid']);
 
     // Ensure that default values are filled in.
-    $expected_properties = array(
+    $expected_properties = [
       'langcode' => $this->container->get('language_manager')->getDefaultLanguage()->getId(),
       'status' => TRUE,
-      'dependencies' => array(),
+      'dependencies' => [],
       'name' => 'test_browser',
       'label' => 'Testing entity browser instance',
       'display' => 'standalone',
-      'display_configuration' => array(),
+      'display_configuration' => [],
       'selection_display' => 'no_display',
-      'selection_display_configuration' => array(),
+      'selection_display_configuration' => [],
       'widget_selector' => 'single',
-      'widget_selector_configuration' => array(),
-      'widgets' => array(
-        $this->widgetUUID => array(
+      'widget_selector_configuration' => [],
+      'widgets' => [
+        $this->widgetUUID => [
           'id' => 'view',
           'label' => 'View widget',
           'uuid' => $this->widgetUUID,
-          'settings' => array(),
-        ),
-      ),
-    );
+          'weight' => 0,
+          'settings' => [
+            'view' => 'test_view',
+            'view_display' => 'test_display',
+          ],
+        ],
+      ],
+    ];
 
-    $this->assertIdentical($actual_properties, $expected_properties, 'Actual config properties are structured as expected.');
+    $this->assertEqual($actual_properties, $expected_properties, 'Actual config properties are structured as expected.');
   }
 
   /**
@@ -221,7 +229,7 @@ class EntityBrowserTest extends KernelTestBase {
 
     $this->assertEqual($route->getPath(), '/entity-browser/test', 'Dynamic path matches.');
     $this->assertEqual($route->getDefault('entity_browser_id'), $entity->id(), 'Entity browser ID matches.');
-    $this->assertEqual($route->getDefault('_content'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
+    $this->assertEqual($route->getDefault('_controller'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
     $this->assertEqual($route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\StandalonePage::title', 'Title callback matches.');
     $this->assertEqual($route->getRequirement('_permission'), 'access ' . String::checkPlain($entity->id()) . ' entity browser pages', 'Permission matches.');
 
@@ -235,7 +243,7 @@ class EntityBrowserTest extends KernelTestBase {
 
     $this->assertEqual($registered_route->getPath(), '/entity-browser/test', 'Dynamic path matches.');
     $this->assertEqual($registered_route->getDefault('entity_browser_id'), $entity->id(), 'Entity browser ID matches.');
-    $this->assertEqual($registered_route->getDefault('_content'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
+    $this->assertEqual($registered_route->getDefault('_controller'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
     $this->assertEqual($registered_route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\StandalonePage::title', 'Title callback matches.');
     $this->assertEqual($registered_route->getRequirement('_permission'), 'access ' . String::checkPlain($entity->id()) . ' entity browser pages', 'Permission matches.');
   }
@@ -269,13 +277,33 @@ class EntityBrowserTest extends KernelTestBase {
     /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
     $entity = $this->controller->load('test');
 
-    $widget = $entity->getWidgetSelector()->getCurrentWidget($entity->getWidgets());
+    $widget = $entity->getWidgets()->get($entity->getWidgetSelector()->getCurrentWidget());
     $this->assertEqual($widget->label(), 'View widget nr. 1', 'First widget is active.');
 
     // Change weight and expect second widget to become first.
     $widget->setWeight(3);
-    $new_widget = $entity->getWidgetSelector()->getCurrentWidget($entity->getWidgets());
-    $this->assertEqual($new_widget->label(), 'View widget nr. 2', 'Second widget is active after changing weights.');
+    $entity->resetWidgets();
+    $new_widget = $entity->getWidgets()->get($entity->getWidgetSelector()->getCurrentWidget());
+    $this->assertEqual($new_widget->label(), 'View widget nr. 2', 'Second widget is active after changing widgets');
+  }
+
+  /**
+   * Test drop_down widget selector.
+   */
+  protected function testDropDownWidgetSelector() {
+    $this->installConfig(array('entity_browser_test'));
+
+    /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
+    $entity = $this->controller->load('test_dropdown');
+
+    $widget = $widget = $entity->getWidgets()->get($entity->getWidgetSelector()->getCurrentWidget());
+    $this->assertEqual($widget->label(), 'Upload', 'First widget is active.');
+
+    // Change weight and expect second widget to become first.
+    $widget->setWeight(3);
+    $entity->resetWidgets();
+    $new_widget = $entity->getWidgets()->get($entity->getWidgetSelector()->getCurrentWidget());
+    $this->assertEqual($new_widget->label(), 'View widget nr. 2', 'Second widget is active after changing widgets');
   }
 
   /**
@@ -286,7 +314,7 @@ class EntityBrowserTest extends KernelTestBase {
 
     /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
     $entity = $this->controller->load('dummy_widget');
-    $entity->getWidgets()->current()->entity = $entity;
+    $entity->getWidgets()->get($entity->getWidgetSelector()->getCurrentWidget())->entity = $entity;
 
     $form_state = new FormState();
     $form = [];
