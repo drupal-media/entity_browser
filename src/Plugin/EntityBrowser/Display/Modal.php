@@ -173,7 +173,8 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
       '#value' => $this->configuration['entity_browser_id'],
     );
 
-    $form[$form['#browser_parts']['widget']]['actions']['submit']['#ajax'] = array(
+    // @TODO find more generic way of doing this.
+    $form['actions']['submit']['#ajax'] = array(
       'callback' => array($this, 'widgetAjaxCallback'),
       'wrapper' =>  $this->configuration['entity_browser_id'],
       'url' => Url::fromRoute('entity_browser.ajax'),
