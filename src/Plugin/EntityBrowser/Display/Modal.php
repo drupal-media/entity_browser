@@ -10,7 +10,6 @@ use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
-use Drupal\entity_browser\DisplayAjaxInterface;
 use Drupal\entity_browser\DisplayBase;
 use Drupal\entity_browser\DisplayRouterInterface;
 use \Drupal\entity_browser\DisplayAjaxInterface;
