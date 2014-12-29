@@ -393,6 +393,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+
     $form['selected_entities'] = array(
       '#type' => 'value',
       '#value' => array_map(function(EntityInterface $item) {return $item->id();}, $this->getSelectedEntities())

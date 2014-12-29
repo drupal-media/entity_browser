@@ -40,13 +40,6 @@ class FormAjaxController extends CoreFormAjaxController {
     $browser = \Drupal::entityManager()->getStorage('entity_browser')->load($browser_id);
     $form = $this->formBuilder->getForm($browser);
 
-    $form_build_id = $request->request->get('form_build_id');
-    $form_id = $request->request->get('form_id');
-  
-    $browser_id =  $request->request->get('browser_id');
-    $browser = \Drupal::entityManager()->getStorage('entity_browser')->load($browser_id);
-    $form = $this->formBuilder->getForm($browser);
-
     $form_state->setUserInput($request->request->all());
     $form_id = $form['#form_id'];
     $form_build_id = $form['#build_id'];
