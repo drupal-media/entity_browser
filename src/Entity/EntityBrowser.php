@@ -344,6 +344,17 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    */
   public function subscribeEvents(EventDispatcherInterface $event_dispatcher) {
+    // When entity browser gets unserialized we end up with two instances of the
+    // class and we must be sure only unserialized one is subscribed to events.
+    foreach ([Events::SELECTED, Events::DONE] as $event) {
+      $existing = $event_dispatcher->getListeners($event);
+      foreach ($existing as $listener) {
+        if (count($listener) == 2 && $listener[0] instanceof EntityBrowserInterface && $listener[0]->id() == $this->id()) {
+          $event_dispatcher->removeListener($event, $listener);
+        }
+      }
+    }
+
     $event_dispatcher->addListener(Events::SELECTED, [$this, 'onSelected']);
     $event_dispatcher->addListener(Events::DONE, [$this, 'selectionCompleted']);
   }
@@ -381,8 +392,6 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form_state->disableCache();
-
     $form['#browser_parts'] = array(
       'widget_selector' => 'widget_selector',
       'widget' => 'widget',
@@ -501,7 +510,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
       [
         'widgetsCollection',
         'widgetSelectorCollection',
-        'displayPluginCollection',
+        'displayCollection',
         'selectionDisplayCollection',
         'selectedEntities'
       ]
