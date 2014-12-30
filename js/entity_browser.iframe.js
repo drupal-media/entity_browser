@@ -25,13 +25,15 @@
    */
   Drupal.entityBrowserIFrame.linkClick = function() {
     var uuid = $(this).attr('data-uuid');
+    var original_path = $(this).attr('data-original-path');
     var iframe = $(
       '<iframe />',
       {
         'src' : drupalSettings['entity_browser']['iframe'][uuid]['src'],
         'width' : drupalSettings['entity_browser']['iframe'][uuid]['width'],
         'height' : drupalSettings['entity_browser']['iframe'][uuid]['height'],
-        'data-uuid' : uuid
+        'data-uuid' : uuid,
+        'data-original-path' : original_path
       }
     );
 

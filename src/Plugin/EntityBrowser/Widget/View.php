@@ -34,7 +34,7 @@ class View extends WidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function getForm(array &$original_form, FormStateInterface $form_state) {
+  public function getForm(array &$original_form, FormStateInterface $form_state, array $aditional_widget_parameters) {
     // TODO - do we need better error handling for view and view_display (in case
     // either of those is nonexistent or display not of correct type)?
     $storage = &$form_state->getStorage();
@@ -45,8 +45,17 @@ class View extends WidgetBase {
         ->getExecutable();
     }
 
-    $form['view'] = $storage['view']->executeDisplay($this->configuration['view_display']);
+    if (!empty($this->configuration['arguments'])) {
+      if (!empty($aditional_widget_parameters['path_parts'])) {
+        $arguments = array_intersect_key($aditional_widget_parameters['path_parts'], array_flip($this->configuration['arguments']));
+        $storage['view']->setArguments(array_values($arguments));
+      }
+      else {
+        // @todo Should we log something here?
+      }
+    }
 
+    $form['view'] = $storage['view']->executeDisplay($this->configuration['view_display']);
     if (empty($storage['view']->field['entity_browser_select'])) {
       return [
         // TODO - link to view admin page if allowed to.

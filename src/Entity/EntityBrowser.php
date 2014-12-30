@@ -146,6 +146,13 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   protected $selectionCompleted = FALSE;
 
   /**
+   * Additional widget parameters.
+   *
+   * @var array
+   */
+  protected $additional_widget_parameters = [];
+
+  /**
    * {@inheritdoc}
    */
   public function id() {
@@ -186,6 +193,21 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
       $this->displayCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.display'), $this->display, $this->display_configuration);
     }
     return $this->displayCollection;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setAdditionalWidgetParameters(array $parameters) {
+    $this->additional_widget_parameters += $parameters;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAdditionalWidgetParameters() {
+    return $this->get('additional_widget_parameters');
   }
 
   /**
@@ -404,7 +426,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     );
 
     $form[$form['#browser_parts']['widget_selector']] = $this->getWidgetSelector()->getForm($form, $form_state);
-    $form[$form['#browser_parts']['widget']] = $this->getWidgets()->get($this->getWidgetSelector()->getCurrentWidget())->getForm($form, $form_state);
+    $form[$form['#browser_parts']['widget']] = $this->getWidgets()->get($this->getWidgetSelector()->getCurrentWidget())->getForm($form, $form_state, $this->additional_widget_parameters);
     $form[$form['#browser_parts']['selection_display']] = $this->getSelectionDisplay()->getForm();
 
     return $form;

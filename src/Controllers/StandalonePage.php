@@ -12,6 +12,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Standalone entity browser page.
@@ -33,16 +34,26 @@ class StandalonePage extends ControllerBase {
   protected $browserStorage;
 
   /**
+   * Current request.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request
+   */
+  protected $request;
+
+  /**
    * Constructs StandalonePage route controller.
    *
    * @param RouteMatchInterface $route_match
    *   Current route match service.
    * @param EntityManagerInterface $entity_manager
    *   Entity manager service.
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   Current request.
    */
-  public function __construct(RouteMatchInterface $route_match, EntityManagerInterface $entity_manager) {
+  public function __construct(RouteMatchInterface $route_match, EntityManagerInterface $entity_manager, Request $request) {
     $this->currentRouteMatch = $route_match;
     $this->browserStorage = $entity_manager->getStorage('entity_browser');
+    $this->request = $request;
   }
 
   /**
@@ -51,7 +62,8 @@ class StandalonePage extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('current_route_match'),
-      $container->get('entity.manager')
+      $container->get('entity.manager'),
+      $container->get('request_stack')->getCurrentRequest()
     );
   }
 
@@ -60,6 +72,12 @@ class StandalonePage extends ControllerBase {
    */
   public function page() {
     $browser = $this->loadBrowser();
+
+    //  The original path is sometimes needed: ie for views arguments.
+    if ($original_path = $this->request->get('original_path')) {
+      $browser->setAdditionalWidgetParameters(['path_parts' => explode('/', $original_path)]);
+    }
+
     return \Drupal::formBuilder()->getForm($browser);
   }
 
