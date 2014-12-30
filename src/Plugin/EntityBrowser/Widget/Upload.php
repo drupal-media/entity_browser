@@ -45,13 +45,7 @@ class Upload extends WidgetBase {
       '#title_display' => 'invisible',
       '#upload_location' => $this->configuration['upload_location'],
       '#multiple' => TRUE,
-      //'#default_value' => NULL,
     ];
-
-//     $form['submit'] = [
-//       '#type' => 'submit',
-//       '#value' => 'Upload',
-//     ];
 
     return $form;
   }
