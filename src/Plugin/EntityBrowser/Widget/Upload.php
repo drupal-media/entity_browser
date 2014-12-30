@@ -48,10 +48,10 @@ class Upload extends WidgetBase {
       //'#default_value' => NULL,
     ];
 
-    $form['submit'] = [
-      '#type' => 'submit',
-      '#value' => 'Upload',
-    ];
+//     $form['submit'] = [
+//       '#type' => 'submit',
+//       '#value' => 'Upload',
+//     ];
 
     return $form;
   }

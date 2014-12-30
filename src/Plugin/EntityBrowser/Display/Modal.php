@@ -137,17 +137,13 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
           'data-accepts' => "application/vnd.drupal-modal",
         ],
         '#attached' => [
-          'js' => [
-            [
-              'type' => 'setting',
-              'data' => [
-                'entity_browser' => [
-                  'modal' => [
-                    'uuid' => $uuid,
-                    'js_callbacks' => $event->getCallbacks(),
-                  ]
-                ]
-              ],
+          'library' => ['entity_browser/modal'],
+          'drupalSettings' => [
+            'entity_browser' => [
+              'modal' => [
+                'uuid' => $uuid,
+                'js_callbacks' => $event->getCallbacks(),
+              ]
             ]
           ],
         ],
@@ -172,11 +168,9 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
       '#value' => $this->configuration['entity_browser_id'],
     );
 
-    // @TODO find more generic way of doing this.
     $form['actions']['submit']['#ajax'] = array(
       'callback' => array($this, 'widgetAjaxCallback'),
       'wrapper' =>  $this->configuration['entity_browser_id'],
-      'url' => Url::fromRoute('entity_browser.ajax'),
     );
   }
   
@@ -206,26 +200,8 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
    * @return array
    */
   public function getAjaxCommands() {
-    $settings =  [
-    	'entity_browser' => [
-        'modal' => [
-           'uuid' => $this->request->query->get('uuid'),
-        ],
-      ],
-   ];
-    
-   $attached = [
-     '#attached' => [
-       'js' => [
-         drupal_get_path('module', 'entity_browser') . '/js/entity_browser.modal.js',
-       ],
-     ],
-   ];
-    
     $entities = array_map(function (EntityInterface $item) {return [$item->id(), $item->uuid(), $item->getEntityTypeId()];}, $this->entities);
-    drupal_process_attached($attached);
     $commands = array();
-    $commands[] = new SettingsCommand($settings);
     $commands[] = new SelectEntitiesCommand($this->uuid, $entities);
     $commands[] = new CloseDialogCommand();
     
@@ -239,4 +215,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
     return '/entity-browser/modal/' . $this->configuration['entity_browser_id'];
   }
   
+  public function __sleep() {
+    return array();
+  }
 }
