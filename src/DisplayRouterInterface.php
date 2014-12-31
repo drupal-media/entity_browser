@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\entity_browser\Plugin\EntityBrowser\Display\DisplayRouterInterface.
+ * Contains \Drupal\entity_browser\DisplayRouterInterface.
  */
 
-namespace Drupal\entity_browser\Plugin\EntityBrowser\Display;
+namespace Drupal\entity_browser;
 
 /**
  * Defines an interface for displays that operate on routes.

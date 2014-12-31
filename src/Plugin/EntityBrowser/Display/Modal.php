@@ -10,6 +10,7 @@ use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
+use Drupal\entity_browser\DisplayAjaxInterface;
 use Drupal\entity_browser\DisplayBase;
 use Drupal\entity_browser\DisplayRouterInterface;
 use Drupal\entity_browser\Events\Events;
@@ -20,18 +21,23 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\CloseDialogCommand;
+use Drupal\Core\Ajax\SettingsCommand;
+use Drupal\entity_browser\Ajax\SelectEntitiesCommand;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Presents entity browser in an iFrame.
  *
  * @EntityBrowserDisplay(
- *   id = "iframe",
- *   label = @Translation("iFrame"),
- *   description = @Translation("Displays entity browser in an iFrame."),
+ *   id = "modal",
+ *   label = @Translation("Modal"),
+ *   description = @Translation("Displays entity browser in a Modal."),
  *   uses_route = TRUE
  * )
  */
-class IFrame extends DisplayBase implements DisplayRouterInterface {
+class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxInterface {
 
   /**
    * Current route match service.
@@ -119,24 +125,27 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
         '#tag' => 'a',
         '#value' => $this->configuration['link_text'],
         '#attributes' => [
-          'href' => '#browser',
-          'class' => ['entity-browser-handle', 'entity-browser-iframe'],
+          'href' => Url::fromRoute('entity_browser.' . $this->configuration['entity_browser_id'], [], ['query' => ['uuid' => $uuid]])->toString(),
+          'class' => ['entity-browser-modal', 'use-ajax'],
           'data-uuid' => $uuid,
+          'data-dialog-options' => json_encode(
+            array(
+              'width' => $this->configuration['width'],
+              'height' => $this->configuration['height'],
+            )
+          ),
+          'data-accepts' => "application/vnd.drupal-modal",
         ],
         '#attached' => [
-          'library' => ['entity_browser/iframe'],
+          'library' => ['entity_browser/modal'],
           'drupalSettings' => [
             'entity_browser' => [
-              'iframe' => [
-                $uuid => [
-                  'src' => Url::fromRoute('entity_browser.' . $this->configuration['entity_browser_id'], [], ['query' => ['uuid' => $uuid]])->toString(),
-                  'width' => $this->configuration['width'],
-                  'height' => $this->configuration['height'],
-                  'js_callbacks' => $event->getCallbacks(),
-                ],
-              ],
-            ],
-          ]
+              'modal' => [
+                'uuid' => $uuid,
+                'js_callbacks' => $event->getCallbacks(),
+              ]
+            ]
+          ],
         ],
       ],
     ];
@@ -147,42 +156,66 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
    */
   public function selectionCompleted(array $entities) {
     $this->entities = $entities;
-    $this->eventDispatcher->addListener(KernelEvents::RESPONSE, [$this, 'propagateSelection']);
+  }
+  
+  /**
+   * {@inheritdoc}
+   */
+  public function addAjax(array &$form) {
+    // Add the browser id to use in the FormAjaxController.
+    $form['browser_id'] = array(
+      '#type' => 'hidden',
+      '#value' => $this->configuration['entity_browser_id'],
+    );
+
+    $form['actions']['submit']['#ajax'] = array(
+      'callback' => array($this, 'widgetAjaxCallback'),
+      'wrapper' =>  $this->configuration['entity_browser_id'],
+    );
+  }
+  
+/**
+   * Ajax callback for entity browser form.
+   *
+   * Allows the entity browser form to submit the form via ajax.
+   *
+   * @param array $form
+   * @param FormStateInterface $form_state
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse
+   */
+  public function widgetAjaxCallback(array &$form, FormStateInterface $form_state) {
+    $commands = $this->getAjaxCommands();
+    $response = new AjaxResponse();
+    foreach ($commands as $command) {
+      $response->addCommand($command);
+    }
+      
+    return $response;
   }
 
   /**
-   * KernelEvents::RESPONSE listener. Intercepts default response and injects
-   * response that will trigger JS to propagate selected entities upstream.
+   * Helper function to return commands to return in AjaxResponse
    *
-   * @param FilterResponseEvent $event
-   *   Response event.
+   * @return array
    */
-  public function propagateSelection(FilterResponseEvent $event) {
-    $render = [
-      'labels' => [
-        '#markup' => 'Labels: ' . implode(', ', array_map(function (EntityInterface $item) {return $item->label();}, $this->entities)),
-        '#attached' => [
-          'library' => ['entity_browser/iframe_selection'],
-          'drupalSettings' => [
-            'entity_browser' => [
-              'iframe' => [
-                'entities' => array_map(function (EntityInterface $item) {return [$item->id(), $item->uuid(), $item->getEntityTypeId()];}, $this->entities),
-                'uuid' => $this->request->query->get('uuid'),
-              ],
-            ],
-          ],
-        ],
-      ],
-    ];
-
-    $event->setResponse(new Response(\Drupal::service('bare_html_page_renderer')->renderBarePage($render, 'Entity browser', 'entity_browser_propagation')));
+  public function getAjaxCommands() {
+    $entities = array_map(function (EntityInterface $item) {return [$item->id(), $item->uuid(), $item->getEntityTypeId()];}, $this->entities);
+    $commands = array();
+    $commands[] = new SelectEntitiesCommand($this->uuid, $entities);
+    $commands[] = new CloseDialogCommand();
+    
+    return $commands;
   }
 
   /**
    * {@inheritdoc}
    */
   public function path() {
-    return '/entity-browser/iframe/' . $this->configuration['entity_browser_id'];
+    return '/entity-browser/modal/' . $this->configuration['entity_browser_id'];
   }
-
+  
+  public function __sleep() {
+    return array();
+  }
 }

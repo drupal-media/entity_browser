@@ -19,10 +19,11 @@ use Drupal\entity_browser\Events\EntitySelectionEvent;
 use Drupal\entity_browser\Events\Events;
 use Drupal\entity_browser\Events\SelectionDoneEvent;
 use Drupal\entity_browser\WidgetInterface;
-use Drupal\entity_browser\Plugin\EntityBrowser\Display\DisplayRouterInterface;
+use Drupal\entity_browser\DisplayRouterInterface;
 use Drupal\entity_browser\WidgetsCollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Route;
+use Drupal\entity_browser\DisplayAjaxInterface;
 
 /**
  * Defines an entity browser configuration entity.
@@ -392,21 +393,32 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['#browser_parts'] = array(
-      'widget_selector' => 'widget_selector',
-      'widget' => 'widget',
-      'selection_display' => 'selection_display',
-    );
 
     $form['selected_entities'] = array(
       '#type' => 'value',
       '#value' => array_map(function(EntityInterface $item) {return $item->id();}, $this->getSelectedEntities())
     );
-
+    
+    $form['#browser_parts'] = array(
+      'widget_selector' => 'widget_selector',
+      'widget' => 'widget',
+      'selection_display' => 'selection_display',
+    );
     $form[$form['#browser_parts']['widget_selector']] = $this->getWidgetSelector()->getForm($form, $form_state);
     $form[$form['#browser_parts']['widget']] = $this->getWidgets()->get($this->getWidgetSelector()->getCurrentWidget())->getForm($form, $form_state);
     $form[$form['#browser_parts']['selection_display']] = $this->getSelectionDisplay()->getForm();
 
+    $form['actions'] = [
+      'submit' => [
+        '#type' => 'submit',
+        '#value' => t('Select'),
+      ],
+    ];
+    
+    if ($this->getDisplay() instanceOf DisplayAjaxInterface) {
+      $this->getDisplay()->addAjax($form);
+    }
+    
     return $form;
   }
 
