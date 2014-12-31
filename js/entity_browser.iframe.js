@@ -51,7 +51,7 @@
         }
 
         if (typeof fn === 'function') {
-          $(iframe).bind('entities-selected', fn);
+          $(this).bind('entities-selected', fn);
         }
       }
     }

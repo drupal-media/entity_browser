@@ -71,13 +71,6 @@ class View extends WidgetBase {
       }
     }
 
-    $form['actions'] = [
-      'submit' => [
-        '#type' => 'submit',
-        '#value' => t('Select'),
-      ],
-    ];
-
     return $form;
   }
 
