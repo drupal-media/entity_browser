@@ -75,7 +75,7 @@ class StandalonePage extends ControllerBase {
 
     //  The original path is sometimes needed: ie for views arguments.
     if ($original_path = $this->request->get('original_path')) {
-      $browser->setAdditionalWidgetParameters(['path_parts' => explode('/', $original_path)]);
+      $browser->addAdditionalWidgetParameters(['path_parts' => explode('/', $original_path)]);
     }
 
     return \Drupal::formBuilder()->getForm($browser);

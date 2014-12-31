@@ -196,21 +196,6 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function setAdditionalWidgetParameters(array $parameters) {
-    $this->additional_widget_parameters += $parameters;
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getAdditionalWidgetParameters() {
-    return $this->get('additional_widget_parameters');
-  }
-
-  /**
    * Returns the plugin collections used by this entity.
    *
    * @return \Drupal\Component\Plugin\LazyPluginCollection[]
@@ -271,6 +256,21 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   public function resetWidgets() {
     $this->getWidgets()->sort();
     $this->widgetSelectorCollection = NULL;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addAdditionalWidgetParameters(array $parameters) {
+    $this->additional_widget_parameters += $parameters;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getAdditionalWidgetParameters() {
+    return $this->get('additional_widget_parameters');
   }
 
   /**
@@ -426,7 +426,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     );
 
     $form[$form['#browser_parts']['widget_selector']] = $this->getWidgetSelector()->getForm($form, $form_state);
-    $form[$form['#browser_parts']['widget']] = $this->getWidgets()->get($this->getWidgetSelector()->getCurrentWidget())->getForm($form, $form_state, $this->additional_widget_parameters);
+    $form[$form['#browser_parts']['widget']] = $this->getWidgets()->get($this->getWidgetSelector()->getCurrentWidget())->getForm($form, $form_state, $this->getAdditionalWidgetParameters());
     $form[$form['#browser_parts']['selection_display']] = $this->getSelectionDisplay()->getForm();
 
     return $form;
