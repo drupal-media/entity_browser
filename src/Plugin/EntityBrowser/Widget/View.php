@@ -47,11 +47,9 @@ class View extends WidgetBase {
 
     if (!empty($this->configuration['arguments'])) {
       if (!empty($aditional_widget_parameters['path_parts'])) {
+        // Compare values from configuration with path parts.
         $arguments = array_intersect_key($aditional_widget_parameters['path_parts'], array_flip($this->configuration['arguments']));
         $storage['view']->setArguments(array_values($arguments));
-      }
-      else {
-        // @todo Should we log something here?
       }
     }
 
