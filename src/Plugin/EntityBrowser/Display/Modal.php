@@ -144,7 +144,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
           'data-original-path' => $original_path,
         ],
         '#attached' => [
-          'library' => ['entity_browser/modal', 'core/drupal.ajax'],
+          'library' => ['core/drupal.ajax', 'entity_browser/modal'],
           'drupalSettings' => [
             'entity_browser' => [
               'modal' => [
