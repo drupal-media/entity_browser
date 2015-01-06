@@ -88,7 +88,25 @@ interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
    * Used when widgets configurations change, such as changing weights.
    */
   public function resetWidgets();
-  
+
+  /**
+   * Adds paramterers that will be passed to the widget.
+   *
+   * @param array $parameters
+   *   An array of parameters.
+   *
+   * @return $this
+   */
+  public function addAdditionalWidgetParameters(array $parameters);
+
+  /**
+   * Gets additional parameters that will be passed to the widget.
+   *
+   * @return array
+   *   Array of parameters.
+   */
+  public function getAdditionalWidgetParameters();
+
   /**
    * Returns the selection display.
    *

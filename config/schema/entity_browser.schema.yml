@@ -82,3 +82,8 @@ entity_browser.browser.widget.view:
     view_display:
       type: string
       label: 'View display ID'
+    arguments:
+      type: sequence
+      sequence:
+        - type: integer
+          label: 'View display arguments'

@@ -112,6 +112,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
     /** @var \Drupal\entity_browser\Events\RegisterJSCallbacks $event */
     $event = $this->eventDispatcher->dispatch(Events::REGISTER_JS_CALLBACKS, new RegisterJSCallbacks($this->configuration['entity_browser_id']));
     $uuid = $this->uuid->generate();
+    $original_path = $this->request->getPathInfo();
     return [
       '#theme_wrappers' => ['container'],
       'link' => [
@@ -122,6 +123,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
           'href' => '#browser',
           'class' => ['entity-browser-handle', 'entity-browser-iframe'],
           'data-uuid' => $uuid,
+          'data-original-path' => $original_path,
         ],
         '#attached' => [
           'library' => ['entity_browser/iframe'],
@@ -129,7 +131,12 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
             'entity_browser' => [
               'iframe' => [
                 $uuid => [
-                  'src' => Url::fromRoute('entity_browser.' . $this->configuration['entity_browser_id'], [], ['query' => ['uuid' => $uuid]])->toString(),
+                  'src' => Url::fromRoute('entity_browser.' . $this->configuration['entity_browser_id'], [], [
+                    'query' => [
+                      'uuid' => $uuid,
+                      'original_path' => $original_path,
+                    ]
+                  ])->toString(),
                   'width' => $this->configuration['width'],
                   'height' => $this->configuration['height'],
                   'js_callbacks' => $event->getCallbacks(),

@@ -38,7 +38,7 @@ class Upload extends WidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function getForm(array &$original_form, FormStateInterface $form_state) {
+  public function getForm(array &$original_form, FormStateInterface $form_state, array $aditional_widget_parameters) {
     $form['upload'] = [
       '#type' => 'managed_file',
       '#title' => t('Choose a file'),

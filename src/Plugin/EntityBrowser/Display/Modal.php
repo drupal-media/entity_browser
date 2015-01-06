@@ -118,6 +118,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
     /** @var \Drupal\entity_browser\Events\RegisterJSCallbacks $event */
     $event = $this->eventDispatcher->dispatch(Events::REGISTER_JS_CALLBACKS, new RegisterJSCallbacks($this->configuration['entity_browser_id']));
     $uuid = $this->uuid->generate();
+    $original_path = $this->request->getPathInfo();
     return [
       '#theme_wrappers' => ['container'],
       'link' => [
@@ -125,7 +126,12 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
         '#tag' => 'a',
         '#value' => $this->configuration['link_text'],
         '#attributes' => [
-          'href' => Url::fromRoute('entity_browser.' . $this->configuration['entity_browser_id'], [], ['query' => ['uuid' => $uuid]])->toString(),
+          'href' => Url::fromRoute('entity_browser.' . $this->configuration['entity_browser_id'], [], [
+            'query' => [
+              'uuid' => $uuid,
+              'original_path' => $original_path,
+            ]
+          ])->toString(),
           'class' => ['entity-browser-modal', 'use-ajax'],
           'data-uuid' => $uuid,
           'data-dialog-options' => json_encode(
@@ -135,14 +141,16 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
             )
           ),
           'data-accepts' => "application/vnd.drupal-modal",
+          'data-original-path' => $original_path,
         ],
         '#attached' => [
-          'library' => ['entity_browser/modal'],
+          'library' => ['core/drupal.ajax', 'entity_browser/modal'],
           'drupalSettings' => [
             'entity_browser' => [
               'modal' => [
                 'uuid' => $uuid,
                 'js_callbacks' => $event->getCallbacks(),
+                'original_path' => $original_path,
               ]
             ]
           ],
