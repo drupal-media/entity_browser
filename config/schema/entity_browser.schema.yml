@@ -86,4 +86,4 @@ entity_browser.browser.widget.view:
       type: sequence
       sequence:
         - type: integer
-        - label: 'View display arguments'
+          label: 'View display arguments'
