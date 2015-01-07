@@ -31,15 +31,15 @@ class View extends WidgetBase {
     ) + parent::defaultConfiguration();
   }
 
-  /**
+  /**drupal
    * {@inheritdoc}
    */
   public function getForm(array &$original_form, FormStateInterface $form_state, array $aditional_widget_parameters) {
     // TODO - do we need better error handling for view and view_display (in case
     // either of those is nonexistent or display not of correct type)?
     $storage = &$form_state->getStorage();
-    if (empty($storage['view']) || $form_state->isRebuilding()) {
-      $storage['view'] = $this->entityManager
+    if (empty($storage['widget_view']) || $form_state->isRebuilding()) {
+      $storage['widget_view'] = $this->entityManager
         ->getStorage('view')
         ->load($this->configuration['view'])
         ->getExecutable();
@@ -49,12 +49,12 @@ class View extends WidgetBase {
       if (!empty($aditional_widget_parameters['path_parts'])) {
         // Compare values from configuration with path parts.
         $arguments = array_intersect_key($aditional_widget_parameters['path_parts'], array_flip($this->configuration['arguments']));
-        $storage['view']->setArguments(array_values($arguments));
+        $storage['widget_view']->setArguments(array_values($arguments));
       }
     }
 
-    $form['view'] = $storage['view']->executeDisplay($this->configuration['view_display']);
-    if (empty($storage['view']->field['entity_browser_select'])) {
+    $form['view'] = $storage['widget_view']->executeDisplay($this->configuration['view_display']);
+    if (empty($storage['widget_view']->field['entity_browser_select'])) {
       return [
         // TODO - link to view admin page if allowed to.
         '#markup' => t('Entity browser select form field not found on a view. Go fix it!'),
@@ -65,11 +65,25 @@ class View extends WidgetBase {
     // selected.
     if (!empty($form['view']['entity_browser_select']) && $form_state->isRebuilding()) {
       foreach (Element::children($form['view']['entity_browser_select']) as $child) {
-        $form['view']['entity_browser_select'][$child]['#value'] = 0;
+        $form['view']['entity_browser_select'][$child]['#process'][] = ['\Drupal\entity_browser\Plugin\EntityBrowser\Widget\View', 'processCheckbox'];
+        $form['view']['entity_browser_select'][$child]['#process'][] = ['\Drupal\Core\Render\Element\Checkbox', 'processAjaxForm'];
+        $form['view']['entity_browser_select'][$child]['#process'][] = ['\Drupal\Core\Render\Element\Checkbox', 'processGroup'];
       }
     }
 
     return $form;
+  }
+
+  /**
+   * Sets the #checked property when rebuilding form.
+   *
+   * Every time when we rebuild we want all checkboxes to be unchecked.
+   *
+   * @see \Drupal\Core\Render\Element\Checkbox::processCheckbox()
+   */
+  public static function processCheckbox(&$element, FormStateInterface $form_state, &$complete_form) {
+    $element['#checked'] = FALSE;
+    return $element;
   }
 
   /**
@@ -80,7 +94,7 @@ class View extends WidgetBase {
     $entities = [];
     $storage = $form_state->getStorage();
     foreach ($selected_rows as $row) {
-      $entities[] = $storage['view']->result[$row]->_entity;
+      $entities[] = $storage['widget_view']->result[$row]->_entity;
     }
 
     $this->selectEntities($entities);

@@ -165,7 +165,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
   public function selectionCompleted(array $entities) {
     $this->entities = $entities;
   }
-  
+
   /**
    * {@inheritdoc}
    */
@@ -177,11 +177,11 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
     );
 
     $form['actions']['submit']['#ajax'] = array(
-      'callback' => array($this, 'widgetAjaxCallback'),
+      'callback' => array(get_class($this), 'widgetAjaxCallback'),
       'wrapper' =>  $this->configuration['entity_browser_id'],
     );
   }
-  
+
 /**
    * Ajax callback for entity browser form.
    *
@@ -198,7 +198,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
     foreach ($commands as $command) {
       $response->addCommand($command);
     }
-      
+
     return $response;
   }
 
@@ -212,7 +212,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
     $commands = array();
     $commands[] = new SelectEntitiesCommand($this->uuid, $entities);
     $commands[] = new CloseDialogCommand();
-    
+
     return $commands;
   }
 
@@ -222,7 +222,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
   public function path() {
     return '/entity-browser/modal/' . $this->configuration['entity_browser_id'];
   }
-  
+
   public function __sleep() {
     return array();
   }

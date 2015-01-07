@@ -6,10 +6,8 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\SelectionDisplay;
 
-use Drupal\Component\Plugin\PluginBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_browser\SelectionDisplayBase;
-use Drupal\entity_browser\SelectionDisplayInterface;
 
 /**
  * Does not show current selection and immediately delivers selected entities.
@@ -25,7 +23,7 @@ class NoDisplay extends SelectionDisplayBase {
   /**
    * {@inheritdoc}
    */
-  public function getForm() {
+  public function getForm(array &$original_form, FormStateInterface $form_state) {
     return array();
   }
 
