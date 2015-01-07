@@ -24,3 +24,7 @@ enable "Entity Browser example" module (entity_browser_example).
 ## Technical details
 
 Architecture details can be found on [architecture meta-issue.](https://www.drupal.org/node/2289821).
+
+## Maintainers
+ - Janez Urevc (@slashrsm) drupal.org/user/744628
+ - Primož Hmeljak (@primsi) drupal.org/user/282629
