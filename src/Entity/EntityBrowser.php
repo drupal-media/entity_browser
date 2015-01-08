@@ -460,11 +460,11 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $original_widget = $this->getWidgetSelector()->getCurrentWidget();
     $this->getWidgetSelector()->submit($form, $form_state);
-
+    
     // Only call widget submit if we didn't change the widget
-    if ($original_widget == $this->getWidgetSelector()->getCurrentWidget()) {
+    $trigger = $form_state->getTriggeringElement();
+    if ($trigger['#value'] == 'Select') {
       $this->getWidgets()->get($this->getWidgetSelector()->getCurrentWidget())->submit($form[$form['#browser_parts']['widget']], $form, $form_state);
       $this->getSelectionDisplay()->submit($form, $form_state);
     }
