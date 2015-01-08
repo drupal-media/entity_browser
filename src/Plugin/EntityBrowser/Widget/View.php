@@ -65,7 +65,8 @@ class View extends WidgetBase {
     // selected.
     if (!empty($form['view']['entity_browser_select']) && $form_state->isRebuilding()) {
       foreach (Element::children($form['view']['entity_browser_select']) as $child) {
-        $form['view']['entity_browser_select'][$child]['#value'] = 0;
+        // We need to unset the #value or the form builder will not set it.
+        unset($form['view']['entity_browser_select'][$child]['#value']);
       }
     }
 
