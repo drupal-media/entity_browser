@@ -332,6 +332,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function setSelectedEntities(array $entities) {
     $this->selectedEntities = $entities;
+    $this->getSelectionDisplay()->setSelectedEntities($this->selectedEntities);
   }
 
   /**
@@ -339,6 +340,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function addSelectedEntities(array $entities) {
     $this->selectedEntities = array_merge($this->selectedEntities, $entities);
+    $this->getSelectionDisplay()->setSelectedEntities($this->selectedEntities);
   }
 
   /**
@@ -420,7 +422,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
       '#type' => 'value',
       '#value' => array_map(function(EntityInterface $item) {return $item->id();}, $this->getSelectedEntities())
     );
-    
+
     $form['#browser_parts'] = array(
       'widget_selector' => 'widget_selector',
       'widget' => 'widget',
@@ -428,7 +430,6 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     );
     $form[$form['#browser_parts']['widget_selector']] = $this->getWidgetSelector()->getForm($form, $form_state);
     $form[$form['#browser_parts']['widget']] = $this->getWidgets()->get($this->getWidgetSelector()->getCurrentWidget())->getForm($form, $form_state, $this->getAdditionalWidgetParameters());
-    $form[$form['#browser_parts']['selection_display']] = $this->getSelectionDisplay()->getForm();
 
     $form['actions'] = [
       'submit' => [
@@ -436,11 +437,13 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
         '#value' => t('Select'),
       ],
     ];
-    
+
+    $form[$form['#browser_parts']['selection_display']] = $this->getSelectionDisplay()->getForm($form, $form_state);
+
     if ($this->getDisplay() instanceOf DisplayAjaxInterface) {
       $this->getDisplay()->addAjax($form);
     }
-    
+
     return $form;
   }
 
@@ -534,8 +537,8 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     $this->_selected_entities = [];
     foreach ($this->selectedEntities as $entity) {
       $this->_selected_entities[] = [
-        $entity->getEntityTypeId(),
-        $entity->id(),
+        'type' => $entity->getEntityTypeId(),
+        'id' => $entity->id(),
       ];
     }
 
@@ -561,5 +564,6 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     foreach ($this->_selected_entities as $entity) {
       $this->selectedEntities[] = \Drupal::entityManager()->getStorage($entity['type'])->load($entity['id']);
     }
+    $this->getSelectionDisplay()->setSelectedEntities($this->selectedEntities);
   }
 }
