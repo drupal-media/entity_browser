@@ -428,8 +428,9 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
       'widget' => 'widget',
       'selection_display' => 'selection_display',
     );
+    $this->getWidgetSelector()->setDefaultWidget($this->getCurrentWidget($form_state));
     $form[$form['#browser_parts']['widget_selector']] = $this->getWidgetSelector()->getForm($form, $form_state);
-    $form[$form['#browser_parts']['widget']] = $this->getWidgets()->get($this->getWidgetSelector()->getCurrentWidget())->getForm($form, $form_state, $this->getAdditionalWidgetParameters());
+    $form[$form['#browser_parts']['widget']] = $this->getWidgets()->get($this->getCurrentWidget($form_state))->getForm($form, $form_state, $this->getAdditionalWidgetParameters());
 
     $form['actions'] = [
       'submit' => [
@@ -452,20 +453,49 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $this->getWidgetSelector()->validate($form, $form_state);
-    $this->getWidgets()->get($this->getWidgetSelector()->getCurrentWidget())->validate($form, $form_state);
+    $this->getWidgets()->get($this->getCurrentWidget($form_state))->validate($form, $form_state);
     $this->getSelectionDisplay()->validate($form, $form_state);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    $original_widget = $this->getWidgetSelector()->getCurrentWidget();
-    $this->getWidgetSelector()->submit($form, $form_state);
+  public function getCurrentWidget(FormStateInterface $form_state) {
+    if (!$form_state->has('entity_browser_current_widget')) {
+      $form_state->set('entity_browser_current_widget', $this->getFirstWidget());
+    }
 
-    // Only call widget submit if we didn't change the widget
-    if ($original_widget == $this->getWidgetSelector()->getCurrentWidget()) {
-      $this->getWidgets()->get($this->getWidgetSelector()->getCurrentWidget())->submit($form[$form['#browser_parts']['widget']], $form, $form_state);
+    return $form_state->get('entity_browser_current_widget');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setCurrentWidget($widget, FormStateInterface $form_state) {
+    $form_state->set('entity_browser_current_widget', $widget);
+  }
+
+  /**
+   * Gets first widget based on weights.
+   *
+   * @return string
+   *   First widget instance ID.
+   */
+  protected function getFirstWidget() {
+    $this->getWidgets()->rewind();
+    return $this->getWidgets()->key();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    $original_widget = $this->getCurrentWidget($form_state);
+    $this->setCurrentWidget($this->getWidgetSelector()->submit($form, $form_state), $form_state);
+
+    // Only call widget submit if we didn't change the widget.
+    if ($original_widget == $this->getCurrentWidget($form_state)) {
+      $this->getWidgets()->get($this->getCurrentWidget($form_state))->submit($form[$form['#browser_parts']['widget']], $form, $form_state);
       $this->getSelectionDisplay()->submit($form, $form_state);
     }
 

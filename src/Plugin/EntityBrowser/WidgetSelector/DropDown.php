@@ -32,7 +32,7 @@ class DropDown extends WidgetSelectorBase {
     $element['widget'] = array(
       '#type' => 'select',
       '#options' => $this->widget_ids,
-      '#default_value' => $this->getCurrentWidget(),
+      '#default_value' => $this->getDefaultWidget(),
     );
 
     $element['change'] = array(
@@ -53,12 +53,7 @@ class DropDown extends WidgetSelectorBase {
    * {@inheritdoc}
    */
   public function submit(array &$form, FormStateInterface $form_state) {
-    // If we've submitted the form, update the current widget.
-    if ($form_state->getValue('widget')) {
-      $this->setCurrentWidget($form_state->getValue('widget'));
-    }
-
-    $form_state->setRebuild();
+    return $form_state->getValue('widget');
   }
 
   /**

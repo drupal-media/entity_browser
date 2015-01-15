@@ -269,40 +269,23 @@ class EntityBrowserTest extends KernelTestBase {
   }
 
   /**
-   * Test single widget selector.
+   * Tests default widget selector.
    */
-  protected function testSingleWidgetSelector() {
+  protected function testDefaultWidget() {
     $this->installConfig(array('entity_browser_test'));
 
     /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
     $entity = $this->controller->load('test');
 
-    $widget = $entity->getWidgets()->get($entity->getWidgetSelector()->getCurrentWidget());
+    $form_state = new FormState();
+
+    $widget = $entity->getWidgets()->get($entity->getCurrentWidget($form_state));
     $this->assertEqual($widget->label(), 'View widget nr. 1', 'First widget is active.');
 
     // Change weight and expect second widget to become first.
     $widget->setWeight(3);
     $entity->resetWidgets();
-    $new_widget = $entity->getWidgets()->get($entity->getWidgetSelector()->getCurrentWidget());
-    $this->assertEqual($new_widget->label(), 'View widget nr. 2', 'Second widget is active after changing widgets');
-  }
-
-  /**
-   * Test drop_down widget selector.
-   */
-  protected function testDropDownWidgetSelector() {
-    $this->installConfig(array('entity_browser_test'));
-
-    /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
-    $entity = $this->controller->load('test_dropdown');
-
-    $widget = $widget = $entity->getWidgets()->get($entity->getWidgetSelector()->getCurrentWidget());
-    $this->assertEqual($widget->label(), 'Upload', 'First widget is active.');
-
-    // Change weight and expect second widget to become first.
-    $widget->setWeight(3);
-    $entity->resetWidgets();
-    $new_widget = $entity->getWidgets()->get($entity->getWidgetSelector()->getCurrentWidget());
+    $new_widget = $entity->getWidgets()->get($entity->getCurrentWidget($form_state));
     $this->assertEqual($new_widget->label(), 'View widget nr. 2', 'Second widget is active after changing widgets');
   }
 
