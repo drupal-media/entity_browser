@@ -18,12 +18,8 @@ use Drupal\entity_browser\Events\RegisterJSCallbacks;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseDialogCommand;
-use Drupal\Core\Ajax\SettingsCommand;
 use Drupal\entity_browser\Ajax\SelectEntitiesCommand;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -177,7 +173,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
     );
 
     $form['actions']['submit']['#ajax'] = array(
-      'callback' => array(get_class($this), 'widgetAjaxCallback'),
+      'callback' => array($this, 'widgetAjaxCallback'),
       'wrapper' =>  $this->configuration['entity_browser_id'],
     );
   }
