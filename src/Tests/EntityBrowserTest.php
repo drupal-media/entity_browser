@@ -284,7 +284,7 @@ class EntityBrowserTest extends KernelTestBase {
 
     // Change weight and expect second widget to become first.
     $widget->setWeight(3);
-    $entity->resetWidgets();
+    $entity->resetWidgets($form_state);
     $new_widget = $entity->getWidgets()->get($entity->getCurrentWidget($form_state));
     $this->assertEqual($new_widget->label(), 'View widget nr. 2', 'Second widget is active after changing widgets');
   }
@@ -295,12 +295,13 @@ class EntityBrowserTest extends KernelTestBase {
   protected function testSelectedEvent() {
     $this->installConfig(array('entity_browser_test'));
 
-    /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
-    $entity = $this->controller->load('dummy_widget');
-    $entity->getWidgets()->get($entity->getWidgetSelector()->getCurrentWidget())->entity = $entity;
-
     $form_state = new FormState();
     $form = [];
+
+    /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
+    $entity = $this->controller->load('dummy_widget');
+    $entity->getWidgets()->get($entity->getCurrentWidget($form_state))->entity = $entity;
+
     $form = $entity->buildForm($form, new $form_state);
     $entity->submitForm($form, $form_state);
 

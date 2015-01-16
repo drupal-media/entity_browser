@@ -87,8 +87,11 @@ interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
    * Resets widgets on the entity browser.
    *
    * Used when widgets configurations change, such as changing weights.
+   *
+   *  @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
    */
-  public function resetWidgets();
+  public function resetWidgets(FormStateInterface $form_state);
 
   /**
    * Adds paramterers that will be passed to the widget.

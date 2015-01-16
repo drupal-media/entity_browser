@@ -254,7 +254,38 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   /**
    * {@inheritdoc}
    */
-  public function resetWidgets() {
+  public function getCurrentWidget(FormStateInterface $form_state) {
+    // Do not use has() as that returns TRUE if the value is NULL.
+    if (!$form_state->get('entity_browser_current_widget')) {
+      $form_state->set('entity_browser_current_widget', $this->getFirstWidget());
+    }
+
+    return $form_state->get('entity_browser_current_widget');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setCurrentWidget($widget, FormStateInterface $form_state) {
+    $form_state->set('entity_browser_current_widget', $widget);
+  }
+
+  /**
+   * Gets first widget based on weights.
+   *
+   * @return string
+   *   First widget instance ID.
+   */
+  protected function getFirstWidget() {
+    $this->getWidgets()->rewind();
+    return $this->getWidgets()->key();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function resetWidgets(FormStateInterface $form_state) {
+    $form_state->set('entity_browser_current_widget', NULL);
     $this->getWidgets()->sort();
     $this->widgetSelectorCollection = NULL;
   }
@@ -460,38 +491,11 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   /**
    * {@inheritdoc}
    */
-  public function getCurrentWidget(FormStateInterface $form_state) {
-    if (!$form_state->has('entity_browser_current_widget')) {
-      $form_state->set('entity_browser_current_widget', $this->getFirstWidget());
-    }
-
-    return $form_state->get('entity_browser_current_widget');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setCurrentWidget($widget, FormStateInterface $form_state) {
-    $form_state->set('entity_browser_current_widget', $widget);
-  }
-
-  /**
-   * Gets first widget based on weights.
-   *
-   * @return string
-   *   First widget instance ID.
-   */
-  protected function getFirstWidget() {
-    $this->getWidgets()->rewind();
-    return $this->getWidgets()->key();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $original_widget = $this->getCurrentWidget($form_state);
-    $this->setCurrentWidget($this->getWidgetSelector()->submit($form, $form_state), $form_state);
+    if ($new_widget = $this->getWidgetSelector()->submit($form, $form_state)) {
+      $this->setCurrentWidget($new_widget, $form_state);
+    }
 
     // Only call widget submit if we didn't change the widget.
     if ($original_widget == $this->getCurrentWidget($form_state)) {
