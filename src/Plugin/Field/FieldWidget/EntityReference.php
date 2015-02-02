@@ -152,7 +152,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
    * {@inheritdoc}
    */
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
-    $ids = explode(' ', $values['target_id']);
+    $ids = empty($values['target_id']) ? [] : explode(' ', $values['target_id']);
     $return = [];
     foreach ($ids as $id) {
       $return[]['target_id'] = $id;
