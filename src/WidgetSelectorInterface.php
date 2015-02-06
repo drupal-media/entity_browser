@@ -33,20 +33,12 @@ interface WidgetSelectorInterface extends PluginInspectionInterface {
   public function getForm(array &$form, FormStateInterface &$form_state);
 
   /**
-   * Returns the widget that is currently selected.
-   *
-   * @return string
-   *   ID of currently selected widget.
-   */
-  public function getCurrentWidget();
-
-  /**
-   * Sets the current widget.
+   * Sets the default widget.
    *
    * @param string $widget
    *   Id of widget to set as the current widget.
    */
-  public function setCurrentWidget($widget);
+  public function setDefaultWidget($widget);
 
   /**
    * Validates form.
@@ -65,6 +57,9 @@ interface WidgetSelectorInterface extends PluginInspectionInterface {
    *   Form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Form state object.
+   *
+   * @return string
+   *   The selected widget ID.
    */
   public function submit(array &$form, FormStateInterface $form_state);
 

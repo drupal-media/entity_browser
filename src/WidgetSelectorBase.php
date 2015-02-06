@@ -31,11 +31,11 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
   protected $widgets_options;
 
   /**
-   * Id of Current Widget.
+   * ID of the default widget.
    *
    * @var string
    */
-  protected $currentWidget;
+  protected $defaultWidget;
 
   /**
    * {@inheritdoc}
@@ -55,34 +55,15 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
   /**
    * {@inheritdoc}
    */
-  public function getCurrentWidget() {
-    if (!$this->currentWidget) {
-      $this->currentWidget = $this->getFirstWidget($this->widget_ids);
-    }
-
-    return $this->currentWidget;
+  protected function getDefaultWidget() {
+    return $this->defaultWidget;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setCurrentWidget($widget) {
-    $this->currentWidget = $widget;
-  }
-
-  /**
-   * Gets first widget based on weights.
-   *
-   * @param array $widget_ids
-   *   Array of all the widgets.
-   *
-   * @return array
-   *   First element of the array.
-   */
-  protected function getFirstWidget(array $widget_ids) {
-    reset($widget_ids);
-    
-    return key($widget_ids);
+  public function setDefaultWidget($widget) {
+    $this->defaultWidget = $widget;
   }
 
   /**
