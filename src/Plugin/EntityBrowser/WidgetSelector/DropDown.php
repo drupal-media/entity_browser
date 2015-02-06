@@ -33,17 +33,19 @@ class DropDown extends WidgetSelectorBase {
       '#type' => 'select',
       '#options' => $this->widget_ids,
       '#default_value' => $this->getDefaultWidget(),
+      '#executes_submit_callback' => TRUE,
+      '#limit_validation_errors' => array(array('widget')),
+      '#ajax' => array(
+        'callback' => array($this, 'changeWidgetCallback'),
+        'wrapper' => 'entity-browser-form',
+      ),
     );
 
     $element['change'] = array(
       '#type' => 'submit',
       '#name' => 'change',
       '#value' => t('Change'),
-      '#limit_validation_errors' => array(array('widget')),
-      '#ajax' => array(
-        'callback' => array($this, 'changeWidgetCallback'),
-        'wrapper' => 'entity-browser-form',
-      ),
+      '#attributes' => array('class' => array('js-hide')),
     );
 
     return $element;
