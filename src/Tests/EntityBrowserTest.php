@@ -319,6 +319,8 @@ class EntityBrowserTest extends KernelTestBase {
     $form_state = new FormState();
     $form = [];
     $form = $entity->buildForm($form, new $form_state);
+    // We need to set the TriggeringElement as if clicking 'Select'.
+    $form_state->setTriggeringElement($form['actions']['submit']);
     $entity->submitForm($form, $form_state);
 
     // Event should be dispatched from widget and added to list of selected entities.

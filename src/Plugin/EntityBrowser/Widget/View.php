@@ -71,6 +71,8 @@ class View extends WidgetBase {
         $form['view']['entity_browser_select'][$child]['#process'][] = ['\Drupal\entity_browser\Plugin\EntityBrowser\Widget\View', 'processCheckbox'];
         $form['view']['entity_browser_select'][$child]['#process'][] = ['\Drupal\Core\Render\Element\Checkbox', 'processAjaxForm'];
         $form['view']['entity_browser_select'][$child]['#process'][] = ['\Drupal\Core\Render\Element\Checkbox', 'processGroup'];
+        // We need to unset the #value or the form builder will not set it.
+        unset($form['view']['entity_browser_select'][$child]['#value']);
       }
     }
 
