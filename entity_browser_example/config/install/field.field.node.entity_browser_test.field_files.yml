@@ -12,7 +12,7 @@ field_name: field_files
 entity_type: node
 bundle: entity_browser_test
 label: Files
-description: ''
+description: 'Attach files. Click on the link below and pick or upload them.'
 required: false
 translatable: false
 default_value: {  }

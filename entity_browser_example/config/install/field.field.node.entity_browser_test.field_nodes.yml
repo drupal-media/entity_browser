@@ -12,7 +12,7 @@ field_name: field_nodes
 entity_type: node
 bundle: entity_browser_test
 label: Nodes
-description: ''
+description: 'Click on the link below and pick related content.'
 required: false
 translatable: false
 default_value: {  }

@@ -133,7 +133,9 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       $ids[] = $item->target_id;
     }
 
-    return [
+    $element += [
+      '#type' => 'details',
+      '#open' => !empty($ids),
       'target_id' => [
         '#type' => 'hidden',
         '#default_value' => $ids,
@@ -146,6 +148,8 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
         '#markup' => '<strong>'. t('Selected:') . '</strong> <div class="current-markup">' . implode(' ', $ids) . '</div>',
       ],
     ];
+
+    return $element;
   }
 
   /**
