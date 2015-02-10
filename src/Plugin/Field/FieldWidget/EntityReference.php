@@ -7,6 +7,7 @@
 
 namespace Drupal\entity_browser\Plugin\Field\FieldWidget;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -129,16 +130,37 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
    */
   function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $ids = [];
-    foreach ($items as $item) {
-      $ids[] = $item->target_id;
+    if ($form_state->isRebuilding()) {
+      if ($value = $form_state->getValue([$this->fieldDefinition->getName(), 'target_id'])) {
+        $ids = explode(' ', $value);
+      }
+    }
+    else {
+      foreach ($items as $item) {
+        $ids[] = $item->target_id;
+      }
     }
 
+    $hidden_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName() . '-target-id');
+    $details_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName());
+
     $element += [
+      '#id' => $details_id,
       '#type' => 'details',
       '#open' => !empty($ids),
       'target_id' => [
         '#type' => 'hidden',
+        '#id' => $hidden_id,
+        // We need to repeat ID here as it is otherwise skipped when rendering.
+        '#attributes' => ['id' => $hidden_id],
         '#default_value' => $ids,
+        // #ajax is officially not supported for hidden elements but if we
+        // specify event manually it works.
+        '#ajax' => [
+          'callback' => array($this, 'selectEntitiesCallback'),
+          'wrapper' => $details_id,
+          'event' => 'entity_browser_value_updated',
+        ],
       ],
       'entity_browser' => $this->entityManager->getStorage('entity_browser')->load($this->getSetting('entity_browser'))->getDisplay()->displayEntityBrowser(),
       '#attached' => ['library' => ['entity_browser/entity_reference']],
@@ -174,4 +196,12 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       $event->registerCallback('Drupal.entityBrowserEntityReference.selectionCompleted');
     }
   }
+
+  /**
+   * AJAX form callback for hidden value updated event.
+   */
+  public function selectEntitiesCallback(array &$form, FormStateInterface $form_state) {
+    return $form[$this->fieldDefinition->getName()];
+  }
+
 }
