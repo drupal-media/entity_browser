@@ -6,7 +6,7 @@
 
 namespace Drupal\entity_browser;
 
-use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;

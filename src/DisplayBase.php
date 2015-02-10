@@ -6,7 +6,7 @@
 
 namespace Drupal\entity_browser;
 
-use Drupal\Component\Plugin\PluginBase;
+use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
