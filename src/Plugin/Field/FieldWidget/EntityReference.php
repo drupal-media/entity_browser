@@ -126,24 +126,38 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       $displays[$id] = $definition['label'];
     }
 
+    $id = Html::getUniqueId('field-' . $this->fieldDefinition->getName() . '-display-settings-wrapper');
     $element['field_widget_display'] = [
       '#title' => t('Entity display plugin'),
       '#type' => 'select',
       '#default_value' => $this->getSetting('field_widget_display'),
       '#options' => $displays,
       '#validate' => [[$this, 'submitFieldWidgetDisplay']],
+      '#ajax' => [
+        'callback' => array($this, 'updateSettingsAjax'),
+        'wrapper' => $id,
+      ],
+    ];
+
+    $element['field_widget_display_settings'] = [
+      '#type' => 'fieldset',
+      '#title' => t('Entity display plugin configuration'),
+      '#tree' => TRUE,
+      '#prefix' => '<div id="' . $id . '">',
+      '#suffix' => '</div>',
     ];
 
     if ($this->getSetting('field_widget_display')) {
-      $element['field_widget_display_settings'] = [
-        '#type' => 'fieldset',
-        '#title' => t('Entity display plugin configuration'),
-        '#tree' => TRUE,
-      ];
       $element['field_widget_display_settings'] += $this->fieldDisplayManager
         ->createInstance(
-          $this->getSetting('field_widget_display'),
-          $this->getSetting('field_widget_display_settings') + ['entity_type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')]
+          $form_state->getValue(
+            ['fields', $this->fieldDefinition->getName(), 'settings_edit_form', 'settings', 'field_widget_display'],
+            $this->getSetting('field_widget_display')
+          ),
+          $form_state->getValue(
+            ['fields', $this->fieldDefinition->getName(), 'settings_edit_form', 'settings', 'field_widget_display_settings'],
+            $this->getSetting('field_widget_display_settings')
+          ) + ['entity_type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')]
         )
         ->settingsForm($form, $form_state);
     }
@@ -152,6 +166,13 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
   }
 
   /**
+   * Ajax callback that updates field widget display settings fieldset.
+   */
+  public function updateSettingsAjax(array $form, FormStateInterface $form_state) {
+    return $form['fields'][$this->fieldDefinition->getName()]['plugin']['settings_edit_form']['settings']['field_widget_display_settings'];
+  }
+
+    /**
    * {@inheritdoc}
    */
   public function settingsSummary() {
