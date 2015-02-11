@@ -16,6 +16,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\entity_browser\Events\Events;
 use Drupal\entity_browser\Events\RegisterJSCallbacks;
+use Drupal\entity_browser\FieldWidgetDisplayManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -42,6 +43,13 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
   protected $entityManager;
 
   /**
+   * Field widget display plugin manager.
+   *
+   * @var \Drupal\entity_browser\FieldWidgetDisplayManager
+   */
+  protected $fieldDisplayManager;
+
+  /**
    * Constructs widget plugin.
    *
    * @param array $configuration
@@ -56,11 +64,13 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
    *   Entity manager service.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher.
-   *
+   * @param \Drupal\entity_browser\FieldWidgetDisplayManager $field_display_manager
+   *   Field widget display plugin manager.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityManagerInterface $entity_manager, EventDispatcherInterface $event_dispatcher) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityManagerInterface $entity_manager, EventDispatcherInterface $event_dispatcher, FieldWidgetDisplayManager $field_display_manager) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->entityManager = $entity_manager;
+    $this->fieldDisplayManager = $field_display_manager;
 
     $event_dispatcher->addListener(Events::REGISTER_JS_CALLBACKS, [$this, 'registerJSCallback']);
   }
@@ -76,7 +86,8 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       $configuration['settings'],
       $configuration['third_party_settings'],
       $container->get('entity.manager'),
-      $container->get('event_dispatcher')
+      $container->get('event_dispatcher'),
+      $container->get('plugin.manager.entity_browser.field_widget_display')
     );
   }
 
@@ -131,7 +142,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
   function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $entity_type = $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type');
     $entity_storage = $this->entityManager->getStorage($entity_type);
-    $entity_view = $this->entityManager->getViewBuilder($entity_type);
+    $field_widget_display = $this->fieldDisplayManager->createInstance('rendered_entity', ['view_mode' => 'teaser']);
 
     $ids = [];
     if ($form_state->isRebuilding()) {
@@ -171,9 +182,9 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       'current' => [
         '#theme' => 'item_list',
         '#items' => array_map(
-          function($id) use ($entity_storage, $entity_view) {
+          function($id) use ($entity_storage, $field_widget_display) {
             $entity = $entity_storage->load($id);
-            return $entity_view->view($entity);
+            return $field_widget_display->view($entity);
           },
           $ids
         )
