@@ -8,6 +8,7 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\FieldWidgetDisplay;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\entity_browser\FieldWidgetDisplayInterface;
@@ -64,7 +65,27 @@ class RenderedEntity extends PluginBase implements FieldWidgetDisplayInterface, 
    * {@inheritdoc}
    */
   public function view(EntityInterface $entity) {
-    return $this->entityManager->getViewBuilder($entity->getEntityTypeId())->view($entity, $this->configuration['view_mode']);
+    return $this->entityManager->getViewBuilder($this->configuration['entity_type'])->view($entity, $this->configuration['view_mode']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsForm(array $form, FormStateInterface $form_state) {
+    $options = [];
+    foreach ($this->entityManager->getViewModes($this->configuration['entity_type']) as $id => $view_mode) {
+      $options[$id] = $view_mode['label'];
+    }
+
+    return [
+      'view_mode' => [
+        '#type' => 'select',
+        '#title' => t('View mode'),
+        '#description' => t('Select view mode to be used when rendering entities.'),
+        '#default_value' => $this->configuration['view_mode'],
+        '#options' => $options,
+      ],
+    ];
   }
 
 }

@@ -7,6 +7,7 @@
 namespace Drupal\entity_browser\Plugin\EntityBrowser\FieldWidgetDisplay;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\entity_browser\FieldWidgetDisplayInterface;
 
@@ -26,6 +27,13 @@ class EntityLabel extends PluginBase implements FieldWidgetDisplayInterface {
    */
   public function view(EntityInterface $entity) {
     return $entity->label();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsForm(array $form, FormStateInterface $form_state) {
+    return [];
   }
 
 }

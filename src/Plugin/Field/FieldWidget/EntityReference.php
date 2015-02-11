@@ -97,6 +97,8 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
   public static function defaultSettings() {
     return array(
       'entity_browser' => NULL,
+      'field_widget_display' => NULL,
+      'field_widget_display_settings' => [],
     ) + parent::defaultSettings();
   }
 
@@ -106,18 +108,45 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $element = parent::settingsForm($form, $form_state);
 
-    $options = [];
+    $browsers = [];
     /** @var \Drupal\entity_browser\EntityBrowserInterface $browser */
     foreach ($this->entityManager->getStorage('entity_browser')->loadMultiple() as $browser) {
-      $options[$browser->id()] = $browser->label();
+      $browsers[$browser->id()] = $browser->label();
     }
 
     $element['entity_browser'] = [
       '#title' => t('Entity browser'),
       '#type' => 'select',
       '#default_value' => $this->getSetting('entity_browser'),
-      '#options' => $options,
+      '#options' => $browsers,
     ];
+
+    $displays = [];
+    foreach ($this->fieldDisplayManager->getDefinitions() as $id => $definition) {
+      $displays[$id] = $definition['label'];
+    }
+
+    $element['field_widget_display'] = [
+      '#title' => t('Entity display plugin'),
+      '#type' => 'select',
+      '#default_value' => $this->getSetting('field_widget_display'),
+      '#options' => $displays,
+      '#validate' => [[$this, 'submitFieldWidgetDisplay']],
+    ];
+
+    if ($this->getSetting('field_widget_display')) {
+      $element['field_widget_display_settings'] = [
+        '#type' => 'fieldset',
+        '#title' => t('Entity display plugin configuration'),
+        '#tree' => TRUE,
+      ];
+      $element['field_widget_display_settings'] += $this->fieldDisplayManager
+        ->createInstance(
+          $this->getSetting('field_widget_display'),
+          $this->getSetting('field_widget_display_settings') + ['entity_type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')]
+        )
+        ->settingsForm($form, $form_state);
+    }
 
     return $element;
   }
@@ -126,14 +155,25 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
    * {@inheritdoc}
    */
   public function settingsSummary() {
+    $summary = [];
     $entity_browser_id = $this->getSetting('entity_browser');
+    $field_widget_display = $this->getSetting('field_widget_display');
+
     if (empty($entity_browser_id)) {
       return [t('No entity browser selected.')];
     }
+    else {
+      $browser = $this->entityManager->getStorage('entity_browser')
+        ->load($entity_browser_id);
+      $summary[] = t('Entity browser: @browser', ['@browser' => $browser->label()]);
+    }
 
-    $browser = $this->entityManager->getStorage('entity_browser')->load($entity_browser_id);
-    return [t('Entity browser: @browser', ['@browser' => $browser->label()])];
+    if (!empty($field_widget_display)) {
+      $plugin = $this->fieldDisplayManager->getDefinition($field_widget_display);
+      $summary[] = t('Entity display: @name', ['@name' => $plugin['label']]);
+    }
 
+    return $summary;
   }
 
   /**
@@ -142,7 +182,10 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
   function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $entity_type = $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type');
     $entity_storage = $this->entityManager->getStorage($entity_type);
-    $field_widget_display = $this->fieldDisplayManager->createInstance('rendered_entity', ['view_mode' => 'teaser']);
+    $field_widget_display = $this->fieldDisplayManager->createInstance(
+      $this->getSetting('field_widget_display'),
+      $this->getSetting('field_widget_display_settings') + ['entity_type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')]
+    );
 
     $ids = [];
     if ($form_state->isRebuilding()) {
