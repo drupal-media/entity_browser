@@ -50,7 +50,16 @@ function hook_entity_browser_widget_selector_info_alter(&$widgets) {
   $widgets['tab_selector']['label'] = t('Tabs are for winners');
 }
 
-
+/**
+ * Alter the information provided in \Drupal\entity_browser\Annotation\EntityBrowserFieldWidgetDisplay.
+ *
+ * @param $field_displays
+ *   The array of field widget display plugins, keyed on the machine-readable
+ *   name.
+ */
+function hook_entity_browser_field_widget_display_info_alter(&$field_displays) {
+  $displays['rendered_entity']['label'] = t('Entity render system FTW');
+}
 
 /**
  * @} End of "addtogroup hooks".
