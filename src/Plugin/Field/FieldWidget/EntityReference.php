@@ -129,6 +129,10 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
    * {@inheritdoc}
    */
   function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+    $entity_type = $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type');
+    $entity_storage = $this->entityManager->getStorage($entity_type);
+    $entity_view = $this->entityManager->getViewBuilder($entity_type);
+
     $ids = [];
     if ($form_state->isRebuilding()) {
       if ($value = $form_state->getValue([$this->fieldDefinition->getName(), 'target_id'])) {
@@ -165,9 +169,14 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       'entity_browser' => $this->entityManager->getStorage('entity_browser')->load($this->getSetting('entity_browser'))->getDisplay()->displayEntityBrowser(),
       '#attached' => ['library' => ['entity_browser/entity_reference']],
       'current' => [
-        // TODO - create better display of current entities (possibly using a view)
-        // See: https://www.drupal.org/node/2366241
-        '#markup' => '<strong>'. t('Selected:') . '</strong> <div class="current-markup">' . implode(' ', $ids) . '</div>',
+        '#theme' => 'item_list',
+        '#items' => array_map(
+          function($id) use ($entity_storage, $entity_view) {
+            $entity = $entity_storage->load($id);
+            return $entity_view->view($entity);
+          },
+          $ids
+        )
       ],
     ];
 
