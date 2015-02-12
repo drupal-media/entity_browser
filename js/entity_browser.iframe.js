@@ -11,11 +11,9 @@
    * Registers behaviours related to iFrame display.
    */
   Drupal.behaviors.entityBrowserIFrame = {
-
     attach: function (context) {
-      $(context).find('.entity-browser-handle.entity-browser-iframe').on('click', Drupal.entityBrowserIFrame.linkClick);
+      $(context).find('.entity-browser-handle.entity-browser-iframe').once('iframe-click').on('click', Drupal.entityBrowserIFrame.linkClick);
     }
-
   };
 
   Drupal.entityBrowserIFrame = {};
