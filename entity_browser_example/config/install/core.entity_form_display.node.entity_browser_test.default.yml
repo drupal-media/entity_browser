@@ -68,6 +68,8 @@ content:
     weight: 32
     settings:
       entity_browser: test_files
+      field_widget_display: label
+      field_widget_display_settings: []
     third_party_settings: {  }
   field_nodes:
     type: entity_browser_entity_reference

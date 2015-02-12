@@ -248,10 +248,21 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
         '#items' => array_map(
           function($id) use ($entity_storage, $field_widget_display) {
             $entity = $entity_storage->load($id);
-            return $field_widget_display->view($entity);
+            $display = $field_widget_display->view($entity);
+
+            if (is_string($display)) {
+              $display = [
+                '#markup' => $display
+              ];
+            }
+
+            $display['#wrapper_attributes']['data-entity-id'] = $entity->id();
+            return $display;
           },
           $ids
-        )
+        ),
+        '#attached' => ['library' => ['core/jquery.ui.sortable']],
+        '#attributes' => ['class' => ['entities-list']],
       ],
     ];
 
