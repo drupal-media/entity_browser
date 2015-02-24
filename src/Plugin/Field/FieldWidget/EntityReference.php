@@ -219,6 +219,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
         $ids[] = $item->target_id;
       }
     }
+    $ids = array_filter($ids);
 
     $hidden_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName() . '-target-id');
     $details_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName());
