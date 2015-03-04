@@ -6,14 +6,9 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Widget;
 
-use Drupal\Component\Plugin\PluginBase;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\entity_browser\EntityBrowserWidgetInterface;
 use Drupal\entity_browser\WidgetBase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Uses a view to provide entity listing in a browser's widget.
