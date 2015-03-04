@@ -1,0 +1,23 @@
+uuid: 167181a9-2c3e-4993-a278-1c332b8f1706
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.entity_browser_test
+  module:
+    - text
+id: node.entity_browser_test.body
+field_name: body
+entity_type: node
+bundle: entity_browser_test
+label: Body
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+third_party_settings: {  }
+field_type: text_with_summary
