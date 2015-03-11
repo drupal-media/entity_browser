@@ -277,8 +277,8 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    *   First widget instance ID.
    */
   protected function getFirstWidget() {
-    $this->getWidgets()->rewind();
-    return $this->getWidgets()->key();
+    $instance_ids = $this->getWidgets()->getInstanceIds();
+    return reset($instance_ids);
   }
 
   /**
