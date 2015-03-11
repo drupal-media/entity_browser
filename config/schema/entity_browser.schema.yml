@@ -29,18 +29,18 @@ entity_browser.browser.*:
       type: sequence
       label: 'Widgets'
       sequence:
-        - type: mapping
-          mapping:
-            id:
-              type: string
-            uuid:
-              type: string
-            label:
-              type: string
-            weight:
-              type: integer
-            settings:
-              type: entity_browser.browser.widget.[%parent.id]
+        type: mapping
+        mapping:
+          id:
+            type: string
+          uuid:
+            type: string
+          label:
+            type: string
+          weight:
+            type: integer
+          settings:
+            type: entity_browser.browser.widget.[%parent.id]
 
 entity_browser.browser.display.standalone:
   type: mapping
@@ -85,5 +85,5 @@ entity_browser.browser.widget.view:
     arguments:
       type: sequence
       sequence:
-        - type: integer
-          label: 'View display arguments'
+        type: integer
+        label: 'View display arguments'
