@@ -6,7 +6,6 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\WidgetSelector;
 
-use Drupal\entity_browser\WidgetsCollection;
 use Drupal\entity_browser\WidgetSelectorBase;
 use Drupal\Core\Form\FormStateInterface;
 
