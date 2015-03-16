@@ -6,12 +6,8 @@
 
 namespace Drupal\entity_browser_entity_form\Plugin\EntityBrowser\Widget;
 
-use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_browser\WidgetBase;
-use Drupal\inline_entity_form\InlineEntityFormPluginManager;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Uses a view to provide entity listing in a browser's widget.
@@ -25,92 +21,46 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class EntityForm extends WidgetBase {
 
   /**
-   * Inline entity form plugin manager.
-   *
-   * @var \Drupal\inline_entity_form\InlineEntityFormPluginManager
-   */
-  protected $inlineFormManager;
-
-  /**
-   * Constructs widget plugin.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin_id for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
-   *   Event dispatcher service.
-   * @param \Drupal\inline_entity_form\InlineEntityFormPluginManager
-   *   Inline entity form plugin manager.
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityManagerInterface $entity_manager, InlineEntityFormPluginManager $inline_form_manager) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_manager);
-    $this->inlineFormManager = $inline_form_manager;
-  }
-
-  /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    return new static(
-      $configuration,
-      $plugin_id,
-      $plugin_definition,
-      $container->get('event_dispatcher'),
-      $container->get('entity.manager'),
-      $container->get('plugin.manager.inline_entity_form')
-    );
+  public function defaultConfiguration() {
+    return array(
+      'entity_type' => NULL,
+      'bundle' => NULL,
+    ) + parent::defaultConfiguration();
   }
-
 
   /**
    * {@inheritdoc}
    */
   public function getForm(array &$original_form, FormStateInterface $form_state, array $aditional_widget_parameters) {
-    /** @var \Drupal\inline_entity_form\InlineEntityFormControllerInterface $inline_form_controller */
-    $inline_form_controller = $this->inlineFormManager->createInstance('entity:node', []);
+    if (empty($this->configuration['entity_type']) || empty($this->configuration['entity_type'])) {
+      return [
+        '#markup' => t('Entity type or bundle are no configured correctly.'),
+      ];
+    }
 
-    $form = [];
-    $form = $inline_form_controller->entityForm($form, $form_state);
-
-
-    /** @var \Drupal\Core\Entity\EntityForm $controller */
-    /*$controller = $this->entityManager->getFormObject('node', 'default');
-
-    $entity = $this->entityManager->getStorage('node')->create([
-      'type' => 'article'
-    ]);
-
-    $controller->setEntity($entity);
-
-    $form = [];
-    $child_form_state = new FormState();
-    $child_form_state->set('form_display', $this->entityManager->getStorage('entity_form_display')->load('node.article.default'));
-    $form = $controller->buildForm($form, $child_form_state);
-
-    //unset($form['#parents']);
-    //unset($form['#process']);
-    $form['#process'] = [
-      $form['#process'][1],
-    ];*/
-
-    return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validate(array &$form, FormStateInterface $form_state) {
-
+    return [
+      'inline_entity_form' => [
+        '#type' => 'inline_entity_form',
+        '#op' => 'add',
+        '#handle_submit' => FALSE,
+        '#entity_type' => $this->configuration['entity_type'],
+        '#bundle' => $this->configuration['bundle'],
+      ],
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
   public function submit(array &$element, array &$form, FormStateInterface $form_state) {
+    // We handle submit on our own in order to take control over what's going on.
+    foreach ($element['inline_entity_form']['#ief_element_submit'] as $function) {
+      $function($element['inline_entity_form'], $form_state);
+    }
 
+    $this->selectEntities([$element['inline_entity_form']['#entity']]);
   }
 
 }
