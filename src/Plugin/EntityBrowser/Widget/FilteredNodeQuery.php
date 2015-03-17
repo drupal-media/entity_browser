@@ -73,7 +73,6 @@ class FilteredNodeQuery extends WidgetBase {
 
   /**
    * Returns array of node types.
-   *
    * @return array
    */
   private static function getNodeTypes() {
@@ -89,6 +88,7 @@ class FilteredNodeQuery extends WidgetBase {
    *
    * @param string $bundle
    * @param string $title_substring
+   *
    * @return array
    *   Array of Node objects.
    */
@@ -175,4 +175,5 @@ class FilteredNodeQuery extends WidgetBase {
     // Dispatch entity selection event.
     $this->selectEntities($entities);
   }
+
 }
