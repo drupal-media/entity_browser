@@ -4,6 +4,7 @@ dependencies:
   config:
     - field.field.node.entity_browser_test.body
     - field.field.node.entity_browser_test.field_files
+    - field.field.node.entity_browser_test.field_files1
     - field.field.node.entity_browser_test.field_nodes
     - node.type.entity_browser_test
   module:
@@ -70,9 +71,17 @@ content:
       field_widget_display: label
       field_widget_display_settings: []
     third_party_settings: {  }
-  field_nodes:
+  field_files1:
     type: entity_browser_entity_reference
     weight: 33
+    settings:
+      entity_browser: test_files1
+      field_widget_display: label
+      field_widget_display_settings: []
+    third_party_settings: {  }
+  field_nodes:
+    type: entity_browser_entity_reference
+    weight: 34
     settings:
       entity_browser: test_nodes
       field_widget_display: label
