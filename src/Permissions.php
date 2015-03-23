@@ -6,7 +6,7 @@
  */
 
 namespace Drupal\entity_browser;
-use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\StringTranslation\TranslationManager;
@@ -63,7 +63,7 @@ class Permissions implements ContainerInjectionInterface {
 
     foreach ($browsers as $browser) {
       if ($browser->route()) {
-        $permissions['access ' . String::checkPlain($browser->id()) . ' entity browser pages'] = array(
+        $permissions['access ' . SafeMarkup::checkPlain($browser->id()) . ' entity browser pages'] = array(
           'title' => $this->translationManager->translate('Access @name pages', array('@name' => $browser->label())),
           'description' => $this->translationManager->translate('Access pages that %browser uses to operate.', array('%browser' => $browser->label())),
         );
