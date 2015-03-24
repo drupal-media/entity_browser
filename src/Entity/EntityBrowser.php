@@ -7,7 +7,7 @@
 
 namespace Drupal\entity_browser\Entity;
 
-use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -532,7 +532,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
           'entity_browser_id' => $this->id(),
         ],
         [
-          '_permission' => 'access ' . String::checkPlain($this->id()) . ' entity browser pages',
+          '_permission' => 'access ' . SafeMarkup::checkPlain($this->id()) . ' entity browser pages',
         ],
         [
           '_admin_route' => TRUE,
