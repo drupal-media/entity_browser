@@ -8,7 +8,7 @@
 namespace Drupal\entity_browser\Tests;
 
 use Drupal\Component\Plugin\Exception\PluginException;
-use Drupal\Component\Utility\String;
+use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Core\Entity\EntityMalformedException;
 use Drupal\Core\Form\FormState;
@@ -231,7 +231,7 @@ class EntityBrowserTest extends KernelTestBase {
     $this->assertEqual($route->getDefault('entity_browser_id'), $entity->id(), 'Entity browser ID matches.');
     $this->assertEqual($route->getDefault('_controller'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
     $this->assertEqual($route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\StandalonePage::title', 'Title callback matches.');
-    $this->assertEqual($route->getRequirement('_permission'), 'access ' . String::checkPlain($entity->id()) . ' entity browser pages', 'Permission matches.');
+    $this->assertEqual($route->getRequirement('_permission'), 'access ' . SafeMarkup::checkPlain($entity->id()) . ' entity browser pages', 'Permission matches.');
 
     try {
       $registered_route = $this->routeProvider->getRouteByName('entity_browser.' . $entity->id());
@@ -245,7 +245,7 @@ class EntityBrowserTest extends KernelTestBase {
     $this->assertEqual($registered_route->getDefault('entity_browser_id'), $entity->id(), 'Entity browser ID matches.');
     $this->assertEqual($registered_route->getDefault('_controller'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
     $this->assertEqual($registered_route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\StandalonePage::title', 'Title callback matches.');
-    $this->assertEqual($registered_route->getRequirement('_permission'), 'access ' . String::checkPlain($entity->id()) . ' entity browser pages', 'Permission matches.');
+    $this->assertEqual($registered_route->getRequirement('_permission'), 'access ' . SafeMarkup::checkPlain($entity->id()) . ' entity browser pages', 'Permission matches.');
   }
 
   /**
@@ -258,7 +258,7 @@ class EntityBrowserTest extends KernelTestBase {
     /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
     $entity = $this->controller->load('test');
 
-    $expected_permission_name = 'access ' . String::checkPlain($entity->id()) . ' entity browser pages';
+    $expected_permission_name = 'access ' . SafeMarkup::checkPlain($entity->id()) . ' entity browser pages';
     $expected_permission = array(
       'title' => $this->container->get('string_translation')->translate('Access @name pages', array('@name' => $entity->label())),
       'description' => $this->container->get('string_translation')->translate('Access pages that %browser uses to operate.', array('%browser' => $entity->label())),
