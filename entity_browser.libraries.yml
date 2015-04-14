@@ -16,6 +16,11 @@ entity_reference:
   version: VERSION
   js:
     js/entity_browser.entity_reference.js: {}
+
+entity_reference_single:
+  version: VERSION
+  js:
+    js/entity_browser.entity_reference_single.js: {}
     
 modal:
   version: VERSION

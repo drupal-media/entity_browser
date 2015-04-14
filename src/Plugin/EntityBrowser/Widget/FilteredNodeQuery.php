@@ -144,7 +144,7 @@ class FilteredNodeQuery extends WidgetBase {
         '#js_select' => FALSE,
       ),
       'pager' => array(
-        '#theme' => 'pager',
+        '#type' => 'pager',
       ),
     );
   }
@@ -177,3 +177,4 @@ class FilteredNodeQuery extends WidgetBase {
   }
 
 }
+
