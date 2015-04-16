@@ -31,7 +31,7 @@ class View extends WidgetBase {
     ) + parent::defaultConfiguration();
   }
 
-  /**drupal
+  /**
    * {@inheritdoc}
    */
   public function getForm(array &$original_form, FormStateInterface $form_state, array $aditional_widget_parameters) {
