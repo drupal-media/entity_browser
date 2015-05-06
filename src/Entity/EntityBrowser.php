@@ -37,6 +37,17 @@ use Drupal\entity_browser\DisplayAjaxInterface;
  *     "id" = "name",
  *     "label" = "label"
  *   },
+ *   config_export = {
+ *     "name",
+ *     "label",
+ *     "display",
+ *     "display_configuration",
+ *     "selection_display",
+ *     "selection_display_configuration",
+ *     "widget_selector",
+ *     "widget_selector_configuration",
+ *     "widgets",
+ *   },
  * )
  */
 class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, EntityWithPluginCollectionInterface {
