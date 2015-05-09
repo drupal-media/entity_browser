@@ -55,10 +55,10 @@ entity_browser.browser.display.iframe:
   label: 'iFrame display configuration'
   mapping:
     width:
-      type: int
+      type: integer
       label: 'iFrame width'
     height:
-      type: int
+      type: integer
       label: 'iFrame height'
     link_text:
       type: string
