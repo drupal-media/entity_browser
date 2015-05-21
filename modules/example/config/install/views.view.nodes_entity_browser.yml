@@ -3,8 +3,12 @@ status: true
 dependencies:
   module:
     - entity_browser
+    - entity_browser_example
     - node
     - user
+  enforced:
+    module:
+      - entity_browser_example
 id: nodes_entity_browser
 label: 'Nodes entity browser'
 module: views
