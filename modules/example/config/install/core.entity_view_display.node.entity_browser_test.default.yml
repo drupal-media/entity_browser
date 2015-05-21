@@ -7,9 +7,13 @@ dependencies:
     - field.field.node.entity_browser_test.field_nodes
     - node.type.entity_browser_test
   module:
+    - entity_browser_example
     - entity_reference
     - text
     - user
+  enforced:
+    module:
+      - entity_browser_example
 id: node.entity_browser_test.default
 label: null
 targetEntityType: node

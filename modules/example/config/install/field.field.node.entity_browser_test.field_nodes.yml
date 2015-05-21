@@ -5,7 +5,11 @@ dependencies:
     - field.storage.node.field_nodes
     - node.type.entity_browser_test
   module:
+    - entity_browser_example
     - entity_reference
+  enforced:
+    module:
+      - entity_browser_example
 id: node.entity_browser_test.field_nodes
 field_name: field_nodes
 entity_type: node
