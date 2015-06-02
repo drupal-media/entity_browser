@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Contains \Drupal\entity_browser\Plugin\EntityBrowser\WidgetSelector\DropDown.
  */
 
@@ -61,7 +62,9 @@ class DropDown extends WidgetSelectorBase {
    * AJAX callback to refresh form.
    *
    * @param array $form
+   *   Form.
    * @param FormStateInterface $form_state
+   *   Form state object.
    *
    * @return array
    *   Form element to replace.
@@ -69,4 +72,5 @@ class DropDown extends WidgetSelectorBase {
   public function changeWidgetCallback(array &$form, FormStateInterface $form_state) {
     return $form;
   }
+
 }
