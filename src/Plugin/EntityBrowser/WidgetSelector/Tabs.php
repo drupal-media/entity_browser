@@ -33,7 +33,7 @@ class Tabs extends WidgetSelectorBase {
       $element[$label] = array(
         '#type' => 'button',
         '#value' => $label,
-        '#disabled' => $this->getDefaultWidget(),
+        '#disabled' => $id == $this->getDefaultWidget(),
         '#executes_submit_callback' => TRUE,
         '#limit_validation_errors' => array(array($label)),
         '#ajax' => array(
