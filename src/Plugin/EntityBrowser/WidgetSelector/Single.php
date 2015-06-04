@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Contains \Drupal\entity_browser\Plugin\EntityBrowser\WidgetSelector\Single.
  */
 

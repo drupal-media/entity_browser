@@ -513,7 +513,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
       $this->getWidgets()->get($this->getCurrentWidget($form_state))->submit($form[$form['#browser_parts']['widget']], $form, $form_state);
       $this->getSelectionDisplay()->submit($form, $form_state);
     }
-    
+
     // Save the selected entities to the form state.
     $form_state->set('selected_entities', $this->getSelectedEntities());
 

@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Contains \Drupal\entity_browser\WidgetSelectorBase.
  */
 
@@ -24,7 +25,7 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
   protected $label;
 
   /**
-   * Available widgets
+   * Available widgets.
    *
    * @var array()
    */
@@ -40,7 +41,7 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
   /**
    * {@inheritdoc}
    */
-  function __construct($configuration, $plugin_id, $plugin_definition) {
+  public function __construct($configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->widget_ids = $this->configuration['widget_ids'];
   }
