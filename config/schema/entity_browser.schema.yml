@@ -64,6 +64,20 @@ entity_browser.browser.display.iframe:
       type: string
       label: 'Link text'
 
+entity_browser.browser.display.modal:
+  type: mapping
+  label: 'Modal display configuration'
+  mapping:
+    width:
+      type: integer
+      label: 'Modal width'
+    height:
+      type: integer
+      label: 'Modal height'
+    link_text:
+      type: string
+      label: 'Link text'
+
 entity_browser.browser.widget.upload:
   type: mapping
   label: 'Upload widget configuration'
