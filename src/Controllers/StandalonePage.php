@@ -73,12 +73,12 @@ class StandalonePage extends ControllerBase {
   public function page() {
     $browser = $this->loadBrowser();
 
-    //  The original path is sometimes needed: ie for views arguments.
+    // The original path is sometimes needed: ie for views arguments.
     if ($original_path = $this->request->get('original_path')) {
       $browser->addAdditionalWidgetParameters(['path_parts' => explode('/', $original_path)]);
     }
 
-    return \Drupal::formBuilder()->getForm($browser);
+    return $this->entityFormBuilder()->getForm($browser, 'default');
   }
 
   /**
@@ -93,6 +93,7 @@ class StandalonePage extends ControllerBase {
    * Loads entity browser object for this page.
    *
    * @return \Drupal\entity_browser\EntityBrowserInterface
+   *   Loads the entity browser entity object
    */
   protected function loadBrowser() {
     /** @var $route \Symfony\Component\Routing\Route */
