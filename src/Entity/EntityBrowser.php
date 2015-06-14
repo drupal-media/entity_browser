@@ -32,7 +32,7 @@ use Symfony\Component\Routing\Route;
  *   label = @Translation("Entity browser"),
  *   handlers = {
  *     "form" = {
- *       "default" = Drupal\entity_browser\EntityBrowserForm"
+ *       "default" = "Drupal\entity_browser\EntityBrowserForm"
  *     }
  *   },
  *   admin_permission = "administer entity browsers",
