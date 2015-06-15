@@ -8,13 +8,12 @@
 namespace Drupal\entity_browser;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
-use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Provides an interface defining an entity browser entity.
  */
-interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
+interface EntityBrowserInterface extends ConfigEntityInterface {
 
   /**
    * Returns the entity browser name.
@@ -72,7 +71,7 @@ interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
    *   The widget ID.
    */
   public function addWidget(array $configuration);
-  
+
   /**
    * Deletes a widget from this entity browser.
    *
@@ -88,7 +87,7 @@ interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
    *
    * Used when widgets configurations change, such as changing weights.
    *
-   *  @param \Drupal\Core\Form\FormStateInterface $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    */
   public function resetWidgets(FormStateInterface $form_state);
@@ -154,7 +153,7 @@ interface EntityBrowserInterface extends ConfigEntityInterface, FormInterface {
   /**
    * Returns the widget that is currently selected.
    *
-   *  @param \Drupal\Core\Form\FormStateInterface $form_state
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
    *
    * @return string

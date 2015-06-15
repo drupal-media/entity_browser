@@ -23,7 +23,6 @@ use Drupal\entity_browser\DisplayRouterInterface;
 use Drupal\entity_browser\WidgetsCollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Route;
-use Drupal\entity_browser\DisplayAjaxInterface;
 
 /**
  * Defines an entity browser configuration entity.
@@ -31,6 +30,11 @@ use Drupal\entity_browser\DisplayAjaxInterface;
  * @ConfigEntityType(
  *   id = "entity_browser",
  *   label = @Translation("Entity browser"),
+ *   handlers = {
+ *     "form" = {
+ *       "default" = "Drupal\entity_browser\EntityBrowserForm"
+ *     }
+ *   },
  *   admin_permission = "administer entity browsers",
  *   config_prefix = "browser",
  *   entity_keys = {
@@ -449,80 +453,13 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   }
 
   /**
-   * {@inheritdoc}
+   * Indicates selection is done.
+   *
+   * @return bool
+   *   Indicates selection is done.
    */
-  public function getFormId() {
-    return 'entity_browser_' . $this->id() . '_form';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function buildForm(array $form, FormStateInterface $form_state) {
-
-    $form['selected_entities'] = array(
-      '#type' => 'value',
-      '#value' => array_map(function(EntityInterface $item) {return $item->id();}, $this->getSelectedEntities())
-    );
-
-    $form['#browser_parts'] = array(
-      'widget_selector' => 'widget_selector',
-      'widget' => 'widget',
-      'selection_display' => 'selection_display',
-    );
-    $this->getWidgetSelector()->setDefaultWidget($this->getCurrentWidget($form_state));
-    $form[$form['#browser_parts']['widget_selector']] = $this->getWidgetSelector()->getForm($form, $form_state);
-    $form[$form['#browser_parts']['widget']] = $this->getWidgets()->get($this->getCurrentWidget($form_state))->getForm($form, $form_state, $this->getAdditionalWidgetParameters());
-
-    $form['actions'] = [
-      'submit' => [
-        '#type' => 'submit',
-        '#value' => t('Select'),
-      ],
-    ];
-
-    $form[$form['#browser_parts']['selection_display']] = $this->getSelectionDisplay()->getForm($form, $form_state);
-
-    if ($this->getDisplay() instanceOf DisplayAjaxInterface) {
-      $this->getDisplay()->addAjax($form);
-    }
-
-    return $form;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    $this->getWidgetSelector()->validate($form, $form_state);
-    $this->getWidgets()->get($this->getCurrentWidget($form_state))->validate($form, $form_state);
-    $this->getSelectionDisplay()->validate($form, $form_state);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    $original_widget = $this->getCurrentWidget($form_state);
-    if ($new_widget = $this->getWidgetSelector()->submit($form, $form_state)) {
-      $this->setCurrentWidget($new_widget, $form_state);
-    }
-
-    // Only call widget submit if we didn't change the widget.
-    if ($original_widget == $this->getCurrentWidget($form_state)) {
-      $this->getWidgets()->get($this->getCurrentWidget($form_state))->submit($form[$form['#browser_parts']['widget']], $form, $form_state);
-      $this->getSelectionDisplay()->submit($form, $form_state);
-    }
-
-    // Save the selected entities to the form state.
-    $form_state->set('selected_entities', $this->getSelectedEntities());
-
-    if (!$this->selectionCompleted) {
-      $form_state->setRebuild();
-    }
-    else {
-      $this->getDisplay()->selectionCompleted($this->getSelectedEntities());
-    }
+  public function isSelectionCompleted() {
+    return $this->selectionCompleted;
   }
 
   /**
@@ -531,7 +468,6 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   public function route() {
     // TODO: Allow displays to define more than just path.
     // See: https://www.drupal.org/node/2364193
-
     $display = $this->getDisplay();
     if ($display instanceof DisplayRouterInterface) {
       $path = $display->path();
@@ -574,7 +510,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * Prevent plugin collections from being serialized and correctly serialize
    * selected entities.
    */
-  function __sleep() {
+  public function __sleep() {
     // Save configuration for all plugins.
     $this->widgets = $this->getWidgets()->getConfiguration();
     $this->widget_selector_configuration = $this->widgetSelectorPluginCollection()->getConfiguration();
@@ -605,7 +541,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   /**
    * Re-register event listeners and load selected entities.
    */
-  function __wakeup() {
+  public function __wakeup() {
     $this->subscribeEvents(\Drupal::service('event_dispatcher'));
 
     $this->selectedEntities = [];
@@ -614,4 +550,5 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     }
     $this->getSelectionDisplay()->setSelectedEntities($this->selectedEntities);
   }
+
 }

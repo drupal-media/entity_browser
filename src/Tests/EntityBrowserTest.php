@@ -20,7 +20,7 @@ use Drupal\entity_browser\SelectionDisplayInterface;
 use Drupal\simpletest\KernelTestBase;
 
 /**
- * Tests the entity_browser config entity
+ * Tests the entity_browser config entity.
  *
  * @group entity_browser
  */
@@ -54,6 +54,9 @@ class EntityBrowserTest extends KernelTestBase {
    */
   protected $routeProvider;
 
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp() {
     parent::setUp();
 
@@ -302,11 +305,16 @@ class EntityBrowserTest extends KernelTestBase {
     $entity = $this->controller->load('dummy_widget');
     $entity->getWidgets()->get($entity->getCurrentWidget($form_state))->entity = $entity;
 
-    $form = $entity->buildForm($form, new $form_state);
-    $entity->submitForm($form, $form_state);
+    $form_object = $this->container->get('entity.manager')->getFormObject($entity->getEntityTypeId(), 'default');
+    $form_object->setEntity($entity);
+    $form_state = (new FormState())->setFormState(array());
+
+    \Drupal::formBuilder()->buildForm($form_object, $form_state);
+    \Drupal::formBuilder()->submitForm($form_object, $form_state);
 
     // Event should be dispatched from widget and added to list of selected entities.
     $selected_entities = $entity->getSelectedEntities();
     $this->assertEqual($selected_entities, [$entity], 'Expected selected entities detected.');
   }
+
 }
