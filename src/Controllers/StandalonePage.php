@@ -93,7 +93,7 @@ class StandalonePage extends ControllerBase {
    * Loads entity browser object for this page.
    *
    * @return \Drupal\entity_browser\EntityBrowserInterface
-   *   Loads the entity browser entity object
+   *   Loads the entity browser object
    */
   protected function loadBrowser() {
     /** @var $route \Symfony\Component\Routing\Route */
