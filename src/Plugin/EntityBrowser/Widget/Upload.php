@@ -61,8 +61,35 @@ class Upload extends WidgetBase {
    * {@inheritdoc}
    */
   public function submit(array &$element, array &$form, FormStateInterface $form_state) {
-    $files = [];
+    $files = $this->extractFiles($form_state);
+    $this->selectEntities($files);
+    $this->clearFormValues($element, $form_state);
+  }
 
+  /**
+   * Clear values from upload form element.
+   *
+   * @param array $element
+   *   Upload form element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state object.
+   */
+  protected function clearFormValues(array &$element, FormStateInterface $form_state) {
+    // We propagated entities to the other parts of the system. We can now remove
+    // them from our values.
+    $form_state->setValueForElement($element['upload']['fids'], '');
+    NestedArray::setValue($form_state->getUserInput(), $element['upload']['fids']['#parents'], '');
+  }
+
+  /**
+   * @param FormStateInterface $form_state
+   *   Form state object.
+   *
+   * @return \Drupal\file\FileInterface[]
+   *   Array of files.
+   */
+  protected function extractFiles(FormStateInterface $form_state) {
+    $files = [];
     foreach ($form_state->getValue(['upload'], []) as $fid) {
       /** @var \Drupal\file\FileInterface $file */
       $file = $this->entityManager->getStorage('file')->load($fid);
@@ -71,12 +98,7 @@ class Upload extends WidgetBase {
       $files[] = $file;
     }
 
-    $this->selectEntities($files);
-
-    // We propagated entities to the other parts of the system. We can now remove
-    // them from our values.
-    $form_state->setValueForElement($element['upload']['fids'], '');
-    NestedArray::setValue($form_state->getUserInput(), $element['upload']['fids']['#parents'], '');
+    return $files;
   }
 
 }
