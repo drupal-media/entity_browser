@@ -28,6 +28,8 @@ class EntityBrowserForm extends EntityForm {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+    $form_state->disableCache();
+
     $entity_browser = $this->entity;
     $form['selected_entities'] = array(
       '#type' => 'value',
