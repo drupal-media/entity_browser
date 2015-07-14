@@ -25,30 +25,19 @@ class Tabs extends WidgetSelectorBase {
    * {@inheritdoc}
    */
   public function getForm(array &$form = array(), FormStateInterface &$form_state = NULL) {
-    // Set a wrapper container for us to replace the form on ajax call.
-    $form['#prefix'] = '<div id="entity-browser-form">';
-    $form['#suffix'] = '</div>';
-
+    $element = [];
     foreach ($this->widget_ids as $id => $label) {
-      $element[$label] = array(
+      $name = 'tab_selector_' . $id;
+      $element[$name] = array(
         '#type' => 'button',
         '#value' => $label,
         '#disabled' => $id == $this->getDefaultWidget(),
         '#executes_submit_callback' => TRUE,
-        '#limit_validation_errors' => array(array($label)),
-        '#ajax' => array(
-          'callback' => array($this, 'changeWidgetCallback'),
-          'wrapper' => 'entity-browser-form',
-        ),
+        '#limit_validation_errors' => array(array($id)),
+        '#name' => $name,
+        '#widget_id' => $id,
       );
     }
-
-    $element['change'] = array(
-      '#type' => 'submit',
-      '#name' => 'change',
-      '#value' => t('Change'),
-      '#attributes' => array('class' => array('js-hide')),
-    );
 
     return $element;
   }
@@ -57,26 +46,11 @@ class Tabs extends WidgetSelectorBase {
    * {@inheritdoc}
    */
   public function submit(array &$form, FormStateInterface $form_state) {
-    foreach ($this->widget_ids as $id => $label) {
-      if ($form_state->hasValue($label)) {
-        return $id;
+    if (($trigger = $form_state->getTriggeringElement()) && strpos($trigger['#name'], 'tab_selector_') === 0) {
+      if (!empty($this->widget_ids[$trigger['#widget_id']])) {
+        return $trigger['#widget_id'];
       }
     }
-  }
-
-  /**
-   * AJAX callback to refresh form.
-   *
-   * @param array $form
-   *   Form.
-   * @param FormStateInterface $form_state
-   *   Form state object.
-   *
-   * @return array
-   *   Form element to replace.
-   */
-  public function changeWidgetCallback(array &$form, FormStateInterface $form_state) {
-    return $form;
   }
 
 }
