@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Contains \Drupal\entity_browser\Plugin\EntityBrowser\Display\IFrame.
+ * Contains \Drupal\entity_browser\Plugin\EntityBrowser\Display\Modal.
  */
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Display;
@@ -24,7 +24,7 @@ use Drupal\entity_browser\Ajax\SelectEntitiesCommand;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Presents entity browser in an iFrame.
+ * Presents entity browser in an Modal.
  *
  * @EntityBrowserDisplay(
  *   id = "modal",
