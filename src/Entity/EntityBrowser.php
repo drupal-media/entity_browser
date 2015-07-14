@@ -453,10 +453,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   }
 
   /**
-   * Indicates selection is done.
-   *
-   * @return bool
-   *   Indicates selection is done.
+   * {@inheritdoc}
    */
   public function isSelectionCompleted() {
     return $this->selectionCompleted;

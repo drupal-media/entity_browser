@@ -9,6 +9,7 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\Widget;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\entity_browser\WidgetBase;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Uses a view to provide entity listing in a browser's widget.
@@ -56,7 +57,10 @@ class View extends WidgetBase {
       }
     }
 
+    \Drupal::requestStack()->push(new Request());
     $form['view'] = $storage['widget_view']->executeDisplay($this->configuration['view_display']);
+    \Drupal::requestStack()->pop();
+
     if (empty($storage['widget_view']->field['entity_browser_select'])) {
       return [
         // TODO - link to view admin page if allowed to.
@@ -73,6 +77,13 @@ class View extends WidgetBase {
         $form['view']['entity_browser_select'][$child]['#process'][] = ['\Drupal\Core\Render\Element\Checkbox', 'processGroup'];
       }
     }
+
+    $form['view']['exposed_form'] = $form['view']['view']['#view']->exposed_widgets;
+    $form['view']['exposed_form']['#type'] = 'container';
+    unset($form['view']['exposed_form']['#theme']);
+    $form['view']['view'] = [
+      '#markup' => drupal_render($form['view']['view']),
+    ];
 
     return $form;
   }

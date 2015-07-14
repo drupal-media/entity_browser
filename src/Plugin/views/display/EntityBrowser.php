@@ -7,6 +7,7 @@
 
 namespace Drupal\entity_browser\Plugin\views\display;
 
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
 
 /**
@@ -83,7 +84,7 @@ class EntityBrowser extends DisplayPluginBase {
     if (!empty($this->view->field['entity_browser_select'])) {
       $this->view->field['entity_browser_select']->viewsForm($render);
 
-      $render['#post_render'][] = [$this, 'postRender'];
+      $render['#post_render'][] = [get_class($this), 'postRender'];
       $substitutions = [];
       foreach ($this->view->result as $row_id => $row) {
         $form_element_row_id = $row_id;

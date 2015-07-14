@@ -30,6 +30,7 @@ class EntityBrowserForm extends EntityForm {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form_state->disableCache();
 
+    /** @var \Drupal\entity_browser\EntityBrowserInterface $entity_browser */
     $entity_browser = $this->entity;
     $form['selected_entities'] = array(
       '#type' => 'value',
@@ -65,6 +66,7 @@ class EntityBrowserForm extends EntityForm {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
+    /** @var \Drupal\entity_browser\EntityBrowserInterface $entity_browser */
     $entity_browser = $this->entity;
     $entity_browser->getWidgetSelector()->validate($form, $form_state);
     $entity_browser->getWidgets()->get($entity_browser->getCurrentWidget($form_state))->validate($form, $form_state);
@@ -75,6 +77,7 @@ class EntityBrowserForm extends EntityForm {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    /** @var \Drupal\entity_browser\EntityBrowserInterface $entity_browser */
     $entity_browser = $this->entity;
     $original_widget = $entity_browser->getCurrentWidget($form_state);
     if ($new_widget = $entity_browser->getWidgetSelector()->submit($form, $form_state)) {
@@ -90,7 +93,7 @@ class EntityBrowserForm extends EntityForm {
     // Save the selected entities to the form state.
     $form_state->set('selected_entities', $entity_browser->getSelectedEntities());
 
-    if (!$entity_browser->isselectionCompleted()) {
+    if (!$entity_browser->isSelectionCompleted()) {
       $form_state->setRebuild();
     }
     else {
