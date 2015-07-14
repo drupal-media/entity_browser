@@ -272,7 +272,14 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   public function getCurrentWidget(FormStateInterface $form_state) {
     // Do not use has() as that returns TRUE if the value is NULL.
     if (!$form_state->get('entity_browser_current_widget')) {
-      $form_state->set('entity_browser_current_widget', $this->getFirstWidget());
+      // If an initial value is present, use it
+      if (isset($form_state->getUserInput()['widget'])) {
+        $form_state->set('entity_browser_current_widget', $form_state->getUserInput()['widget']);
+      }
+      // Otherwise use the first widget based on weight
+      else {
+        $form_state->set('entity_browser_current_widget', $this->getFirstWidget());
+      }
     }
 
     return $form_state->get('entity_browser_current_widget');
