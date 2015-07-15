@@ -1,0 +1,18 @@
+uuid: 1c247d7b-43c6-4add-a053-ac41bcb43a3a
+langcode: und
+status: true
+dependencies: {  }
+name: filtered_node_browser
+label: 'Filtered Node Browser'
+display: iframe
+display_configuration:
+  width: 800
+  height: 400
+  link_text: 'Select nodes'
+selection_display: no_display
+selection_display_configuration: {  }
+widget_selector: single
+widget_selector_configuration: {  }
+widgets:
+  b032c35d-b0dd-48d6-b390-fb15fd2fcd15:
+    id: filtered_node_query
