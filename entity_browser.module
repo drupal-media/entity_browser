@@ -2,5 +2,20 @@
 
 /**
  * @file
- * Allows to flexibly create, browse and select entites.
+ * Allows to flexibly create, browse and select entities.
  */
+
+/**
+ * Implements hook_theme().
+ *
+ * Overrides the core html theme to use a custom template for iframes.
+ */
+function entity_browser_theme() {
+  return [
+    'html__entity_browser__iframe' => array(
+      'template' => 'html--entity-browser--iframe',
+      'render element' => 'html',
+      'preprocess functions' => ['template_preprocess_html']
+    ),
+  ];
+}
