@@ -30,9 +30,28 @@ class EntityBrowser extends DisplayPluginBase {
    */
   public function execute() {
     parent::execute();
+    $this->has_exposed = FALSE;
     $render = ['view' => $this->view->render()];
+
     $this->handleForm($render);
     return $render;
+  }
+
+  /**
+   * {@inheritdoc}.
+   */
+  public function usesExposedFormInBlock() {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}.
+   */
+  protected function defineOptions() {
+    // Push users towards exposing filters as a block
+    $options = parent::defineOptions();
+    $options['exposed_block']['default'] = TRUE;
+    return $options;
   }
 
   /**

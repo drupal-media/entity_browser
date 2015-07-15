@@ -85,6 +85,37 @@ class View extends WidgetBase {
       }
     }
 
+    // Get the exposed filter as a block, if present
+    if ($view->display_handler->getOption('exposed_block')) {
+      $plugin_id = 'views_exposed_filter_block:' . $view->id() . '-' . $view->current_display;
+      $block_id = 'exposedform' . $view->id() . $view->current_display;
+
+      // Attempt to load block
+      if (!$block = \Drupal\block\Entity\Block::load($block_id)) {
+        // Create block if it doesn't exist
+        $settings = [
+          'plugin' => $plugin_id,
+          'id' => $block_id,
+          'settings' => [
+            'id' => $plugin_id,
+            'provider' => 'views',
+          ]
+        ];
+        $block = \Drupal\block\Entity\Block::create($settings);
+        $block->save();
+
+        // Load the new block
+        $block = \Drupal\block\Entity\Block::load($block_id);
+      }
+
+      // Build the render array
+      $exposed_form = \Drupal::entityManager()
+        ->getViewBuilder('block')
+        ->view($block);
+
+      $form['view']['exposed_form'] = $exposed_form;
+    }
+
     $form['view']['view'] = [
       '#markup' => \Drupal::service('renderer')->render($form['view']['view']),
     ];
