@@ -162,11 +162,29 @@ interface EntityBrowserInterface extends ConfigEntityInterface {
   public function getCurrentWidget(FormStateInterface $form_state);
 
   /**
+   * Sets widget that is currently active.
+   *
+   * @param string $widget
+   *   New active widget UUID.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state.
+   */
+  public function setCurrentWidget($widget, FormStateInterface $form_state);
+
+  /**
    * Gets route that matches this display.
    *
    * @return \Symfony\Component\Routing\Route|bool
    *   Route object or FALSE if no route is used.
    */
   public function route();
+
+  /**
+   * Indicates selection is done.
+   *
+   * @return bool
+   *   Indicates selection is done.
+   */
+  public function isSelectionCompleted();
 
 }

@@ -9,6 +9,7 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\Widget;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\entity_browser\WidgetBase;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Uses a view to provide entity listing in a browser's widget.
@@ -37,13 +38,11 @@ class View extends WidgetBase {
   public function getForm(array &$original_form, FormStateInterface $form_state, array $aditional_widget_parameters) {
     // TODO - do we need better error handling for view and view_display (in case
     // either of those is nonexistent or display not of correct type)?
-    $storage = &$form_state->getStorage();
-    if (empty($storage['widget_view']) || $form_state->isRebuilding()) {
-      $storage['widget_view'] = $this->entityManager
-        ->getStorage('view')
-        ->load($this->configuration['view'])
-        ->getExecutable();
-    }
+    /** @var \Drupal\views\ViewExecutable $view */
+    $view = $this->entityManager
+      ->getStorage('view')
+      ->load($this->configuration['view'])
+      ->getExecutable();
 
     if (!empty($this->configuration['arguments'])) {
       if (!empty($aditional_widget_parameters['path_parts'])) {
@@ -52,12 +51,24 @@ class View extends WidgetBase {
         foreach ($this->configuration['arguments'] as $argument) {
           $arguments[] = isset($aditional_widget_parameters['path_parts'][$argument]) ? $aditional_widget_parameters['path_parts'][$argument] : '';
         }
-        $storage['widget_view']->setArguments(array_values($arguments));
+        $view->setArguments(array_values($arguments));
       }
     }
 
-    $form['view'] = $storage['widget_view']->executeDisplay($this->configuration['view_display']);
-    if (empty($storage['widget_view']->field['entity_browser_select'])) {
+    $form['view'] = $view->executeDisplay($this->configuration['view_display']);
+
+    $ids = [];
+    foreach ($view->result as $row_id => $row_result) {
+      /** @var \Drupal\Core\Entity\EntityInterface $entity */
+      $entity = $row_result->_entity;
+      $ids[$row_id] = [
+        'id' => $entity->id(),
+        'type' => $entity->getEntityTypeId(),
+      ];
+    }
+    $form_state->set('view_widget_rows', $ids);
+
+    if (empty($view->field['entity_browser_select'])) {
       return [
         // TODO - link to view admin page if allowed to.
         '#markup' => t('Entity browser select form field not found on a view. Go fix it!'),
@@ -73,6 +84,10 @@ class View extends WidgetBase {
         $form['view']['entity_browser_select'][$child]['#process'][] = ['\Drupal\Core\Render\Element\Checkbox', 'processGroup'];
       }
     }
+
+    $form['view']['view'] = [
+      '#markup' => \Drupal::service('renderer')->render($form['view']['view']),
+    ];
 
     return $form;
   }
@@ -95,9 +110,9 @@ class View extends WidgetBase {
   public function submit(array &$element, array &$form, FormStateInterface $form_state) {
     $selected_rows = array_keys(array_filter($form_state->getValue('entity_browser_select')));
     $entities = [];
-    $storage = $form_state->getStorage();
+    $ids = $form_state->get('view_widget_rows');
     foreach ($selected_rows as $row) {
-      $entities[] = $storage['widget_view']->result[$row]->_entity;
+      $entities[] = $this->entityManager->getStorage($ids[$row]['type'])->load($ids[$row]['id']);
     }
 
     $this->selectEntities($entities);
