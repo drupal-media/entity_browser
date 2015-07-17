@@ -6,10 +6,11 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Widget;
 
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\entity_browser\WidgetBase;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Uses a view to provide entity listing in a browser's widget.
@@ -96,6 +97,17 @@ class View extends WidgetBase {
 
     $form['view']['exposed_widgets'] = $form['view']['view']['#view']->exposed_widgets;
     $form['view']['exposed_widgets']['#weight'] = -1;
+    $form['filter'] = [
+      'submit' => [
+        '#type' => 'submit',
+        '#value' => t('Filter'),
+        '#name' => 'filter',
+        '#ajax' => array(
+          'callback' => [$this, 'filterCallback'],
+          'wrapper' => 'view'
+        ),
+      ],
+    ];
 
     unset($form['view']['view']['#view']->exposed_widgets);
 
@@ -104,6 +116,26 @@ class View extends WidgetBase {
     ];
 
     return $form;
+  }
+
+  /**
+   * AJAX callback to re-render just the view from our form based on current filters.
+   *
+   * @param array $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse
+   */
+  public function filterCallback(array &$form, FormStateInterface $form_state) {
+    $response = new AjaxResponse();
+
+    $new_form = $this->getForm($form, $form_state, []);
+
+    $html = \Drupal::service('renderer')->render($new_form['view']['view']);
+
+    $response->addCommand(new HtmlCommand('.view', $html));
+
+    return $response;
   }
 
   /**
@@ -122,6 +154,9 @@ class View extends WidgetBase {
    * {@inheritdoc}
    */
   public function submit(array &$element, array &$form, FormStateInterface $form_state) {
+    if ($form_state->getTriggeringElement()['#name'] == 'filter') {
+      return TRUE;
+    }
     $selected_rows = array_keys(array_filter($form_state->getValue('entity_browser_select')));
     $entities = [];
     $ids = $form_state->get('view_widget_rows');
