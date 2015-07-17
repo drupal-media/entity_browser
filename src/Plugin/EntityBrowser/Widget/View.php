@@ -39,10 +39,19 @@ class View extends WidgetBase {
     // TODO - do we need better error handling for view and view_display (in case
     // either of those is nonexistent or display not of correct type)?
     /** @var \Drupal\views\ViewExecutable $view */
+
     $view = $this->entityManager
       ->getStorage('view')
       ->load($this->configuration['view'])
       ->getExecutable();
+
+    // Add exposed filter values, if present
+    foreach ($form_state->getUserInput() as $name => $value) {
+      if (strpos($name, 'entity_browser_exposed_') === 0) {
+        $name = str_replace('entity_browser_exposed_', '', $name);
+        $view->exposed_data[$name] = $value;
+      }
+    }
 
     if (!empty($this->configuration['arguments'])) {
       if (!empty($aditional_widget_parameters['path_parts'])) {
@@ -84,6 +93,11 @@ class View extends WidgetBase {
         $form['view']['entity_browser_select'][$child]['#process'][] = ['\Drupal\Core\Render\Element\Checkbox', 'processGroup'];
       }
     }
+
+    $form['view']['exposed_widgets'] = $form['view']['view']['#view']->exposed_widgets;
+    $form['view']['exposed_widgets']['#weight'] = -1;
+
+    unset($form['view']['view']['#view']->exposed_widgets);
 
     $form['view']['view'] = [
       '#markup' => \Drupal::service('renderer')->render($form['view']['view']),
