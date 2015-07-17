@@ -37,6 +37,10 @@ function entity_browser_form_alter(&$form, FormStateInterface &$form_state) {
         $dummy_form['#info']['filter-' . $dummy_key]['value'] = $dummy_key;
       }
     }
+    $dummy_form['#id'] = '';
+    $dummy_form['#build_id'] = '';
+    $dummy_form['#array_parents'] = [];
+    $dummy_form['#tree'] = '';
     $dummy_form['#theme'] = $form['#theme'];
     $form = $dummy_form;
   }
