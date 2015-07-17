@@ -30,9 +30,11 @@ function entity_browser_form_alter(&$form, FormStateInterface &$form_state) {
   if ($form['#form_id'] == 'views_exposed_form' && $form_state->getStorage()['display']['display_plugin'] == 'entity_browser') {
     $dummy_form = array();
     foreach (Element::getVisibleChildren($form) as $key) {
-      $dummy_form['entity_browser_exposed_' . $key] = $form[$key];
+      $dummy_key = 'entity_browser_exposed_' . $key;
+      $dummy_form[$dummy_key] = $form[$key];
+      $dummy_form['#info']['filter-' . $dummy_key] = $form['#info']['filter-' . $key];
+      $dummy_form['#info']['filter-' . $dummy_key]['value'] = $dummy_key;
     }
-    $dummy_form['#info'] = $form['#info'];
     $dummy_form['#theme'] = $form['#theme'];
     $dummy_form['#theme_wrappers'] = $form['#theme_wrappers'];
     $form = $dummy_form;
