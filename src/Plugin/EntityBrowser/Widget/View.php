@@ -41,6 +41,8 @@ class View extends WidgetBase {
     // either of those is nonexistent or display not of correct type)?
     /** @var \Drupal\views\ViewExecutable $view */
 
+    $form['#attached']['library'] = ['entity_browser/view'];
+
     $view = $this->entityManager
       ->getStorage('view')
       ->load($this->configuration['view'])
@@ -95,8 +97,6 @@ class View extends WidgetBase {
       }
     }
 
-    $form['view']['exposed_widgets'] = $form['view']['view']['#view']->exposed_widgets;
-    $form['view']['exposed_widgets']['#weight'] = -1;
     $form['filter'] = [
       'submit' => [
         '#type' => 'button',
@@ -105,14 +105,23 @@ class View extends WidgetBase {
       ],
     ];
 
-    // Add exposed filter default values, if present
+    // Add exposed widgets from the view, if present
+    if (!empty($form['view']['view']['#view']->exposed_widgets)) {
+      $form['view']['exposed_widgets'] = $form['view']['view']['#view']->exposed_widgets;
+      $form['view']['exposed_widgets']['#weight'] = -1;
+      unset($form['view']['view']['#view']->exposed_widgets);
+    }
+    // Hide the filter button from view
+    else {
+      $form['filter']['submit']['#attributes']['class'][] = 'visually-hidden';
+    }
+
+    // Add exposed filter default values from the form state
     foreach ($form_state->getUserInput() as $name => $value) {
       if (strpos($name, 'entity_browser_exposed_') === 0) {
         $form['view']['exposed_widgets'][$name]['#value'] = $value;
       }
     }
-
-    unset($form['view']['view']['#view']->exposed_widgets);
 
     $form['view']['view'] = [
       '#markup' => \Drupal::service('renderer')->render($form['view']['view']),
