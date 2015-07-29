@@ -16,10 +16,20 @@ entity_reference:
   version: VERSION
   js:
     js/entity_browser.entity_reference.js: {}
-    
+
 modal:
   version: VERSION
   js:
     js/entity_browser.modal.js: {}
+  dependencies:
+    - core/drupalSettings
+
+tabs:
+  version: VERSION
+  css:
+    component:
+      css/entity_browser.tabs.css: {}
+  js:
+    js/entity_browser.tabs.js: {}
   dependencies:
     - core/drupalSettings

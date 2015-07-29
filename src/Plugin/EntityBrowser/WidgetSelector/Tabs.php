@@ -30,6 +30,7 @@ class Tabs extends WidgetSelectorBase {
       $name = 'tab_selector_' . $id;
       $element[$name] = array(
         '#type' => 'button',
+        '#attributes' => ['class' => ['tab']],
         '#value' => $label,
         '#disabled' => $id == $this->getDefaultWidget(),
         '#executes_submit_callback' => TRUE,
