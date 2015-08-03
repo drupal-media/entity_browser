@@ -136,7 +136,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
               'height' => $this->configuration['height'],
             )
           ),
-          'data-accepts' => "application/vnd.drupal-modal",
+          'data-dialog-type' => 'modal',
           'data-original-path' => $original_path,
         ],
         '#attached' => [
