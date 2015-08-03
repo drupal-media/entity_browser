@@ -33,3 +33,9 @@ tabs:
     js/entity_browser.tabs.js: {}
   dependencies:
     - core/drupalSettings
+
+view:
+  version: VERSION
+  js:
+    js/entity_browser.view.js: {}
+  dependencies:

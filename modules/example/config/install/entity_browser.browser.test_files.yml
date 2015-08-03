@@ -15,7 +15,7 @@ display_configuration:
   link_text: 'Select entities'
 selection_display: no_display
 selection_display_configuration: {  }
-widget_selector: drop_down
+widget_selector: tabs
 widget_selector_configuration: {  }
 widgets:
   a4ad947c-9669-497c-9988-24351955a02f:

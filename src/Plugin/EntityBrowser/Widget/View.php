@@ -6,10 +6,11 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Widget;
 
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\entity_browser\WidgetBase;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Uses a view to provide entity listing in a browser's widget.
@@ -39,10 +40,21 @@ class View extends WidgetBase {
     // TODO - do we need better error handling for view and view_display (in case
     // either of those is nonexistent or display not of correct type)?
     /** @var \Drupal\views\ViewExecutable $view */
+
+    $form['#attached']['library'] = ['entity_browser/view'];
+
     $view = $this->entityManager
       ->getStorage('view')
       ->load($this->configuration['view'])
       ->getExecutable();
+
+    // Add exposed filter values, if present
+    foreach ($form_state->getUserInput() as $name => $value) {
+      if (strpos($name, 'entity_browser_exposed_') === 0) {
+        $name = str_replace('entity_browser_exposed_', '', $name);
+        $view->exposed_data[$name] = $value;
+      }
+    }
 
     if (!empty($this->configuration['arguments'])) {
       if (!empty($aditional_widget_parameters['path_parts'])) {
@@ -82,6 +94,32 @@ class View extends WidgetBase {
         $form['view']['entity_browser_select'][$child]['#process'][] = ['\Drupal\entity_browser\Plugin\EntityBrowser\Widget\View', 'processCheckbox'];
         $form['view']['entity_browser_select'][$child]['#process'][] = ['\Drupal\Core\Render\Element\Checkbox', 'processAjaxForm'];
         $form['view']['entity_browser_select'][$child]['#process'][] = ['\Drupal\Core\Render\Element\Checkbox', 'processGroup'];
+      }
+    }
+
+    $form['filter'] = [
+      'submit' => [
+        '#type' => 'button',
+        '#value' => t('Filter'),
+        '#name' => 'filter',
+      ],
+    ];
+
+    // Add exposed widgets from the view, if present
+    if (!empty($form['view']['view']['#view']->exposed_widgets)) {
+      $form['view']['exposed_widgets'] = $form['view']['view']['#view']->exposed_widgets;
+      $form['view']['exposed_widgets']['#weight'] = -1;
+      unset($form['view']['view']['#view']->exposed_widgets);
+    }
+    // Hide the filter button from view
+    else {
+      $form['filter']['submit']['#attributes']['class'][] = 'visually-hidden';
+    }
+
+    // Add exposed filter default values from the form state
+    foreach ($form_state->getUserInput() as $name => $value) {
+      if (strpos($name, 'entity_browser_exposed_') === 0) {
+        $form['view']['exposed_widgets'][$name]['#value'] = $value;
       }
     }
 

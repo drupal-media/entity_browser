@@ -30,6 +30,7 @@ class EntityBrowserForm extends EntityForm {
   public function buildForm(array $form, FormStateInterface $form_state) {
     /** @var \Drupal\entity_browser\EntityBrowserInterface $entity_browser */
     $entity_browser = $this->entity;
+
     $form['selected_entities'] = array(
       '#type' => 'value',
       '#value' => array_map(function(EntityInterface $item) {return $item->id();}, $entity_browser->getSelectedEntities()),

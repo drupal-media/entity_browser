@@ -35,6 +35,8 @@ class EntityBrowser extends DisplayPluginBase {
     return $render;
   }
 
+
+
   /**
    * {@inheritdoc}.
    */
