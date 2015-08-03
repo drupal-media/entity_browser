@@ -105,22 +105,23 @@ class View extends WidgetBase {
       ],
     ];
 
-    // Add exposed widgets from the view, if present
+    // Add exposed widgets from the view, if present.
     if (!empty($form['view']['view']['#view']->exposed_widgets)) {
       $form['view']['exposed_widgets'] = $form['view']['view']['#view']->exposed_widgets;
       $form['view']['exposed_widgets']['#weight'] = -1;
       unset($form['view']['view']['#view']->exposed_widgets);
-    }
-    // Hide the filter button from view
-    else {
-      $form['filter']['submit']['#attributes']['class'][] = 'visually-hidden';
-    }
 
-    // Add exposed filter default values from the form state
-    foreach ($form_state->getUserInput() as $name => $value) {
-      if (strpos($name, 'entity_browser_exposed_') === 0) {
-        $form['view']['exposed_widgets'][$name]['#value'] = $value;
+      // Add exposed filter default values from the form state
+      foreach ($form_state->getUserInput() as $name => $value) {
+        if (strpos($name, 'entity_browser_exposed_') === 0) {
+          $form['view']['exposed_widgets'][$name]['#value'] = $value;
+        }
       }
+    }
+    // Hide the filter button from view.
+    else {
+      // We are using this for pagers too so let's keep it in form.
+      $form['filter']['submit']['#attributes']['class'][] = 'visually-hidden';
     }
 
     $form['view']['view'] = [
