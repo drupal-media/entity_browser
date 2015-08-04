@@ -8,6 +8,7 @@
 namespace Drupal\entity_browser\Plugin\Field\FieldWidget;
 
 use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -209,8 +210,8 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     );
 
     $ids = [];
-    if ($form_state->isRebuilding()) {
-      if ($value = $form_state->getValue([$this->fieldDefinition->getName(), 'target_id'])) {
+    if (($trigger = $form_state->getTriggeringElement()) && !empty($trigger['#ajax']['event']) && $trigger['#ajax']['event'] == 'entity_browser_value_updated' && in_array($this->fieldDefinition->getName(), $trigger['#parents'])) {
+      if ($value = $form_state->getValue($trigger['#parents'])) {
         $ids = explode(' ', $value);
       }
     }
@@ -297,7 +298,8 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
    * AJAX form callback for hidden value updated event.
    */
   public function selectEntitiesCallback(array &$form, FormStateInterface $form_state) {
-    return $form[$this->fieldDefinition->getName()];
+    $parents = array_splice($form_state->getTriggeringElement()['#array_parents'], 0, -2);
+    return NestedArray::getValue($form, $parents);
   }
 
 }
