@@ -35,6 +35,8 @@ class DropDown extends WidgetSelectorBase {
       '#default_value' => $this->getDefaultWidget(),
       '#executes_submit_callback' => TRUE,
       '#limit_validation_errors' => array(array('widget')),
+      // #limit_validation_errors only takes effect if #submit is present.
+      '#submit' => array(),
       '#ajax' => array(
         'callback' => array($this, 'changeWidgetCallback'),
         'wrapper' => 'entity-browser-form',

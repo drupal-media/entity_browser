@@ -35,6 +35,8 @@ class Tabs extends WidgetSelectorBase {
         '#disabled' => $id == $this->getDefaultWidget(),
         '#executes_submit_callback' => TRUE,
         '#limit_validation_errors' => array(array($id)),
+        // #limit_validation_errors only takes effect if #submit is present.
+        '#submit' => array(),
         '#name' => $name,
         '#widget_id' => $id,
       );
