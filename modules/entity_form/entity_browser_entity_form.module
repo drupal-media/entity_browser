@@ -105,7 +105,7 @@ function entity_browser_entity_form_reference_form_validate(&$reference_form, Fo
  * Adds the specified entity to the IEF form state.
  *
  * TODO see if we can get away without overriding entire IEF function.
- * 
+ *
  * @see inline_entity_form_reference_form_submit()
  *
  * @param $reference_form

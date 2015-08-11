@@ -23,7 +23,6 @@
    * Reacts on entities being selected via entity form.
    */
   Drupal.entityBrowserEntityForm.valuesUpdated = function() {
-    console.log($(this).parent().find('.ief-entity-submit'));
     $(this).parent().find('.ief-entity-submit').trigger('entities-selected');
   };
 
