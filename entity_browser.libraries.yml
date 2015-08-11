@@ -1,9 +1,15 @@
+common:
+  version: VERSION
+  js:
+    js/entity_browser.common.js: {}
+
 iframe:
   version: VERSION
   js:
     js/entity_browser.iframe.js: {}
   dependencies:
     - core/drupalSettings
+    - entity_browser/common
 
 iframe_selection:
   version: VERSION
@@ -16,6 +22,8 @@ entity_reference:
   version: VERSION
   js:
     js/entity_browser.entity_reference.js: {}
+  dependencies:
+    - entity_browser/common
 
 modal:
   version: VERSION

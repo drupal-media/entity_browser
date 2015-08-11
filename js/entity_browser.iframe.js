@@ -35,23 +35,9 @@
       }
     );
 
-    // JS callbacks are registred as strings. We need to split their names and
-    // find actual functions.
-    // TODO - move to standalone function as other displays might need the same
-    // functionality
+    // Register callbacks.
     if (drupalSettings.entity_browser.iframe[uuid].js_callbacks || false) {
-      for (var i = 0; i < drupalSettings.entity_browser.iframe[uuid].js_callbacks.length; i++) {
-        var callback = drupalSettings.entity_browser.iframe[uuid].js_callbacks[i].split('.');
-        var fn = window;
-
-        for (var j = 0; j < callback.length; j++) {
-          fn = fn[callback[j]];
-        }
-
-        if (typeof fn === 'function') {
-          $(this).bind('entities-selected', fn);
-        }
-      }
+      Drupal.entityBrowser.registerJsCallbacks(this, drupalSettings.entity_browser.iframe[uuid].js_callbacks, 'entities-selected');
     }
 
     $(this).parent().append(iframe);

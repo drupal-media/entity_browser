@@ -290,7 +290,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
    */
   public function registerJSCallback(RegisterJSCallbacks $event) {
     if ($event->getBrowserID() == $this->getSetting('entity_browser')) {
-      $event->registerCallback('Drupal.entityBrowserEntityReference.selectionCompleted');
+      $event->registerCallback('Drupal.entityBrowser.selectionCompleted');
     }
   }
 
