@@ -166,6 +166,10 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
    * {@inheritdoc}
    */
   public function addAjax(array &$form) {
+    // Set a wrapper container to replace the form on ajax callback.
+    $form['#prefix'] = '<div id="entity-browser-form">';
+    $form['#suffix'] = '</div>';
+
     // Add the browser id to use in the FormAjaxController.
     $form['browser_id'] = array(
       '#type' => 'hidden',
@@ -174,7 +178,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
 
     $form['actions']['submit']['#ajax'] = array(
       'callback' => array($this, 'widgetAjaxCallback'),
-      'wrapper' =>  $this->configuration['entity_browser_id'],
+      'wrapper' =>  'entity-browser-form',
     );
   }
 
@@ -189,6 +193,11 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
    * @return \Drupal\Core\Ajax\AjaxResponse
    */
   public function widgetAjaxCallback(array &$form, FormStateInterface $form_state) {
+    // If we've got any validation error, print out the form again.
+    if ($form_state->hasAnyErrors()) {
+      return $form;
+    }
+
     $commands = $this->getAjaxCommands($form_state);
     $response = new AjaxResponse();
     foreach ($commands as $command) {
