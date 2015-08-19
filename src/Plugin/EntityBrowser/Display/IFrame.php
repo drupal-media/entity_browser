@@ -140,6 +140,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
                   'width' => $this->configuration['width'],
                   'height' => $this->configuration['height'],
                   'js_callbacks' => $event->getCallbacks(),
+                  'entity_browser_id' => $this->configuration['entity_browser_id'],
                 ],
               ],
             ],
