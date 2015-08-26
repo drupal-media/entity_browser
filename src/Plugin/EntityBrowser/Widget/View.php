@@ -97,7 +97,7 @@ class View extends WidgetBase {
       }
     }
 
-    $form['filter'] = [
+    $form['view']['exposed_widgets']['filter'] = [
       'submit' => [
         '#type' => 'button',
         '#value' => t('Filter'),
@@ -107,7 +107,7 @@ class View extends WidgetBase {
 
     // Add exposed widgets from the view, if present.
     if (!empty($form['view']['view']['#view']->exposed_widgets)) {
-      $form['view']['exposed_widgets'] = $form['view']['view']['#view']->exposed_widgets;
+      $form['view']['exposed_widgets'] += $form['view']['view']['#view']->exposed_widgets;
       $form['view']['exposed_widgets']['#weight'] = -1;
       unset($form['view']['view']['#view']->exposed_widgets);
 
@@ -121,7 +121,7 @@ class View extends WidgetBase {
     // Hide the filter button from view.
     else {
       // We are using this for pagers too so let's keep it in form.
-      $form['filter']['submit']['#attributes']['class'][] = 'visually-hidden';
+      $form['view']['exposed_widgets']['filter']['submit']['#attributes']['class'][] = 'visually-hidden';
     }
 
     $form['view']['view'] = [
