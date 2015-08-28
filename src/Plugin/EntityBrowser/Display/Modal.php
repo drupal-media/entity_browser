@@ -17,7 +17,7 @@ use Drupal\entity_browser\Events\Events;
 use Drupal\entity_browser\Events\RegisterJSCallbacks;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Drupal\Core\Path\CurrentPathStack;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\CloseDialogCommand;
 use Drupal\entity_browser\Ajax\SelectEntitiesCommand;
@@ -50,11 +50,11 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
   protected $uuid;
 
   /**
-   * Current request.
+   * Current path.
    *
-   * @var \Symfony\Component\HttpFoundation\Request
+   * @var \Drupal\Core\Path\CurrentPathStack
    */
-  protected $request;
+  protected $currentPath;
 
   /**
    * Constructs display plugin.
@@ -74,11 +74,11 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   Current request.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, RouteMatchInterface $current_route_match, UuidInterface $uuid, Request $request) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, RouteMatchInterface $current_route_match, UuidInterface $uuid, CurrentPathStack $current_path) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher);
     $this->currentRouteMatch = $current_route_match;
     $this->uuid = $uuid;
-    $this->request = $request;
+    $this->currentPath = $current_path;
   }
 
   /**
@@ -92,7 +92,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
       $container->get('event_dispatcher'),
       $container->get('current_route_match'),
       $container->get('uuid'),
-      $container->get('request_stack')->getCurrentRequest()
+      $container->get('path.current')
     );
   }
 
@@ -114,7 +114,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
     /** @var \Drupal\entity_browser\Events\RegisterJSCallbacks $event */
     $event = $this->eventDispatcher->dispatch(Events::REGISTER_JS_CALLBACKS, new RegisterJSCallbacks($this->configuration['entity_browser_id']));
     $uuid = $this->uuid->generate();
-    $original_path = $this->request->getPathInfo();
+    $original_path = $this->currentPath->getPath();
     return [
       '#theme_wrappers' => ['container'],
       'link' => [
