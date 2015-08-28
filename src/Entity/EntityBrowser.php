@@ -479,7 +479,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
           '_permission' => 'access ' . SafeMarkup::checkPlain($this->id()) . ' entity browser pages',
         ],
         [
-          '_admin_route' => TRUE,
+          '_admin_route' => \Drupal::config('node.settings')->get('use_admin_theme'),
         ]
       );
     }
