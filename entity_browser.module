@@ -15,11 +15,16 @@ use \Drupal\Core\Render\Element;
  */
 function entity_browser_theme() {
   return [
-    'html__entity_browser__iframe' => array(
+    'html__entity_browser__iframe' => [
       'template' => 'html--entity-browser--iframe',
       'render element' => 'html',
       'preprocess functions' => ['template_preprocess_html']
-    ),
+    ],
+    'page__entity_browser__iframe' => [
+      'template' => 'page--entity-browser--iframe',
+      'render element' => 'html',
+      'preprocess functions' => ['template_preprocess_page']
+    ],
   ];
 }
 
