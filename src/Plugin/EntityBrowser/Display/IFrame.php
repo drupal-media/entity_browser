@@ -20,6 +20,7 @@ use Drupal\Core\Path\CurrentPathStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Presents entity browser in an iFrame.
@@ -55,6 +56,13 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
   protected $currentPath;
 
   /**
+   * Current request.
+   *
+   * @var \Symfony\Component\HttpFoundation\Request
+   */
+  protected $request;
+
+  /**
    * Constructs display plugin.
    *
    * @param array $configuration
@@ -72,10 +80,11 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
    * @param \Drupal\Core\Path\CurrentPathStack $current_path
    *   The current path.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, RouteMatchInterface $current_route_match, UuidInterface $uuid, CurrentPathStack $current_path) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, RouteMatchInterface $current_route_match, UuidInterface $uuid, Request $request, CurrentPathStack $current_path) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher);
     $this->currentRouteMatch = $current_route_match;
     $this->uuid = $uuid;
+    $this->request = $request;
     $this->currentPath = $current_path;
   }
 
@@ -90,6 +99,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
       $container->get('event_dispatcher'),
       $container->get('current_route_match'),
       $container->get('uuid'),
+      $container->get('request_stack')->getCurrentRequest(),
       $container->get('path.current')
     );
   }
