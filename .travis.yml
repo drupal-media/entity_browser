@@ -111,7 +111,7 @@ before_script:
   - drupal-ti before_script
 
 script:
-  - drupal-ti --include .drupal_ti/phpcs.sh
+  - drupal-ti --include .travis-phpcs.sh
   - drupal-ti script
 
 after_script:
