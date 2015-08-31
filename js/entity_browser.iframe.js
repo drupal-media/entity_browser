@@ -13,6 +13,12 @@
   Drupal.behaviors.entityBrowserIFrame = {
     attach: function (context) {
       $(context).find('.entity-browser-handle.entity-browser-iframe').once('iframe-click').on('click', Drupal.entityBrowserIFrame.linkClick);
+      $(context).find('.entity-browser-handle.entity-browser-iframe').once('iframe-auto-open').each(function() {
+        var uuid = $(this).attr('data-uuid');
+        if (drupalSettings.entity_browser.iframe[uuid].auto_open) {
+          $(this).click();
+        }
+      });
     }
   };
 

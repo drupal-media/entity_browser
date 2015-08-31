@@ -112,6 +112,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
       'width' => 650,
       'height' => 500,
       'link_text' => t('Select entities'),
+      'auto_open' => FALSE,
     ) + parent::defaultConfiguration();
   }
 
@@ -151,6 +152,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
                   'height' => $this->configuration['height'],
                   'js_callbacks' => $event->getCallbacks(),
                   'entity_browser_id' => $this->configuration['entity_browser_id'],
+                  'auto_open' => $this->configuration['auto_open'],
                 ],
               ],
             ],
