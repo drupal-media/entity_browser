@@ -71,6 +71,11 @@ function entity_browser_entity_form_reference_register_js(\Drupal\entity_browser
  *   The form state of the parent form.
  */
 function entity_browser_entity_form_reference_form_validate(&$reference_form, FormStateInterface $form_state) {
+  $triggering_element = $form_state->getTriggeringElement();
+  if (strpos($triggering_element['#name'], 'ief-reference-submit') === FALSE) {
+    return;
+  }
+
   $ief_id = $reference_form['#ief_id'];
   $entity_type = $reference_form['#entity_type'];
   $parents_path = implode('][', $reference_form['#parents']);
@@ -137,4 +142,15 @@ function entity_browser_entity_form_reference_form_submit($reference_form, FormS
     $weight++;
   }
   $form_state->set(['inline_entity_form', $ief_id, 'entities'], $entities);
+
+  // In some rare cases entity_id keeps values of selected entities which then
+  // causes problems in subsequent selections. Let's make sure it is empty and
+  // ready for next usage of entity browser.
+  $form_state->setValueForElement($reference_form['entity_id'], '');
+
+  // Statement above should be enough in normal cases, but with IEF we have two
+  // form states. If we don't remove submitted values from unprocessed array
+  // Drupal still sets #value in some cases. Let's prevent that.
+  $input = &$form_state->getUserInput();
+  NestedArray::unsetValue($input, array_merge($reference_form['#parents'], ['entity_id']));
 }
