@@ -8,7 +8,6 @@
 namespace Drupal\entity_browser\Tests;
 
 use Drupal\Component\Plugin\Exception\PluginException;
-use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Core\Entity\EntityMalformedException;
 use Drupal\Core\Form\FormState;
@@ -17,7 +16,7 @@ use Drupal\entity_browser\EntityBrowserInterface;
 use Drupal\entity_browser\WidgetInterface;
 use Drupal\entity_browser\WidgetSelectorInterface;
 use Drupal\entity_browser\SelectionDisplayInterface;
-use Drupal\simpletest\KernelTestBase;
+use Drupal\KernelTests\KernelTestBase;
 
 /**
  * Tests the entity_browser config entity.
@@ -115,7 +114,7 @@ class EntityBrowserTest extends KernelTestBase {
         $this->fail('An entity browser without required ' . $plugin_type . ' created with no exception thrown.');
       }
       catch (PluginException $e) {
-        $this->assertEqual('The "" plugin does not exist.', $e->getMessage(), 'An exception was thrown when an entity_browser was created without a ' . $plugin_type . ' plugin.');
+        $this->assertEquals('The "" plugin does not exist.', $e->getMessage(), 'An exception was thrown when an entity_browser was created without a ' . $plugin_type . ' plugin.');
       }
     }
 
@@ -128,7 +127,7 @@ class EntityBrowserTest extends KernelTestBase {
       $this->fail('An entity browser without required name created with no exception thrown.');
     }
     catch (EntityMalformedException $e) {
-      $this->assertEqual('The entity does not have an ID.', $e->getMessage(), 'An exception was thrown when an entity_browser was created without a name.');
+      $this->assertEquals('The entity does not have an ID.', $e->getMessage(), 'An exception was thrown when an entity_browser was created without a name.');
     }
 
     // Create an entity_browser with required values.
@@ -170,7 +169,7 @@ class EntityBrowserTest extends KernelTestBase {
       ],
     ];
 
-    $this->assertEqual($actual_properties, $expected_properties, 'Actual config properties are structured as expected.');
+    $this->assertEquals($actual_properties, $expected_properties, 'Actual config properties are structured as expected.');
   }
 
   /**
@@ -183,20 +182,20 @@ class EntityBrowserTest extends KernelTestBase {
     $this->assertTrue($entity instanceof EntityBrowserInterface, 'The loaded entity is an entity browser.');
 
     // Verify several properties of the entity browser.
-    $this->assertEqual($entity->label(), 'Testing entity browser instance');
+    $this->assertEquals($entity->label(), 'Testing entity browser instance');
     $this->assertTrue($entity->uuid());
     $plugin = $entity->getDisplay();
     $this->assertTrue($plugin instanceof DisplayInterface, 'Testing display plugin.');
-    $this->assertEqual($plugin->getPluginId(), 'standalone');
+    $this->assertEquals($plugin->getPluginId(), 'standalone');
     $plugin = $entity->getSelectionDisplay();
     $this->assertTrue($plugin instanceof SelectionDisplayInterface, 'Testing selection display plugin.');
-    $this->assertEqual($plugin->getPluginId(), 'no_display');
+    $this->assertEquals($plugin->getPluginId(), 'no_display');
     $plugin = $entity->getWidgetSelector();
     $this->assertTrue($plugin instanceof WidgetSelectorInterface, 'Testing widget selector plugin.');
-    $this->assertEqual($plugin->getPluginId(), 'single');
+    $this->assertEquals($plugin->getPluginId(), 'single');
     $plugin = $entity->getWidget($this->widgetUUID);
     $this->assertTrue($plugin instanceof WidgetInterface, 'Testing widget plugin.');
-    $this->assertEqual($plugin->getPluginId(), 'view');
+    $this->assertEquals($plugin->getPluginId(), 'view');
   }
 
   /**
@@ -230,25 +229,25 @@ class EntityBrowserTest extends KernelTestBase {
     $entity = $this->controller->load('test');
     $route = $entity->route();
 
-    $this->assertEqual($route->getPath(), '/entity-browser/test', 'Dynamic path matches.');
-    $this->assertEqual($route->getDefault('entity_browser_id'), $entity->id(), 'Entity browser ID matches.');
-    $this->assertEqual($route->getDefault('_controller'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
-    $this->assertEqual($route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\StandalonePage::title', 'Title callback matches.');
-    $this->assertEqual($route->getRequirement('_permission'), 'access ' . SafeMarkup::checkPlain($entity->id()) . ' entity browser pages', 'Permission matches.');
+    $this->assertEquals($route->getPath(), '/entity-browser/test', 'Dynamic path matches.');
+    $this->assertEquals($route->getDefault('entity_browser_id'), $entity->id(), 'Entity browser ID matches.');
+    $this->assertEquals($route->getDefault('_controller'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
+    $this->assertEquals($route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\StandalonePage::title', 'Title callback matches.');
+    $this->assertEquals($route->getRequirement('_permission'), 'access ' . $entity->id() . ' entity browser pages', 'Permission matches.');
 
     try {
       $registered_route = $this->routeProvider->getRouteByName('entity_browser.' . $entity->id());
     }
     catch (\Exception $e) {
-      $this->assert('fail', t('Expected route not found: @message', array('@message' => $e->getMessage())));
+      $this->fail(t('Expected route not found: @message', array('@message' => $e->getMessage())));
       return;
     }
 
-    $this->assertEqual($registered_route->getPath(), '/entity-browser/test', 'Dynamic path matches.');
-    $this->assertEqual($registered_route->getDefault('entity_browser_id'), $entity->id(), 'Entity browser ID matches.');
-    $this->assertEqual($registered_route->getDefault('_controller'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
-    $this->assertEqual($registered_route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\StandalonePage::title', 'Title callback matches.');
-    $this->assertEqual($registered_route->getRequirement('_permission'), 'access ' . SafeMarkup::checkPlain($entity->id()) . ' entity browser pages', 'Permission matches.');
+    $this->assertEquals($registered_route->getPath(), '/entity-browser/test', 'Dynamic path matches.');
+    $this->assertEquals($registered_route->getDefault('entity_browser_id'), $entity->id(), 'Entity browser ID matches.');
+    $this->assertEquals($registered_route->getDefault('_controller'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
+    $this->assertEquals($registered_route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\StandalonePage::title', 'Title callback matches.');
+    $this->assertEquals($registered_route->getRequirement('_permission'), 'access ' . $entity->id() . ' entity browser pages', 'Permission matches.');
   }
 
   /**
@@ -261,14 +260,14 @@ class EntityBrowserTest extends KernelTestBase {
     /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
     $entity = $this->controller->load('test');
 
-    $expected_permission_name = 'access ' . SafeMarkup::checkPlain($entity->id()) . ' entity browser pages';
+    $expected_permission_name = 'access ' . $entity->id() . ' entity browser pages';
     $expected_permission = array(
       'title' => $this->container->get('string_translation')->translate('Access @name pages', array('@name' => $entity->label())),
       'description' => $this->container->get('string_translation')->translate('Access pages that %browser uses to operate.', array('%browser' => $entity->label())),
       'provider' => 'entity_browser',
     );
 
-    $this->assertIdentical($permissions[$expected_permission_name], $expected_permission, 'Dynamically generated permission found.');
+    $this->assertSame($permissions[$expected_permission_name], $expected_permission, 'Dynamically generated permission found.');
   }
 
   /**
@@ -282,14 +281,16 @@ class EntityBrowserTest extends KernelTestBase {
 
     $form_state = new FormState();
 
+    /** @var \Drupal\entity_browser\WidgetInterface $widget */
     $widget = $entity->getWidgets()->get($entity->getCurrentWidget($form_state));
-    $this->assertEqual($widget->label(), 'View widget nr. 1', 'First widget is active.');
+    $this->assertEquals($widget->label(), 'View widget nr. 1', 'First widget is active.');
 
     // Change weight and expect second widget to become first.
     $widget->setWeight(3);
     $entity->resetWidgets($form_state);
+    /** @var \Drupal\entity_browser\WidgetInterface $new_widget */
     $new_widget = $entity->getWidgets()->get($entity->getCurrentWidget($form_state));
-    $this->assertEqual($new_widget->label(), 'View widget nr. 2', 'Second widget is active after changing widgets');
+    $this->assertEquals($new_widget->label(), 'View widget nr. 2', 'Second widget is active after changing widgets');
   }
 
   /**
@@ -305,6 +306,7 @@ class EntityBrowserTest extends KernelTestBase {
     $entity = $this->controller->load('dummy_widget');
     $entity->getWidgets()->get($entity->getCurrentWidget($form_state))->entity = $entity;
 
+    /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
     $form_object = $this->container->get('entity.manager')->getFormObject($entity->getEntityTypeId(), 'default');
     $form_object->setEntity($entity);
     $form_state = (new FormState())->setFormState(array());
@@ -314,7 +316,7 @@ class EntityBrowserTest extends KernelTestBase {
 
     // Event should be dispatched from widget and added to list of selected entities.
     $selected_entities = $entity->getSelectedEntities();
-    $this->assertEqual($selected_entities, [$entity], 'Expected selected entities detected.');
+    $this->assertEquals($selected_entities, [$entity], 'Expected selected entities detected.');
   }
 
 }
