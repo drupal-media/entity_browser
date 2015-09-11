@@ -32,16 +32,16 @@
 <!DOCTYPE html>
 <html{{ html_attributes }}>
 <head>
-    {{ head }}
+    <head-placeholder token="{{ placeholder_token|raw }}">
     <title>{{ head_title|safe_join(' | ') }}</title>
-    {{ styles }}
-    {{ scripts }}
+    <css-placeholder token="{{ placeholder_token|raw }}">
+    <js-placeholder token="{{ placeholder_token|raw }}">
 </head>
 <body{{ attributes }}>
 <a href="#main-content" class="visually-hidden focusable">
     {{ 'Skip to main content'|t }}
 </a>
-{{ page }}
-{{ scripts_bottom }}
+  {{ page }}
+  <js-bottom-placeholder token="{{ placeholder_token|raw }}">
 </body>
 </html>
