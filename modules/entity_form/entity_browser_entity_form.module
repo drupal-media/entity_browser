@@ -46,6 +46,9 @@ function entity_browser_entity_form_inline_entity_form_reference_form_alter(&$re
       // multi-value cases.
       $reference_form['#element_validate'][0] = 'entity_browser_entity_form_reference_form_validate';
       $reference_form['#ief_element_submit'][0] = 'entity_browser_entity_form_reference_form_submit';
+
+      // Add cardinality for this widget so that we can handle it later.
+      $reference_form['#attached']['drupalSettings']['entity_browser']['field_settings'][$display->getUuid()]['cardinality'] = $instance->getFieldStorageDefinition()->getCardinality();
     }
   }
 }

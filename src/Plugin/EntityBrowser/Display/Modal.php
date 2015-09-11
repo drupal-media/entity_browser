@@ -47,7 +47,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
    *
    * @var \Drupal\Component\Uuid\UuidInterface
    */
-  protected $uuid;
+  protected $uuidGenerator;
 
   /**
    * Current path.
@@ -55,6 +55,13 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
    * @var \Drupal\Core\Path\CurrentPathStack
    */
   protected $currentPath;
+
+  /**
+   * UIID string.
+   *
+   * @var string
+   */
+  protected $uuid = NULL;
 
   /**
    * Constructs display plugin.
@@ -77,7 +84,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, RouteMatchInterface $current_route_match, UuidInterface $uuid, CurrentPathStack $current_path) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher);
     $this->currentRouteMatch = $current_route_match;
-    $this->uuid = $uuid;
+    $this->uuidGenerator = $uuid;
     $this->currentPath = $current_path;
   }
 
@@ -113,7 +120,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
   public function displayEntityBrowser() {
     /** @var \Drupal\entity_browser\Events\RegisterJSCallbacks $event */
     $event = $this->eventDispatcher->dispatch(Events::REGISTER_JS_CALLBACKS, new RegisterJSCallbacks($this->configuration['entity_browser_id']));
-    $uuid = $this->uuid->generate();
+    $uuid = $this->getUuid();
     $original_path = $this->currentPath->getPath();
     return [
       '#theme_wrappers' => ['container'],
@@ -226,6 +233,16 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
    */
   public function path() {
     return '/entity-browser/modal/' . $this->configuration['entity_browser_id'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getUuid() {
+    if (empty($this->uuid)) {
+      $this->uuid = $this->uuidGenerator->generate();
+    }
+    return $this->uuid;
   }
 
   public function __sleep() {

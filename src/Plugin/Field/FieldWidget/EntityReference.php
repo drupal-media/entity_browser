@@ -224,6 +224,8 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
 
     $hidden_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName() . '-target-id');
     $details_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName());
+    /** @var \Drupal\entity_browser\EntityBrowserInterface $entity_browser */
+    $entity_browser = $this->entityManager->getStorage('entity_browser')->load($this->getSetting('entity_browser'));
 
     $element += [
       '#id' => $details_id,
@@ -243,8 +245,19 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
           'event' => 'entity_browser_value_updated',
         ],
       ],
-      'entity_browser' => $this->entityManager->getStorage('entity_browser')->load($this->getSetting('entity_browser'))->getDisplay()->displayEntityBrowser(),
-      '#attached' => ['library' => ['entity_browser/entity_reference']],
+      'entity_browser' => $entity_browser->getDisplay()->displayEntityBrowser(),
+      '#attached' => [
+        'library' => ['entity_browser/entity_reference'],
+        'drupalSettings' => [
+          'entity_browser' => [
+            'field_settings' => [
+              $entity_browser->getDisplay()->getUuid() => [
+                'cardinality' => $this->fieldDefinition->getFieldStorageDefinition()->getCardinality(),
+              ],
+            ],
+          ],
+        ],
+      ],
       'current' => [
         '#theme' => 'item_list',
         '#items' => array_map(

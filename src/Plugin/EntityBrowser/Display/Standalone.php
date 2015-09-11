@@ -42,4 +42,11 @@ class Standalone extends DisplayBase implements DisplayRouterInterface {
     return $this->configuration['path'];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getUuid() {
+    return '';
+  }
+
 }
