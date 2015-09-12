@@ -133,7 +133,6 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       '#type' => 'select',
       '#default_value' => $this->getSetting('field_widget_display'),
       '#options' => $displays,
-      '#validate' => [[$this, 'submitFieldWidgetDisplay']],
       '#ajax' => [
         'callback' => array($this, 'updateSettingsAjax'),
         'wrapper' => $id,
