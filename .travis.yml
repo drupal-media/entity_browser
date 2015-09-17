@@ -21,9 +21,6 @@ php:
 
 matrix:
   fast_finish: true
-  allow_failures:
-    - php: 7
-    - php: hhvm
 
 branches:
   only:
@@ -86,9 +83,10 @@ env:
   matrix:
     # [[[ SELECT ANY OR MORE OPTIONS ]]]
     #- DRUPAL_TI_RUNNERS="phpunit"
-    - DRUPAL_TI_RUNNERS="simpletest"
+    #- DRUPAL_TI_RUNNERS="simpletest"
     #- DRUPAL_TI_RUNNERS="behat"
     #- DRUPAL_TI_RUNNERS="phpunit simpletest behat"
+    - DRUPAL_TI_RUNNERS="phpunit-core"
 
 mysql:
   database: drupal_travis_db
@@ -112,7 +110,7 @@ before_script:
 
 script:
   - drupal-ti --include .travis-phpcs.sh
-  - drupal-ti script
+  - export SIMPLETEST_DB=mysql://root:@127.0.0.1/drupal_travis_db; drupal-ti script
 
 after_script:
   - drupal-ti after_script

@@ -2,11 +2,12 @@
 
 /**
  * @file
- * Contains \Drupal\entity_browser\Tests\EntityBrowserTest.
+ * Contains \Drupal\entity_browser\Kernel\Extension\EntityBrowserTest.
  */
 
-namespace Drupal\entity_browser\Tests;
+namespace Drupal\entity_browser\Kernel\Extension;
 
+use Drupal\Component\FileCache\FileCacheFactory;
 use Drupal\Component\Plugin\Exception\PluginException;
 use Drupal\Core\Config\Entity\ConfigEntityStorage;
 use Drupal\Core\Entity\EntityMalformedException;
@@ -57,6 +58,7 @@ class EntityBrowserTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected function setUp() {
+    FileCacheFactory::setPrefix($this->randomString(4));
     parent::setUp();
 
     $this->controller = $this->container->get('entity.manager')->getStorage('entity_browser');
@@ -220,8 +222,8 @@ class EntityBrowserTest extends KernelTestBase {
   /**
    * Tests dynamic routes.
    */
-  protected function testDynamicRoutes() {
-    $this->installConfig(array('entity_browser_test'));
+  public function testDynamicRoutes() {
+    $this->installConfig(['entity_browser_test']);
     $this->installSchema('system', 'router');
     $this->container->get('router.builder')->rebuild();
 
@@ -253,19 +255,19 @@ class EntityBrowserTest extends KernelTestBase {
   /**
    * Tests dynamically generated permissions.
    */
-  protected function testDynamicPermissions() {
-    $this->installConfig(array('entity_browser_test'));
+  public function testDynamicPermissions() {
+    $this->installConfig(['entity_browser_test']);
     $permissions = $this->container->get('user.permissions')->getPermissions();
 
     /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
     $entity = $this->controller->load('test');
 
     $expected_permission_name = 'access ' . $entity->id() . ' entity browser pages';
-    $expected_permission = array(
-      'title' => $this->container->get('string_translation')->translate('Access @name pages', array('@name' => $entity->label())),
-      'description' => $this->container->get('string_translation')->translate('Access pages that %browser uses to operate.', array('%browser' => $entity->label())),
+    $expected_permission = [
+      'title' => $this->container->get('string_translation')->translate('Access @name pages', ['@name' => $entity->label()]),
+      'description' => $this->container->get('string_translation')->translate('Access pages that %browser uses to operate.', ['%browser' => $entity->label()]),
       'provider' => 'entity_browser',
-    );
+    ];
 
     $this->assertSame($permissions[$expected_permission_name], $expected_permission, 'Dynamically generated permission found.');
   }
@@ -273,8 +275,8 @@ class EntityBrowserTest extends KernelTestBase {
   /**
    * Tests default widget selector.
    */
-  protected function testDefaultWidget() {
-    $this->installConfig(array('entity_browser_test'));
+  public function testDefaultWidget() {
+    $this->installConfig(['entity_browser_test']);
 
     /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
     $entity = $this->controller->load('test');
@@ -296,11 +298,10 @@ class EntityBrowserTest extends KernelTestBase {
   /**
    * Test selected event dispatch.
    */
-  protected function testSelectedEvent() {
-    $this->installConfig(array('entity_browser_test'));
+  public function testSelectedEvent() {
+    $this->installConfig(['entity_browser_test']);
 
     $form_state = new FormState();
-    $form = [];
 
     /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
     $entity = $this->controller->load('dummy_widget');
@@ -309,7 +310,7 @@ class EntityBrowserTest extends KernelTestBase {
     /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
     $form_object = $this->container->get('entity.manager')->getFormObject($entity->getEntityTypeId(), 'default');
     $form_object->setEntity($entity);
-    $form_state = (new FormState())->setFormState(array());
+    $form_state = (new FormState())->setFormState([]);
 
     \Drupal::formBuilder()->buildForm($form_object, $form_state);
     \Drupal::formBuilder()->submitForm($form_object, $form_state);
