@@ -36,11 +36,15 @@ function entity_browser_form_alter(&$form, FormStateInterface &$form_state) {
     // Exposed form is not a "real" form when used in context of entitity browser.
     // Let's just display form elements.
     $dummy_form = array();
-    foreach (Element::getVisibleChildren($form) as $key) {
-      if ($key !== 'actions') {
-        $dummy_key = 'entity_browser_exposed_' . $key;
-        $dummy_form[$dummy_key] = $form[$key];
-        $dummy_form['#info']['filter-' . $dummy_key] = $form['#info']['filter-' . $key];
+    /** @var \Drupal\views\ViewExecutable $view */
+    $view = $form_state->get('view');
+    /** @var \Drupal\views\Plugin\views\filter\FilterPluginBase $filter */
+    foreach ($view->filter as $filter) {
+      if ($filter->isExposed()) {
+        $exposed = $filter->exposedInfo();
+        $dummy_key = 'entity_browser_exposed_' . $exposed['value'];
+        $dummy_form[$dummy_key] = $form[$exposed['value']];
+        $dummy_form['#info']['filter-' . $dummy_key] = $form['#info']['filter-' . $filter->field];
         $dummy_form['#info']['filter-' . $dummy_key]['value'] = $dummy_key;
       }
     }
