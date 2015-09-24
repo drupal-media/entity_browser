@@ -2,6 +2,8 @@ common:
   version: VERSION
   js:
     js/entity_browser.common.js: {}
+  dependencies:
+    - core/underscore
 
 iframe:
   version: VERSION
