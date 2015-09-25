@@ -47,4 +47,11 @@ interface DisplayInterface extends PluginInspectionInterface, ConfigurablePlugin
    */
   public function selectionCompleted(array $entities);
 
+  /**
+   * Gets the uuid for this display.
+   *
+   * @return string
+   *   The uuid string.
+   */
+  public function getUuid();
 }

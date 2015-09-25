@@ -20,11 +20,46 @@
    *   Array of selected entities.
    */
   Drupal.entityBrowser.selectionCompleted = function(event, uuid, entities) {
+    var added_entities_array = $.map(entities, function(item) {return item[0]});
+    // @todo Use uuid here. But for this to work we need to move eb uuid
+    // generation from display to eb directly. When we do this, we can change
+    // \Drupal\entity_browser\Plugin\Field\FieldWidget\EntityReference::formElement
+    // also.
+    var cardinality = parseInt(drupalSettings['entity_browser']['field_settings'][uuid]['cardinality']);
+
+    // Having more elements than cardinality should never happen, because
+    // server side authentication should prevent it, but we handle it here
+    // anyway.
+    if (cardinality != -1 && added_entities_array.length > cardinality) {
+      added_entities_array.splice(0, added_entities_array.length - cardinality);
+    }
+
     // Update value form element with new entity IDs.
-    var entity_ids = $(this).parent().parent().find('input[type*=hidden]').val().split(" ");
-    var selected_entity_ids = $.map(entities, function(item) {return item[0]});
-    var entity_ids = _.union(entity_ids, selected_entity_ids);
-    $(this).parent().parent().find('input[type*=hidden]').val(entity_ids.join(" "));
+    var entity_ids = $(this).parent().parent().find('input[type*=hidden]').val();
+    if (entity_ids.length != 0) {
+      var existing_entities_array = entity_ids.split(' ');
+
+      // We always trim the oldest elements and add the new ones.
+      if (cardinality == -1 || existing_entities_array.length + added_entities_array.length <= cardinality) {
+        existing_entities_array = _.union(existing_entities_array, added_entities_array);
+      }
+      else {
+        if (added_entities_array.length >= cardinality) {
+          existing_entities_array = added_entities_array;
+        }
+        else {
+          existing_entities_array.splice(0, added_entities_array.length);
+          existing_entities_array = _.union(existing_entities_array, added_entities_array);
+        }
+      }
+
+      entity_ids = existing_entities_array.join(' ');
+    }
+    else {
+      entity_ids = added_entities_array.join(' ');
+    }
+
+    $(this).parent().parent().find('input[type*=hidden]').val(entity_ids);
     $(this).parent().parent().find('input[type*=hidden]').trigger('entity_browser_value_updated');
   };
 

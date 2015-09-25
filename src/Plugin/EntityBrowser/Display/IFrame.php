@@ -46,7 +46,14 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
    *
    * @var \Drupal\Component\Uuid\UuidInterface
    */
-  protected $uuid;
+  protected $uuidGenerator;
+
+  /**
+   * UIID string.
+   *
+   * @var string
+   */
+  protected $uuid = NULL;
 
   /**
    * Current path.
@@ -83,7 +90,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, RouteMatchInterface $current_route_match, UuidInterface $uuid, Request $request, CurrentPathStack $current_path) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher);
     $this->currentRouteMatch = $current_route_match;
-    $this->uuid = $uuid;
+    $this->uuidGenerator = $uuid;
     $this->request = $request;
     $this->currentPath = $current_path;
   }
@@ -122,7 +129,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
   public function displayEntityBrowser() {
     /** @var \Drupal\entity_browser\Events\RegisterJSCallbacks $event */
     $event = $this->eventDispatcher->dispatch(Events::REGISTER_JS_CALLBACKS, new RegisterJSCallbacks($this->configuration['entity_browser_id']));
-    $uuid = $this->uuid->generate();
+    $uuid = $this->getUuid();
     $original_path = $this->currentPath->getPath();
     return [
       '#theme_wrappers' => ['container'],
@@ -196,6 +203,16 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
     ];
 
     $event->setResponse(new Response(\Drupal::service('bare_html_page_renderer')->renderBarePage($render, 'Entity browser', 'entity_browser_propagation')));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getUuid() {
+    if (empty($this->uuid)) {
+      $this->uuid = $this->uuidGenerator->generate();
+    }
+    return $this->uuid;
   }
 
   /**
