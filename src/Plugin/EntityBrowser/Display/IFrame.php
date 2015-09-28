@@ -202,7 +202,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
       ],
     ];
 
-    $event->setResponse(new Response(\Drupal::service('bare_html_page_renderer')->renderBarePage($render, 'Entity browser', 'entity_browser_propagation')));
+    $event->setResponse(new Response(\Drupal::service('bare_html_page_renderer')->renderBarePage($render, 'Entity browser', 'page')));
   }
 
   /**
