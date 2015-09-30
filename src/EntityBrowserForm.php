@@ -49,6 +49,9 @@ class EntityBrowserForm extends EntityForm {
       'submit' => [
         '#type' => 'submit',
         '#value' => t('Select'),
+        '#attributes' => array(
+          'class' => array('is-entity-browser-submit'),
+        ),
       ],
     ];
 
