@@ -55,13 +55,6 @@ class EntityBrowserForm extends EntityForm {
       ],
     ];
 
-    $form['#attached'] = [
-      'library' =>
-        [
-          'entity_browser/tabs',
-        ]
-    ];
-
     $form[$form['#browser_parts']['selection_display']] = $entity_browser->getSelectionDisplay()->getForm($form, $form_state);
 
     if ($entity_browser->getDisplay() instanceOf DisplayAjaxInterface) {
