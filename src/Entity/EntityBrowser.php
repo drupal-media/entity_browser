@@ -216,12 +216,12 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    *   store their configuration.
    */
   public function getPluginCollections() {
-    return array(
+    return [
       'widgets' => $this->getWidgets(),
       'widget_selector_configuration' => $this->widgetSelectorPluginCollection(),
       'display_configuration' => $this->displayPluginCollection(),
       'selection_display_configuration' => $this->selectionDisplayPluginCollection(),
-    );
+    ];
   }
 
   /**
@@ -443,12 +443,8 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
           '_title_callback' => 'Drupal\entity_browser\Controllers\StandalonePage::title',
           'entity_browser_id' => $this->id(),
         ],
-        [
-          '_permission' => 'access ' . $this->id() . ' entity browser pages',
-        ],
-        [
-          '_admin_route' => \Drupal::config('node.settings')->get('use_admin_theme'),
-        ]
+        ['_permission' => 'access ' . $this->id() . ' entity browser pages'],
+        ['_admin_route' => \Drupal::config('node.settings')->get('use_admin_theme')]
       );
     }
 

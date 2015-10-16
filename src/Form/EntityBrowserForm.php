@@ -38,16 +38,16 @@ class EntityBrowserForm extends EntityForm {
     /** @var \Drupal\entity_browser\EntityBrowserInterface $entity_browser */
     $entity_browser = $this->entity;
 
-    $form['selected_entities'] = array(
+    $form['selected_entities'] = [
       '#type' => 'value',
       '#value' => array_map(function(EntityInterface $item) {return $item->id();}, $entity_browser->getSelectedEntities()),
-    );
+    ];
 
-    $form['#browser_parts'] = array(
+    $form['#browser_parts'] = [
       'widget_selector' => 'widget_selector',
       'widget' => 'widget',
       'selection_display' => 'selection_display',
-    );
+    ];
     $entity_browser->getWidgetSelector()->setDefaultWidget($this->getCurrentWidget($form_state));
     $form[$form['#browser_parts']['widget_selector']] = $entity_browser->getWidgetSelector()->getForm($form, $form_state);
     $form[$form['#browser_parts']['widget']] = $entity_browser->getWidgets()->get($this->getCurrentWidget($form_state))->getForm($form, $form_state, $entity_browser->getAdditionalWidgetParameters());
@@ -56,9 +56,9 @@ class EntityBrowserForm extends EntityForm {
       'submit' => [
         '#type' => 'submit',
         '#value' => t('Select'),
-        '#attributes' => array(
-          'class' => array('is-entity-browser-submit'),
-        ),
+        '#attributes' => [
+          'class' => ['is-entity-browser-submit'],
+        ],
       ],
     ];
 
