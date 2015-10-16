@@ -42,6 +42,8 @@ class Tabs extends WidgetSelectorBase {
       );
     }
 
+    $element['#attached'] = ['library' => ['entity_browser/tabs']];
+
     return $element;
   }
 
