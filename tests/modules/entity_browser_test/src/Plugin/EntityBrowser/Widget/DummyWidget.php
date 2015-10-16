@@ -30,8 +30,15 @@ class DummyWidget extends WidgetBase {
   /**
    * {@inheritdoc}
    */
+  public function defaultConfiguration() {
+    return ['text' => ''] + parent::defaultConfiguration();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getForm(array &$original_form, FormStateInterface $form_state, array $aditional_widget_parameters) {
-    return array();
+    return ['#markup' => $this->configuration['text']];
   }
 
   /**

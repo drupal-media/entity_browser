@@ -83,14 +83,12 @@ interface EntityBrowserInterface extends ConfigEntityInterface {
   public function deleteWidget(WidgetInterface $widget);
 
   /**
-   * Resets widgets on the entity browser.
+   * Gets first widget based on weights.
    *
-   * Used when widgets configurations change, such as changing weights.
-   *
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
+   * @return string
+   *   First widget instance ID.
    */
-  public function resetWidgets(FormStateInterface $form_state);
+  public function getFirstWidget();
 
   /**
    * Adds paramterers that will be passed to the widget.
@@ -149,27 +147,6 @@ interface EntityBrowserInterface extends ConfigEntityInterface {
    *   Entities to be added to the list of currently selected entities.
    */
   public function addSelectedEntities(array $entities);
-
-  /**
-   * Returns the widget that is currently selected.
-   *
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   *
-   * @return string
-   *   ID of currently selected widget.
-   */
-  public function getCurrentWidget(FormStateInterface $form_state);
-
-  /**
-   * Sets widget that is currently active.
-   *
-   * @param string $widget
-   *   New active widget UUID.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Form state.
-   */
-  public function setCurrentWidget($widget, FormStateInterface $form_state);
 
   /**
    * Gets route that matches this display.

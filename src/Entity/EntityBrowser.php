@@ -10,7 +10,6 @@ namespace Drupal\entity_browser\Entity;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\DefaultSingleLazyPluginCollection;
 use Drupal\entity_browser\EntityBrowserInterface;
 use Drupal\entity_browser\Events\EntitySelectionEvent;
@@ -30,7 +29,7 @@ use Symfony\Component\Routing\Route;
  *   label = @Translation("Entity browser"),
  *   handlers = {
  *     "form" = {
- *       "default" = "Drupal\entity_browser\EntityBrowserForm"
+ *       "default" = "Drupal\entity_browser\Form\EntityBrowserForm"
  *     }
  *   },
  *   admin_permission = "administer entity browsers",
@@ -267,29 +266,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   /**
    * {@inheritdoc}
    */
-  public function getCurrentWidget(FormStateInterface $form_state) {
-    // Do not use has() as that returns TRUE if the value is NULL.
-    if (!$form_state->get('entity_browser_current_widget')) {
-      $form_state->set('entity_browser_current_widget', $this->getFirstWidget());
-    }
-
-    return $form_state->get('entity_browser_current_widget');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setCurrentWidget($widget, FormStateInterface $form_state) {
-    $form_state->set('entity_browser_current_widget', $widget);
-  }
-
-  /**
-   * Gets first widget based on weights.
-   *
-   * @return string
-   *   First widget instance ID.
-   */
-  protected function getFirstWidget() {
+  public function getFirstWidget() {
     $instance_ids = $this->getWidgets()->getInstanceIds();
     return reset($instance_ids);
   }
@@ -297,16 +274,8 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   /**
    * {@inheritdoc}
    */
-  public function resetWidgets(FormStateInterface $form_state) {
-    $form_state->set('entity_browser_current_widget', NULL);
-    $this->getWidgets()->sort();
-    $this->widgetSelectorCollection = NULL;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function addAdditionalWidgetParameters(array $parameters) {
+    // TODO - this doesn't make much sense. Refactor.
     $this->additional_widget_parameters += $parameters;
     return $this;
   }
@@ -315,6 +284,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function getAdditionalWidgetParameters() {
+    // TODO - this doesn't make much sense. Refactor.
     return $this->get('additional_widget_parameters');
   }
 

@@ -31,7 +31,7 @@ class EntityBrowserTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = array('system', 'user', 'entity_browser', 'entity_browser_test');
+  public static $modules = ['system', 'user', 'entity_browser', 'entity_browser_test'];
 
   /**
    * The entity browser storage.
@@ -283,18 +283,23 @@ class EntityBrowserTest extends KernelTestBase {
     /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
     $entity = $this->controller->load('test');
 
+    /** @var \Drupal\entity_browser\Form\EntityBrowserFormInterface $form_object */
+    $form_object = $this->container->get('entity.manager')->getFormObject($entity->getEntityTypeId(), 'default');
+    $form_object->setEntity($entity);
     $form_state = new FormState();
 
-    /** @var \Drupal\entity_browser\WidgetInterface $widget */
-    $widget = $entity->getWidgets()->get($entity->getCurrentWidget($form_state));
-    $this->assertEquals($widget->label(), 'View widget nr. 1', 'First widget is active.');
+    $form = [];
+    $form = $form_object->buildForm($form, $form_state);
+    $this->assertEquals($form['widget']['#markup'], 'Number one', 'First widget is active.');
 
     // Change weight and expect second widget to become first.
-    $widget->setWeight(3);
-    $entity->resetWidgets($form_state);
-    /** @var \Drupal\entity_browser\WidgetInterface $new_widget */
-    $new_widget = $entity->getWidgets()->get($entity->getCurrentWidget($form_state));
-    $this->assertEquals($new_widget->label(), 'View widget nr. 2', 'Second widget is active after changing widgets');
+    $entity->getWidget($entity->getFirstWidget())->setWeight(3);
+    $form_state->set('entity_browser_current_widget', NULL);
+    $entity->getWidgets()->sort();
+
+    $form = [];
+    $form = $form_object->buildForm($form, $form_state);
+    $this->assertEquals($form['widget']['#markup'], 'Number two', 'Second widget is active after changing widgets.');
   }
 
   /**
@@ -303,19 +308,18 @@ class EntityBrowserTest extends KernelTestBase {
   public function testSelectedEvent() {
     $this->installConfig(['entity_browser_test']);
 
-    $form_state = new FormState();
-
     /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
     $entity = $this->controller->load('dummy_widget');
-    $entity->getWidgets()->get($entity->getCurrentWidget($form_state))->entity = $entity;
 
     /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
     $form_object = $this->container->get('entity.manager')->getFormObject($entity->getEntityTypeId(), 'default');
     $form_object->setEntity($entity);
-    $form_state = (new FormState())->setFormState([]);
 
-    \Drupal::formBuilder()->buildForm($form_object, $form_state);
-    \Drupal::formBuilder()->submitForm($form_object, $form_state);
+    $form_state = new FormState();
+    $entity->getWidgets()->get($entity->getFirstWidget())->entity = $entity;
+
+    $this->container->get('form_builder')->buildForm($form_object, $form_state);
+    $this->container->get('form_builder')->submitForm($form_object, $form_state);
 
     // Event should be dispatched from widget and added to list of selected entities.
     $selected_entities = $entity->getSelectedEntities();
