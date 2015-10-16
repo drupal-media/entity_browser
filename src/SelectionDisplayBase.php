@@ -42,13 +42,6 @@ abstract class SelectionDisplayBase extends PluginBase implements SelectionDispl
   protected $entityManager;
 
   /**
-   * Currently selected entities.
-   *
-   * @var \Drupal\Core\Entity\EntityInterface[]
-   */
-  protected $selectedEntities = [];
-
-  /**
    * Constructs widget plugin.
    *
    * @param array $configuration
@@ -127,17 +120,16 @@ abstract class SelectionDisplayBase extends PluginBase implements SelectionDispl
   public function submit(array &$form, FormStateInterface $form_state) {}
 
   /**
-   * Marks selection as done (dispatches event).
+   * Marks selection as done - sets value in form state and dispatches event.
    */
-  protected function selectionDone() {
-    $this->eventDispatcher->dispatch(Events::DONE, new SelectionDoneEvent($this->configuration['entity_browser_id']));
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setSelectedEntities(array $entities) {
-    $this->selectedEntities = $entities;
+  protected function selectionDone(FormStateInterface $form_state) {
+    $form_state->set(['entity_browser', 'selection_completed'], TRUE);
+    $this->eventDispatcher->dispatch(
+      Events::DONE,
+      new SelectionDoneEvent(
+        $this->configuration['entity_browser_id'],
+        $form_state->get(['entity_browser', 'instance_uuid'])
+      ));
   }
 
 }

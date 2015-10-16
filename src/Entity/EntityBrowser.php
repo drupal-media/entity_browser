@@ -29,7 +29,7 @@ use Symfony\Component\Routing\Route;
  *   label = @Translation("Entity browser"),
  *   handlers = {
  *     "form" = {
- *       "default" = "Drupal\entity_browser\Form\EntityBrowserForm"
+ *       "entity_browser" = "Drupal\entity_browser\Form\EntityBrowserForm"
  *     }
  *   },
  *   admin_permission = "administer entity browsers",
@@ -143,20 +143,6 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * @var \Drupal\Core\Plugin\DefaultSingleLazyPluginCollection
    */
   protected $widgetSelectorCollection;
-
-  /**
-   * Currently selected entities.
-   *
-   * @var \Drupal\Core\Entity\EntityInterface[]
-   */
-  protected $selectedEntities = [];
-
-  /**
-   * Indicates selection is done.
-   *
-   * @var bool
-   */
-  protected $selectionCompleted = FALSE;
 
   /**
    * Additional widget parameters.
@@ -337,99 +323,6 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   /**
    * {@inheritdoc}
    */
-  public function getSelectedEntities() {
-    return $this->selectedEntities;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setSelectedEntities(array $entities) {
-    $this->selectedEntities = $entities;
-    $this->getSelectionDisplay()->setSelectedEntities($this->selectedEntities);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function addSelectedEntities(array $entities) {
-    $this->selectedEntities = array_merge($this->selectedEntities, $entities);
-    $this->getSelectionDisplay()->setSelectedEntities($this->selectedEntities);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function postCreate(EntityStorageInterface $storage) {
-    parent::postCreate($storage);
-    $this->subscribeEvents(\Drupal::service('event_dispatcher'));
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function postLoad(EntityStorageInterface $storage, array &$entities) {
-    parent::postLoad($storage, $entities);
-    $event_dispatcher = \Drupal::service('event_dispatcher');
-    /** @var \Drupal\entity_browser\Entity\EntityBrowser $browser */
-    foreach ($entities as $browser) {
-      $browser->subscribeEvents($event_dispatcher);
-    }
-  }
-
-  /**
-   * Subscribes entity browser to events if needed.
-   *
-   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
-   */
-  public function subscribeEvents(EventDispatcherInterface $event_dispatcher) {
-    // When entity browser gets unserialized we end up with two instances of the
-    // class and we must be sure only unserialized one is subscribed to events.
-    foreach ([Events::SELECTED, Events::DONE] as $event) {
-      $existing = $event_dispatcher->getListeners($event);
-      foreach ($existing as $listener) {
-        if (count($listener) == 2 && $listener[0] instanceof EntityBrowserInterface && $listener[0]->id() == $this->id()) {
-          $event_dispatcher->removeListener($event, $listener);
-        }
-      }
-    }
-
-    $event_dispatcher->addListener(Events::SELECTED, [$this, 'onSelected']);
-    $event_dispatcher->addListener(Events::DONE, [$this, 'selectionCompleted']);
-  }
-
-  /**
-   * Responds to SELECTED event.
-   *
-   * @param \Drupal\entity_browser\Events\EntitySelectionEvent $event
-   */
-  public function onSelected(EntitySelectionEvent $event) {
-    if ($event->getBrowserID() == $this->id()) {
-      $this->addSelectedEntities($event->getEntities());
-    }
-  }
-
-  /**
-   * Responds to DONE event.
-   *
-   * @param \Drupal\entity_browser\Events\SelectionDoneEvent $event
-   */
-  public function selectionCompleted(SelectionDoneEvent $event) {
-    if ($event->getBrowserID() == $this->id()) {
-      $this->selectionCompleted = TRUE;
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isSelectionCompleted() {
-    return $this->selectionCompleted;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function route() {
     // TODO: Allow displays to define more than just path.
     // See: https://www.drupal.org/node/2364193
@@ -478,15 +371,6 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     $this->display_configuration = $this->widgetSelectorPluginCollection()->getConfiguration();
     $this->selection_display_configuration = $this->selectionDisplayPluginCollection()->getConfiguration();
 
-    // For selected entites only store entity type and id.
-    $this->_selected_entities = [];
-    foreach ($this->selectedEntities as $entity) {
-      $this->_selected_entities[] = [
-        'type' => $entity->getEntityTypeId(),
-        'id' => $entity->id(),
-      ];
-    }
-
     return array_diff(
       array_keys(get_object_vars($this)),
       [
@@ -498,18 +382,4 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
       ]
     );
   }
-
-  /**
-   * Re-register event listeners and load selected entities.
-   */
-  public function __wakeup() {
-    $this->subscribeEvents(\Drupal::service('event_dispatcher'));
-
-    $this->selectedEntities = [];
-    foreach ($this->_selected_entities as $entity) {
-      $this->selectedEntities[] = \Drupal::entityManager()->getStorage($entity['type'])->load($entity['id']);
-    }
-    $this->getSelectionDisplay()->setSelectedEntities($this->selectedEntities);
-  }
-
 }

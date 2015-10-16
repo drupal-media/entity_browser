@@ -59,12 +59,4 @@ interface SelectionDisplayInterface extends PluginInspectionInterface, Configura
    */
   public function submit(array &$form, FormStateInterface $form_state);
 
-  /**
-   * Sets currently selected entities.
-   *
-   * @param array $entities
-   *   Entities that are currently selected.
-   */
-  public function setSelectedEntities(array $entities);
-
 }

@@ -31,7 +31,7 @@ class NoDisplay extends SelectionDisplayBase {
    * {@inheritdoc}
    */
   public function submit(array &$form, FormStateInterface $form_state) {
-    $this->selectionDone();
+    $this->selectionDone($form_state);
   }
 
 }

@@ -154,7 +154,7 @@ class View extends WidgetBase {
       $entities[] = $this->entityManager->getStorage($ids[$row]['type'])->load($ids[$row]['id']);
     }
 
-    $this->selectEntities($entities);
+    $this->selectEntities($entities, $form_state);
   }
 
 }

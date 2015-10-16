@@ -24,9 +24,13 @@ class EntitySelectionEvent extends EventBase {
    *
    * @param string $entity_browser_id
    *   Entity browser ID.
+   * @param string $instance_uuid
+   *   Entity browser instance UUID.
+   * @param \Drupal\Core\Entity\EntityInterface[] $entites
+   *   Array of selected entities.
    */
-  public function __construct($entity_browser_id, array $entities) {
-    parent::__construct($entity_browser_id);
+  public function __construct($entity_browser_id, $instance_uuid, array $entities) {
+    parent::__construct($entity_browser_id, $instance_uuid);
     $this->entities = $entities;
   }
 

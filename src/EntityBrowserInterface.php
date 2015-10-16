@@ -125,43 +125,11 @@ interface EntityBrowserInterface extends ConfigEntityInterface {
   public function getWidgetSelector();
 
   /**
-   * Returns currently selected entities.
-   *
-   * @return array
-   *   Array of currently selected entities.
-   */
-  public function getSelectedEntities();
-
-  /**
-   * Sets currently selected entities.
-   *
-   * @param array $entities
-   *   Entities that are currently selected.
-   */
-  public function setSelectedEntities(array $entities);
-
-  /**
-   * Adds entities to currently selected entities.
-   *
-   * @param array $entities
-   *   Entities to be added to the list of currently selected entities.
-   */
-  public function addSelectedEntities(array $entities);
-
-  /**
    * Gets route that matches this display.
    *
    * @return \Symfony\Component\Routing\Route|bool
    *   Route object or FALSE if no route is used.
    */
   public function route();
-
-  /**
-   * Indicates selection is done.
-   *
-   * @return bool
-   *   Indicates selection is done.
-   */
-  public function isSelectionCompleted();
 
 }

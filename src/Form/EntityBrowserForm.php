@@ -34,14 +34,21 @@ class EntityBrowserForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  protected function init(FormStateInterface $form_state) {
+    parent::init($form_state);
+    $form_state->set(['entity_browser', 'instance_uuid'], \Drupal::service('uuid')->generate());
+    $form_state->set(['entity_browser', 'selected_entities'], []);
+    $form_state->set(['entity_browser', 'selection_completed'], FALSE);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function form(array $form, FormStateInterface $form_state) {
+    parent::form($form, $form_state);
+
     /** @var \Drupal\entity_browser\EntityBrowserInterface $entity_browser */
     $entity_browser = $this->entity;
-
-    $form['selected_entities'] = [
-      '#type' => 'value',
-      '#value' => array_map(function(EntityInterface $item) {return $item->id();}, $entity_browser->getSelectedEntities()),
-    ];
 
     $form['#browser_parts'] = [
       'widget_selector' => 'widget_selector',
@@ -99,14 +106,11 @@ class EntityBrowserForm extends EntityForm {
       $entity_browser->getSelectionDisplay()->submit($form, $form_state);
     }
 
-    // Save the selected entities to the form state.
-    $form_state->set('selected_entities', $entity_browser->getSelectedEntities());
-
-    if (!$entity_browser->isSelectionCompleted()) {
+    if (!$this->isSelectionCompleted($form_state)) {
       $form_state->setRebuild();
     }
     else {
-      $entity_browser->getDisplay()->selectionCompleted($entity_browser->getSelectedEntities());
+      $entity_browser->getDisplay()->selectionCompleted($this->getSelectedEntities($form_state));
     }
   }
 
@@ -138,6 +142,26 @@ class EntityBrowserForm extends EntityForm {
    */
   protected function setCurrentWidget($widget, FormStateInterface $form_state) {
     $form_state->set('entity_browser_current_widget', $widget);
+  }
+
+  /**
+   * Indicates selection is done.
+   *
+   * @return bool
+   *   Indicates selection is done.
+   */
+  protected function isSelectionCompleted(FormStateInterface $form_state) {
+    return (bool) $form_state->get(['entity_browser', 'selection_completed']);
+  }
+
+  /**
+   * Returns currently selected entities.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface
+   *   Array of currently selected entities.
+   */
+  protected function getSelectedEntities(FormStateInterface $form_state) {
+    return $form_state->get(['entity_browser', 'selected_entities']);
   }
 
 }

@@ -191,7 +191,16 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    * @param array $entities
    *   Array of entities.
    */
-  protected function selectEntities(array $entities) {
-    $this->eventDispatcher->dispatch(Events::SELECTED, new EntitySelectionEvent($this->configuration['entity_browser_id'], $entities));
+  protected function selectEntities(array $entities, FormStateInterface $form_state) {
+    $selected_entities = &$form_state->get(['entity_browser', 'selected_entities']);
+    $selected_entities = array_merge($selected_entities, $entities);
+
+    $this->eventDispatcher->dispatch(
+      Events::SELECTED,
+      new EntitySelectionEvent(
+        $this->configuration['entity_browser_id'],
+        $form_state->get(['entity_browser', 'instance_uuid']),
+        $entities
+      ));
   }
 }

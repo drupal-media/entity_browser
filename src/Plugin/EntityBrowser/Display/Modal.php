@@ -220,7 +220,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
    * @return array
    */
   public function getAjaxCommands(FormStateInterface $form_state) {
-    $entities = array_map(function (EntityInterface $item) {return [$item->id(), $item->uuid(), $item->getEntityTypeId()];}, $form_state->get('selected_entities'));
+    $entities = array_map(function (EntityInterface $item) {return [$item->id(), $item->uuid(), $item->getEntityTypeId()];}, $form_state->get(['entity_browser', 'selected_entities']));
     $commands = array();
     $commands[] = new SelectEntitiesCommand($this->uuid, $entities);
     $commands[] = new CloseDialogCommand();

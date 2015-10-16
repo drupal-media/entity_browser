@@ -45,7 +45,7 @@ class DummyWidget extends WidgetBase {
    * {@inheritdoc}
    */
   public function submit(array &$element, array &$form, FormStateInterface $form_state) {
-    $this->selectEntities([$this->entity]);
+    $this->selectEntities([$this->entity], $form_state);
   }
 
 }

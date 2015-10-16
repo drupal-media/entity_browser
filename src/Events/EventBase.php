@@ -22,13 +22,23 @@ class EventBase extends Event {
   protected $entityBrowserID;
 
   /**
+   * Entity browser instance UUID.
+   *
+   * @var string
+   */
+  protected $instanceUUID;
+
+  /**
    * Constructs a EntitySelectionEvent object.
    *
    * @param string $entity_browser_id
    *   Entity browser ID.
+   * @param string $instance_uuid
+   *   Entity browser instance UUID.
    */
-  public function __construct($entity_browser_id) {
+  public function __construct($entity_browser_id, $instance_uuid) {
     $this->entityBrowserID = $entity_browser_id;
+    $this->instanceUUID = $instance_uuid;
   }
 
   /**
@@ -39,6 +49,16 @@ class EventBase extends Event {
    */
   public function getBrowserID() {
     return $this->entityBrowserID;
+  }
+
+  /**
+   * Gets the entity browser instance UUID:
+   *
+   * @return string
+   *   Entity browser instance UUID.
+   */
+  public function getBrowserInstanceUUID() {
+    return $this->instanceUUID;
   }
 
 }

@@ -78,7 +78,7 @@ class StandalonePage extends ControllerBase {
       $browser->addAdditionalWidgetParameters(['path_parts' => explode('/', $original_path)]);
     }
 
-    return $this->entityFormBuilder()->getForm($browser, 'default');
+    return $this->entityFormBuilder()->getForm($browser, 'entity_browser');
   }
 
   /**

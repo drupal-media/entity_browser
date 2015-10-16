@@ -69,7 +69,7 @@ class View extends SelectionDisplayBase {
    */
   public function submit(array &$form, FormStateInterface $form_state) {
     if ($form_state->getTriggeringElement()['#name'] == 'use_selected') {
-      $this->selectionDone();
+      $this->selectionDone($form_state);
     }
   }
 

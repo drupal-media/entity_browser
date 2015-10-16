@@ -62,7 +62,7 @@ class Upload extends WidgetBase {
    */
   public function submit(array &$element, array &$form, FormStateInterface $form_state) {
     $files = $this->extractFiles($form_state);
-    $this->selectEntities($files);
+    $this->selectEntities($files, $form_state);
     $this->clearFormValues($element, $form_state);
   }
 

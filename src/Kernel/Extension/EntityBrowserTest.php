@@ -284,7 +284,7 @@ class EntityBrowserTest extends KernelTestBase {
     $entity = $this->controller->load('test');
 
     /** @var \Drupal\entity_browser\Form\EntityBrowserFormInterface $form_object */
-    $form_object = $this->container->get('entity.manager')->getFormObject($entity->getEntityTypeId(), 'default');
+    $form_object = $this->container->get('entity.manager')->getFormObject($entity->getEntityTypeId(), 'entity_browser');
     $form_object->setEntity($entity);
     $form_state = new FormState();
 
@@ -312,7 +312,7 @@ class EntityBrowserTest extends KernelTestBase {
     $entity = $this->controller->load('dummy_widget');
 
     /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
-    $form_object = $this->container->get('entity.manager')->getFormObject($entity->getEntityTypeId(), 'default');
+    $form_object = $this->container->get('entity.manager')->getFormObject($entity->getEntityTypeId(), 'entity_browser');
     $form_object->setEntity($entity);
 
     $form_state = new FormState();
@@ -322,7 +322,7 @@ class EntityBrowserTest extends KernelTestBase {
     $this->container->get('form_builder')->submitForm($form_object, $form_state);
 
     // Event should be dispatched from widget and added to list of selected entities.
-    $selected_entities = $entity->getSelectedEntities();
+    $selected_entities = $form_state->get(['entity_browser', 'selected_entities']);
     $this->assertEquals($selected_entities, [$entity], 'Expected selected entities detected.');
   }
 
