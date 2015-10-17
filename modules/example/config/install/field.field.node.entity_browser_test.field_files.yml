@@ -23,7 +23,7 @@ default_value_callback: ''
 settings:
   handler: default
   handler_settings:
-    target_bundles: {  }
+    target_bundles: null
     sort:
       field: _none
 third_party_settings: {  }
