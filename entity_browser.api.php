@@ -58,7 +58,7 @@ function hook_entity_browser_widget_selector_info_alter(&$widgets) {
  *   name.
  */
 function hook_entity_browser_field_widget_display_info_alter(&$field_displays) {
-  $displays['rendered_entity']['label'] = t('Entity render system FTW');
+  $field_displays['rendered_entity']['label'] = t('Entity render system FTW');
 }
 
 /**

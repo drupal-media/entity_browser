@@ -283,7 +283,7 @@ class EntityBrowserTest extends KernelTestBase {
     /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
     $entity = $this->controller->load('test');
 
-    /** @var \Drupal\entity_browser\Form\EntityBrowserFormInterface $form_object */
+    /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
     $form_object = $this->container->get('entity.manager')->getFormObject($entity->getEntityTypeId(), 'entity_browser');
     $form_object->setEntity($entity);
     $form_state = new FormState();

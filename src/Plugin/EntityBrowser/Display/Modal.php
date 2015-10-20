@@ -78,8 +78,6 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
    *   The currently active route match object.
    * @param \Drupal\Component\Uuid\UuidInterface
    *   UUID generator interface.
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   *   Current request.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, RouteMatchInterface $current_route_match, UuidInterface $uuid, CurrentPathStack $current_path) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher);
@@ -220,7 +218,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
    * @return array
    */
   public function getAjaxCommands(FormStateInterface $form_state) {
-    $entities = array_map(function (EntityInterface $item) {return [$item->id(), $item->uuid(), $item->getEntityTypeId()];}, $form_state->get(['entity_browser', 'selected_entities']));
+    $entities = array_map(function(EntityInterface $item) {return [$item->id(), $item->uuid(), $item->getEntityTypeId()];}, $form_state->get(['entity_browser', 'selected_entities']));
     $commands = array();
     $commands[] = new SelectEntitiesCommand($this->uuid, $entities);
     $commands[] = new CloseDialogCommand();

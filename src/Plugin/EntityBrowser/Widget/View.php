@@ -37,6 +37,7 @@ class View extends WidgetBase {
    * {@inheritdoc}
    */
   public function getForm(array &$original_form, FormStateInterface $form_state, array $aditional_widget_parameters) {
+    $form = [];
     // TODO - do we need better error handling for view and view_display (in case
     // either of those is nonexistent or display not of correct type)?
     /** @var \Drupal\views\ViewExecutable $view */

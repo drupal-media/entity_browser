@@ -35,6 +35,8 @@ class View extends SelectionDisplayBase {
    * {@inheritdoc}
    */
   public function getForm(array &$original_form, FormStateInterface $form_state) {
+    $form = [];
+
     // TODO - do we need better error handling for view and view_display (in case
     // either of those is nonexistent or display not of correct type)?
     $storage = &$form_state->getStorage();
