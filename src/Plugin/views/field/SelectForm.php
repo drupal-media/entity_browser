@@ -10,6 +10,7 @@ namespace Drupal\entity_browser\Plugin\views\field;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\Plugin\views\style\Table;
 use Drupal\views\ResultRow;
+use Drupal\views\Render\ViewsRenderPipelineMarkup;
 
 /**
  * Defines a bulk operation form element that works with entity browser.
@@ -22,7 +23,7 @@ class SelectForm extends FieldPluginBase {
    * {@inheritdoc}
    */
   public function render(ResultRow $values) {
-    return '<!--form-item-' . $this->options['id'] . '--' . $values->index . '-->';
+    return ViewsRenderPipelineMarkup::create('<!--form-item-' . $this->options['id'] . '--' . $values->index . '-->');
   }
 
   /**
