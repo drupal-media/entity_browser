@@ -117,7 +117,8 @@ class Modal extends DisplayBase implements DisplayRouterInterface, DisplayAjaxIn
    */
   public function displayEntityBrowser() {
     /** @var \Drupal\entity_browser\Events\RegisterJSCallbacks $event */
-    $event = $this->eventDispatcher->dispatch(Events::REGISTER_JS_CALLBACKS, new RegisterJSCallbacks($this->configuration['entity_browser_id']));
+    $callback_event = new RegisterJSCallbacks($this->configuration['entity_browser_id'], $this->configuration['instance_uuid']);
+    $event = $this->eventDispatcher->dispatch(Events::REGISTER_JS_CALLBACKS, $callback_event);
     $uuid = $this->getUuid();
     $original_path = $this->currentPath->getPath();
     return [
