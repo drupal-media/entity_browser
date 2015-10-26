@@ -92,6 +92,14 @@ class EntityBrowserForm extends EntityForm {
   /**
    * {@inheritdoc}
    */
+  public function save(array $form, FormStateInterface $form_state) {
+    // Override our parent save method and do not touch the Entity Browser entity.
+    return;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     /** @var \Drupal\entity_browser\EntityBrowserInterface $entity_browser */
     $entity_browser = $this->entity;
