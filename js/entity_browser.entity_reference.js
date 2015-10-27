@@ -12,7 +12,7 @@
    */
   Drupal.behaviors.entityBrowserEntityReference = {
     attach: function (context) {
-      $(context).find('.field-widget-entity-browser-entity-reference').each(function () {
+      $(context).find('.field--widget-entity-browser-entity-reference').each(function () {
         $(this).find('.entities-list').sortable({
           stop: Drupal.entityBrowserEntityReference.entitiesReordered
         });
@@ -31,7 +31,7 @@
    *   Object with detailed information about the sort event.
    */
   Drupal.entityBrowserEntityReference.entitiesReordered = function(event, ui) {
-    var items = $(this).find('li');
+    var items = $(this).find('.item-container');
     var ids = [];
     for (var i = 0; i < items.length; i++) {
       ids[i] = $(items[i]).attr('data-entity-id');
