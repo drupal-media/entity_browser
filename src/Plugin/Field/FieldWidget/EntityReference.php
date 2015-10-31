@@ -272,12 +272,14 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
         ]
       ];
     }
+    
+    $field_parents = $element['#field_parents'];
 
     $element['current'] = [
       '#theme_wrappers' => ['container'],
       '#attributes' => ['class' => ['entities-list']],
       'items' => array_map(
-        function($id) use ($entity_storage, $field_widget_display, $details_id) {
+        function($id) use ($entity_storage, $field_widget_display, $details_id, $field_parents) {
           $entity = $entity_storage->load($id);
 
           $display = $field_widget_display->view($entity);
@@ -301,7 +303,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
               ],
               '#submit' => [[get_class($this), 'removeItemSubmit']],
               '#name' => $this->fieldDefinition->getName() . '_remove_' . $id,
-              '#limit_validation_errors' => [[$this->fieldDefinition->getName()]],
+              '#limit_validation_errors' => [array_merge($field_parents, [$this->fieldDefinition->getName()])],
               '#attributes' => ['data-entity-id' => $id],
             ]
           ];
