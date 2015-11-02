@@ -129,6 +129,9 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
   public function displayEntityBrowser() {
     $uuid = $this->getUuid();
     /** @var \Drupal\entity_browser\Events\RegisterJSCallbacks $event */
+    // TODO - $uuid is unused in this event but we need to pass it as
+    // constructor expects it. See https://www.drupal.org/node/2600706 for more
+    // info.
     $event = $this->eventDispatcher->dispatch(Events::REGISTER_JS_CALLBACKS, new RegisterJSCallbacks($this->configuration['entity_browser_id'], $uuid));
     $original_path = $this->currentPath->getPath();
     return [
