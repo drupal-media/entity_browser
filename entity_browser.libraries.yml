@@ -26,6 +26,7 @@ entity_reference:
     js/entity_browser.entity_reference.js: {}
   dependencies:
     - entity_browser/common
+    - core/jquery.ui.sortable
 
 modal:
   version: VERSION

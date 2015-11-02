@@ -12,6 +12,7 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -209,11 +210,24 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     );
 
     $ids = [];
-    if (($trigger = $form_state->getTriggeringElement()) && !empty($trigger['#ajax']['event']) && $trigger['#ajax']['event'] == 'entity_browser_value_updated' && in_array($this->fieldDefinition->getName(), $trigger['#parents'])) {
-      if ($value = $form_state->getValue($trigger['#parents'])) {
+    if (($trigger = $form_state->getTriggeringElement()) && in_array($this->fieldDefinition->getName(), $trigger['#parents'])) {
+      // Submit was triggered by hidden "target_id" element when entities were
+      // added via entity browser.
+      if (!empty($trigger['#ajax']['event']) && $trigger['#ajax']['event'] == 'entity_browser_value_updated') {
+        $parents = $trigger['#parents'];
+      }
+      // Submit was triggered by one of the "Remove" buttons. We need to walk
+      // few levels up to read value of "target_id" element.
+      elseif ($trigger['#type'] == 'submit' && strpos($trigger['#name'], $this->fieldDefinition->getName() . '_remove_') === 0) {
+        $parents = array_merge(array_slice($trigger['#parents'], 0, -4), ['target_id']);
+      }
+
+      if (isset($parents) && $value = $form_state->getValue($parents)) {
         $ids = explode(' ', $value);
       }
     }
+    // We are loading for for the first time so we need to load any existing
+    // values that might already exist on the entity.
     else {
       foreach ($items as $item) {
         $ids[] = $item->target_id;
@@ -239,45 +253,64 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
         // #ajax is officially not supported for hidden elements but if we
         // specify event manually it works.
         '#ajax' => [
-          'callback' => array($this, 'selectEntitiesCallback'),
+          'callback' => [get_class($this), 'updateWidgetCallback'],
           'wrapper' => $details_id,
           'event' => 'entity_browser_value_updated',
         ],
       ],
-      'entity_browser' => $entity_browser->getDisplay()->displayEntityBrowser(),
-      '#attached' => [
-        'library' => ['entity_browser/entity_reference'],
-        'drupalSettings' => [
-          'entity_browser' => [
-            'field_settings' => [
-              $entity_browser->getDisplay()->getUuid() => [
-                'cardinality' => $this->fieldDefinition->getFieldStorageDefinition()->getCardinality(),
-              ],
-            ],
+    ];
+
+    $cardinality = $this->fieldDefinition->getFieldStorageDefinition()->getCardinality();
+    if ($cardinality == FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED || count($ids) < $cardinality) {
+      $element['entity_browser'] = $entity_browser->getDisplay()->displayEntityBrowser();
+      $element['#attached']['library'][] = 'entity_browser/entity_reference';
+      $element['#attached']['drupalSettings']['entity_browser'] = [
+        'field_settings' => [
+          $entity_browser->getDisplay()->getUuid() => [
+            'cardinality' => $this->fieldDefinition->getFieldStorageDefinition()->getCardinality(),
           ],
-        ],
-      ],
-      'current' => [
-        '#theme' => 'item_list',
-        '#items' => array_map(
-          function($id) use ($entity_storage, $field_widget_display) {
-            $entity = $entity_storage->load($id);
-            $display = $field_widget_display->view($entity);
+        ]
+      ];
+    }
+    
+    $field_parents = $element['#field_parents'];
 
-            if (is_string($display)) {
-              $display = [
-                '#markup' => $display
-              ];
-            }
+    $element['current'] = [
+      '#theme_wrappers' => ['container'],
+      '#attributes' => ['class' => ['entities-list']],
+      'items' => array_map(
+        function($id) use ($entity_storage, $field_widget_display, $details_id, $field_parents) {
+          $entity = $entity_storage->load($id);
 
-            $display['#wrapper_attributes']['data-entity-id'] = $entity->id();
-            return $display;
-          },
-          $ids
-        ),
-        '#attached' => ['library' => ['core/jquery.ui.sortable']],
-        '#attributes' => ['class' => ['entities-list']],
-      ],
+          $display = $field_widget_display->view($entity);
+          if (is_string($display)) {
+            $display = ['#markup' => $display];
+          }
+
+          return [
+            '#theme_wrappers' => ['container'],
+            '#attributes' => [
+              'class' => ['item-container'],
+              'data-entity-id' => $entity->id()
+            ],
+            'display' => $display,
+            'remove_button' => [
+              '#type' => 'submit',
+              '#value' => $this->t('Remove'),
+              '#ajax' => [
+                'callback' => [get_class($this), 'updateWidgetCallback'],
+                'wrapper' => $details_id,
+              ],
+              '#submit' => [[get_class($this), 'removeItemSubmit']],
+              '#name' => $this->fieldDefinition->getName() . '_remove_' . $id,
+              '#limit_validation_errors' => [array_merge($field_parents, [$this->fieldDefinition->getName()])],
+              '#attributes' => ['data-entity-id' => $id],
+            ]
+          ];
+
+        },
+        $ids
+      ),
     ];
 
     return $element;
@@ -307,11 +340,49 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
   }
 
   /**
-   * AJAX form callback for hidden value updated event.
+   * AJAX form callback.
    */
-  public function selectEntitiesCallback(array &$form, FormStateInterface $form_state) {
-    $parents = array_splice($form_state->getTriggeringElement()['#array_parents'], 0, -2);
+  public static function updateWidgetCallback(array &$form, FormStateInterface $form_state) {
+    $trigger = $form_state->getTriggeringElement();
+    // AJAX requests can be triggered by hidden "target_id" element when entities
+    // are added or by one of the "Remove" buttons. Depending on that we need to
+    // figure out where root of the widget is in the form structure and use this
+    // information to return correct part of the form.
+    if (!empty($trigger['#ajax']['event']) && $trigger['#ajax']['event'] == 'entity_browser_value_updated') {
+      $parents = array_slice($trigger['#array_parents'], 0, -2);
+    }
+    elseif ($trigger['#type'] == 'submit' && strpos($trigger['#name'], '_remove_')) {
+      $parents = array_slice($trigger['#array_parents'], 0, -4);
+    }
+
     return NestedArray::getValue($form, $parents);
   }
 
+  /**
+   * Submit callback for remove buttons.
+   */
+  public static function removeItemSubmit(&$form, FormStateInterface $form_state) {
+    $triggering_element = $form_state->getTriggeringElement();
+    if (!empty($triggering_element['#attributes']['data-entity-id'])) {
+      $id = $triggering_element['#attributes']['data-entity-id'];
+      $parents = array_slice($triggering_element['#parents'], 0, -4);
+      $array_parents = array_slice($triggering_element['#array_parents'], 0, -4);
+
+      // Find and remove correct entity.
+      $values = explode(' ', $form_state->getValue(array_merge($parents, ['target_id'])));
+      $values = array_filter(
+        $values,
+        function($item) use ($id) { return $item != $id; }
+      );
+      $values = implode(' ', $values);
+
+      // Set new value for this widget.
+      $target_id_element = &NestedArray::getValue($form, array_merge($array_parents, ['target_id']));
+      $form_state->setValueForElement($target_id_element, $values);
+      NestedArray::setValue($form_state->getUserInput(), $target_id_element['#parents'], $values);
+
+      // Rebuild form.
+      $form_state->setRebuild();
+    }
+  }
 }
