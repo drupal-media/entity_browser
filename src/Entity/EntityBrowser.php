@@ -188,6 +188,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   protected function displayPluginCollection() {
     if (!$this->displayCollection) {
+      $this->display_configuration['instance_uuid'] = $this->uuid();
       $this->display_configuration['entity_browser_id'] = $this->id();
       $this->displayCollection = new DefaultSingleLazyPluginCollection(\Drupal::service('plugin.manager.entity_browser.display'), $this->display, $this->display_configuration);
     }
