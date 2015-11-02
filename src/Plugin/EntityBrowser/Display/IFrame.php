@@ -127,9 +127,9 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
    * {@inheritdoc}
    */
   public function displayEntityBrowser() {
-    /** @var \Drupal\entity_browser\Events\RegisterJSCallbacks $event */
-    $event = $this->eventDispatcher->dispatch(Events::REGISTER_JS_CALLBACKS, new RegisterJSCallbacks($this->configuration['entity_browser_id']));
     $uuid = $this->getUuid();
+    /** @var \Drupal\entity_browser\Events\RegisterJSCallbacks $event */
+    $event = $this->eventDispatcher->dispatch(Events::REGISTER_JS_CALLBACKS, new RegisterJSCallbacks($this->configuration['entity_browser_id'], $uuid));
     $original_path = $this->currentPath->getPath();
     return [
       '#theme_wrappers' => ['container'],
