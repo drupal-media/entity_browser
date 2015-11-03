@@ -34,6 +34,14 @@ modal:
     js/entity_browser.modal.js: {}
   dependencies:
     - core/drupalSettings
+    - core/underscore
+
+modal_selection:
+  version: VERSION
+  js:
+    js/entity_browser.modal_selection.js: {}
+  dependencies:
+    - core/drupalSettings
 
 tabs:
   version: VERSION
