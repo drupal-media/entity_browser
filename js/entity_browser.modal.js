@@ -10,7 +10,7 @@
   Drupal.AjaxCommands.prototype.select_entities = function (ajax, response, status) {
     var uuid = drupalSettings.entity_browser.modal.uuid;
 
-    $('a[data-uuid="' + uuid + '"]').trigger('entities-selected', [uuid, response.entities])
+    $('input[data-uuid="' + uuid + '"]').trigger('entities-selected', [uuid, response.entities])
     .removeClass('entity-browser-processed').unbind('entities-selected');
   };
 
@@ -19,20 +19,22 @@
    */
   Drupal.behaviors.entityBrowserModal = {
     attach: function (context) {
-      for (var i = 0; i < drupalSettings.entity_browser.modal.js_callbacks.length; i++) {
-        // get the callback
-        var callback = drupalSettings.entity_browser.modal.js_callbacks[i].split('.');
-        var fn = window;
+      _.each(drupalSettings.entity_browser.modal, function (instance) {
+        _.each(instance.js_callbacks, function (callback) {
+          // Get the callback.
+          var callback = callback.split('.');
+          var fn = window;
 
-        for (var j = 0; j < callback.length; j++) {
-          fn = fn[callback[j]];
-        }
+          for (var j = 0; j < callback.length; j++) {
+            fn = fn[callback[j]];
+          }
 
-        if (typeof fn === 'function') {
-          $('a[data-uuid="' + drupalSettings.entity_browser.modal.uuid + '"]').not('.entity-browser-processed')
-          .bind('entities-selected', fn).addClass('entity-browser-processed');
-        }
-      }
+          if (typeof fn === 'function') {
+            $('input[data-uuid="' +instance.uuid + '"]').not('.entity-browser-processed')
+              .bind('entities-selected', fn).addClass('entity-browser-processed');
+          }
+        });
+      });
     }
   }
 }(jQuery, Drupal, drupalSettings));
