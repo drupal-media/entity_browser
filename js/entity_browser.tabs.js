@@ -3,7 +3,7 @@
  *
  * Defines the behavior of the entity browser's tab display.
  */
-(function ($, Drupal, drupalSettings) {
+(function ($, Drupal) {
 
   "use strict";
 
@@ -20,26 +20,26 @@
       var $nav = $('<nav class="tabs entity-tabs is-horizontal clearfix"></nav>');
       var $tabs = $('<ul class="tabs secondary" role="navigation" aria-label="Tabs"></ul>');
 
-      $form.find('.tab').each( function (index, element) {
+      $form.find('.tab').each(function (index, element) {
         var $element = $(element);
         var classes = $element.attr('disabled') ? 'is-active' : '';
         var tabSettings = {
           class: classes,
           id: $element.attr('id'),
-          title: $(this)[0].defaultValue
+          title: $(this)[0].value
         };
         var $tab = $(Drupal.theme('entityTab', tabSettings));
 
         // Add a click event handler that submits the hidden input buttons.
         $tab.find('a').on('click', function (event) {
           var buttonID = event.currentTarget.dataset.buttonId;
-          $form.find('input#' + buttonID).trigger('click');
+          $form.find('#' + buttonID).trigger('click');
         });
         $tab.appendTo($tabs);
       });
       $tabs.appendTo($nav);
       $nav.prependTo($form);
-      $form.find('input.tab').css('display', 'none');
+      $form.find('.tab').css('display', 'none');
     }
   };
 
@@ -66,4 +66,4 @@
     );
   };
 
-}(jQuery, Drupal, drupalSettings));
+}(jQuery, Drupal));
