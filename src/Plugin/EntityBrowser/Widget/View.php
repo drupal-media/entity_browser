@@ -6,11 +6,15 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Widget;
 
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\HtmlCommand;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\entity_browser\WidgetBase;
+use Drupal\Core\Url;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Drupal\Core\Entity\EntityManagerInterface;
 
 /**
  * Uses a view to provide entity listing in a browser's widget.
@@ -21,7 +25,14 @@ use Drupal\entity_browser\WidgetBase;
  *   description = @Translation("Uses a view to provide entity listing in a browser's widget.")
  * )
  */
-class View extends WidgetBase {
+class View extends WidgetBase implements ContainerFactoryPluginInterface {
+
+  /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
 
   /**
    * {@inheritdoc}
@@ -31,6 +42,39 @@ class View extends WidgetBase {
       'view' => NULL,
       'view_display' => NULL,
     ) + parent::defaultConfiguration();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('event_dispatcher'),
+      $container->get('entity.manager'),
+      $container->get('current_user')
+    );
+  }
+
+  /**
+   * Constructs a new View object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   Event dispatcher service.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
+   */
+   public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityManagerInterface $entity_manager, AccountInterface $current_user) {
+     parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_manager);
+     $this->currentUser = $current_user;
   }
 
   /**
@@ -82,10 +126,17 @@ class View extends WidgetBase {
     $form_state->set('view_widget_rows', $ids);
 
     if (empty($view->field['entity_browser_select'])) {
-      return [
-        // TODO - link to view admin page if allowed to.
-        '#markup' => t('Entity browser select form field not found on a view. Go fix it!'),
-      ];
+      $url = Url::fromRoute('entity.view.edit_form',['view'=>$this->configuration['view']])->toString();
+      if ($this->currentUser->hasPermission('administer views')) {
+        return [
+          '#markup' => t('Entity browser select form field not found on a view. <a href=":link">Go fix it</a>!', [':link' => $url]),
+        ];
+      }
+      else {
+        return [
+          '#markup' => t('Entity browser select form field not found on a view. Go fix it!'),
+        ];
+      }
     }
 
     // When rebuilding makes no sense to keep checkboxes that were previously
