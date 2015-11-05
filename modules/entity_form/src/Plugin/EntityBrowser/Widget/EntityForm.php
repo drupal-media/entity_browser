@@ -60,7 +60,7 @@ class EntityForm extends WidgetBase {
       $function($element['inline_entity_form'], $form_state);
     }
 
-    $this->selectEntities([$element['inline_entity_form']['#entity']]);
+    $this->selectEntities([$element['inline_entity_form']['#entity']], $form_state);
   }
 
 }
