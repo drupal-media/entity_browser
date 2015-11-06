@@ -3,7 +3,7 @@
  *
  * Defines the behavior of the entity browser's tab display.
  */
-(function ($, Drupal) {
+(function ($, Drupal, drupalSettings) {
 
   "use strict";
 
@@ -13,16 +13,17 @@
   Drupal.behaviors.entityBrowserTabs = {
     attach: function (context) {
       var $form = $(context).find('.entity-browser-form').once('entity-browser-admin');
+      var tabsClass = drupalSettings.entityBrowserTabs.tabsClass.join(' ');
       if (!$form.length) {
         return;
       }
 
       var $nav = $('<nav class="tabs entity-tabs is-horizontal clearfix"></nav>');
-      var $tabs = $('<ul class="tabs secondary" role="navigation" aria-label="Tabs"></ul>');
+      var $tabs = $(Drupal.theme('entityTabs', tabsClass));
 
       $form.find('.tab').each(function (index, element) {
         var $element = $(element);
-        var classes = $element.attr('disabled') ? 'is-active' : '';
+        var classes = $element.attr('disabled') ? 'is-active active' : '';
         var tabSettings = {
           class: classes,
           id: $element.attr('id'),
@@ -41,6 +42,20 @@
       $nav.prependTo($form);
       $form.find('.tab').css('display', 'none');
     }
+  };
+
+  /**
+   * Theme function for entity browser tabs.
+   *
+   * @param {string} tabsClass
+   *   Classes for the tabs.
+   *
+   * @return {object}
+   *   This function returns a jQuery object.
+   */
+  Drupal.theme.entityTabs = function (tabsClass) {
+    return $('<ul role="navigation" aria-label="Tabs"></ul>')
+        .addClass(tabsClass)
   };
 
   /**
@@ -66,4 +81,4 @@
     );
   };
 
-}(jQuery, Drupal));
+}(jQuery, Drupal, drupalSettings));
