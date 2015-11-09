@@ -382,4 +382,15 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
       ]
     );
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function save() {
+    $return = parent::save();
+    // Rebuild route information when browsers that register routes
+    // are created/updated.
+    \Drupal::service('router.builder')->rebuild();
+    return $return;
+  }
 }

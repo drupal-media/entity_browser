@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\entity_browser\Kernel\Extension\EntityBrowserTest.
+ * Contains \Drupal\Tests\entity_browser\Kernel\Extension\EntityBrowserTest.
  */
 
-namespace Drupal\entity_browser\Kernel\Extension;
+namespace Drupal\Tests\entity_browser\Kernel\Extension;
 
 use Drupal\Component\FileCache\FileCacheFactory;
 use Drupal\Component\Plugin\Exception\PluginException;
@@ -61,6 +61,8 @@ class EntityBrowserTest extends KernelTestBase {
     FileCacheFactory::setPrefix($this->randomString(4));
     parent::setUp();
 
+    $this->installSchema('system', 'router');
+
     $this->controller = $this->container->get('entity.manager')->getStorage('entity_browser');
     $this->widgetUUID = $this->container->get('uuid')->generate();
     $this->routeProvider = $this->container->get('router.route_provider');
@@ -86,7 +88,7 @@ class EntityBrowserTest extends KernelTestBase {
       'name' => 'test_browser',
       'label' => 'Testing entity browser instance',
       'display' => 'standalone',
-      'display_configuration' => [],
+      'display_configuration' => ['path' => 'test-browser-test'],
       'selection_display' => 'no_display',
       'selection_display_configuration' => [],
       'widget_selector' => 'single',
@@ -152,7 +154,7 @@ class EntityBrowserTest extends KernelTestBase {
       'name' => 'test_browser',
       'label' => 'Testing entity browser instance',
       'display' => 'standalone',
-      'display_configuration' => [],
+      'display_configuration' => ['path' => 'test-browser-test'],
       'selection_display' => 'no_display',
       'selection_display_configuration' => [],
       'widget_selector' => 'single',
@@ -172,6 +174,10 @@ class EntityBrowserTest extends KernelTestBase {
     ];
 
     $this->assertEquals($actual_properties, $expected_properties, 'Actual config properties are structured as expected.');
+
+    // Ensure that rebuilding routes works.
+    $route = $this->routeProvider->getRoutesByPattern('/test-browser-test');
+    $this->assertTrue($route, 'Route exists.');
   }
 
   /**
@@ -224,7 +230,6 @@ class EntityBrowserTest extends KernelTestBase {
    */
   public function testDynamicRoutes() {
     $this->installConfig(['entity_browser_test']);
-    $this->installSchema('system', 'router');
     $this->container->get('router.builder')->rebuild();
 
     /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
