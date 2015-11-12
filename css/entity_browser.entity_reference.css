@@ -1,0 +1,20 @@
+/**
+ * @file
+ * Styles for Entity reference items.
+ *
+ * These styles are compatible with Bartik, Seven, and Classy themes.
+ */
+
+/**
+ * Entity reference items.
+ */
+.block-file-browser-form .entities-list .item-container {
+    display: inline-block;
+    margin: 10px 10px 15px;
+    text-align: center;
+}
+
+.block-file-browser-form .entities-list .item-container img, .block-file-browser-form .entities-list .item-container input {
+    display: block;
+    margin: 5px auto 0;
+}

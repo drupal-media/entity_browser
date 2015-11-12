@@ -22,6 +22,9 @@ iframe_selection:
 
 entity_reference:
   version: VERSION
+  css:
+    component:
+      css/entity_browser.entity_reference.css: {}
   js:
     js/entity_browser.entity_reference.js: {}
   dependencies:
