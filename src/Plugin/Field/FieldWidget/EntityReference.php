@@ -227,10 +227,14 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       }
     }
     // We are loading for for the first time so we need to load any existing
-    // values that might already exist on the entity.
+    // values that might already exist on the entity. Also, remove any leftover
+    // data from removed entity references.
     else {
       foreach ($items as $item) {
-        $ids[] = $item->target_id;
+        $entity = $entity_storage->load($item->target_id);
+        if (!empty($entity)) {
+          $ids[] = $item->target_id;
+        }
       }
     }
     $ids = array_filter($ids);
