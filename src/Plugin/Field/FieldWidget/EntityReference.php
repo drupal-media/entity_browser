@@ -233,9 +233,10 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       foreach ($items as $item) {
         $entity = $entity_storage->load($item->target_id);
         if (!empty($entity)) {
-          $ids[] = $item->target_id;
+          $entities[$item->target_id] = $entity;
         }
       }
+      $ids = array_keys($entities);
     }
     $ids = array_filter($ids);
 
@@ -283,8 +284,8 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       '#theme_wrappers' => ['container'],
       '#attributes' => ['class' => ['entities-list']],
       'items' => array_map(
-        function($id) use ($entity_storage, $field_widget_display, $details_id, $field_parents) {
-          $entity = $entity_storage->load($id);
+        function($id) use ($entity_storage, $field_widget_display, $details_id, $field_parents, $entities) {
+          $entity = $entities[$id];
 
           $display = $field_widget_display->view($entity);
           if (is_string($display)) {
