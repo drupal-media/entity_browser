@@ -224,6 +224,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
 
       if (isset($parents) && $value = $form_state->getValue($parents)) {
         $ids = explode(' ', $value);
+        $entities = $entity_storage->loadMultiple($ids);
       }
     }
     // We are loading for for the first time so we need to load any existing
@@ -277,7 +278,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
         ]
       ];
     }
-    
+
     $field_parents = $element['#field_parents'];
 
     $element['current'] = [
