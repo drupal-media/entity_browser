@@ -37,7 +37,8 @@
     }
 
     // Update value form element with new entity IDs.
-    var entity_ids = $(this).parent().parent().find('input[type*=hidden]').val();
+    var selector = drupalSettings['entity_browser'][uuid]['selector'] ? $(drupalSettings['entity_browser'][uuid]['selector']) : $(this).parent().parent().find('input[type*=hidden]');
+    var entity_ids = selector.val();
     if (entity_ids.length != 0) {
       var existing_entities_array = entity_ids.split(' ');
 
@@ -61,8 +62,8 @@
       entity_ids = added_entities_array.join(' ');
     }
 
-    $(this).parent().parent().find('input[type*=hidden]').val(entity_ids);
-    $(this).parent().parent().find('input[type*=hidden]').trigger('entity_browser_value_updated');
+    selector.val(entity_ids);
+    selector.trigger('entity_browser_value_updated');
   };
 
   /**
