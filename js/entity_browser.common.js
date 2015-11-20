@@ -25,7 +25,9 @@
     // generation from display to eb directly. When we do this, we can change
     // \Drupal\entity_browser\Plugin\Field\FieldWidget\EntityReference::formElement
     // also.
-    var cardinality = parseInt(drupalSettings['entity_browser']['field_settings'][uuid]['cardinality']);
+
+    // Checking if cardinality is set - assume unlimited.
+    var cardinality = isNaN(parseInt(drupalSettings['entity_browser'][uuid]['cardinality'])) ? -1 : parseInt(drupalSettings['entity_browser'][uuid]['cardinality']);
 
     // Having more elements than cardinality should never happen, because
     // server side authentication should prevent it, but we handle it here
