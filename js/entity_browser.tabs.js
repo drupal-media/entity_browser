@@ -35,6 +35,7 @@
         $tab.find('a').on('click', function (event) {
           var buttonID = event.currentTarget.dataset.buttonId;
           $form.find('#' + buttonID).trigger('click');
+          event.preventDefault();
         });
         $tab.appendTo($tabs);
       });
