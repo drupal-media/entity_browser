@@ -73,8 +73,6 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->entityManager = $entity_manager;
     $this->fieldDisplayManager = $field_display_manager;
-
-    $event_dispatcher->addListener(Events::REGISTER_JS_CALLBACKS, [$this, 'registerJSCallback']);
   }
 
   /**
@@ -332,16 +330,6 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     }
 
     return $return;
-  }
-
-  /**
-   * Registers JS callback that gets entities from entity browser and updates
-   * form values accordingly.
-   */
-  public function registerJSCallback(RegisterJSCallbacks $event) {
-    if ($event->getBrowserID() == $this->getSetting('entity_browser')) {
-      $event->registerCallback('Drupal.entityBrowser.selectionCompleted');
-    }
   }
 
   /**
