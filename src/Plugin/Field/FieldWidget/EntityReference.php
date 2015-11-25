@@ -54,14 +54,16 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
   /**
    * Constructs widget plugin.
    *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
    * @param string $plugin_id
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
-   *   Event dispatcher service.
+   * @param \Drupal\Core\Field\FieldDefinitionInterface $field_definition
+   *   The definition of the field to which the widget is associated.
+   * @param array $settings
+   *   The widget settings.
+   * @param array $third_party_settings
+   *   Any third party settings.
    * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
    *   Entity manager service.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
