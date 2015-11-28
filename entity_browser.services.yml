@@ -14,6 +14,9 @@ services:
   plugin.manager.entity_browser.field_widget_display:
     class: Drupal\entity_browser\FieldWidgetDisplayManager
     parent: default_plugin_manager
+  plugin.manager.entity_browser.widget_validation:
+    class: Drupal\entity_browser\WidgetValidationManager
+    parent: default_plugin_manager
   entity_browser.route_subscriber:
     class: Drupal\entity_browser\RouteSubscriber
     arguments: ['@entity.manager', '@plugin.manager.entity_browser.display', '@entity.query']

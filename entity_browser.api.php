@@ -62,5 +62,16 @@ function hook_entity_browser_field_widget_display_info_alter(&$field_displays) {
 }
 
 /**
+ * Alter the information provided in \Drupal\entity_browser\Annotation\EntityBrowserWidgetValidation.
+ *
+ * @param $validation_plugins
+ *   The array of widget validation plugins, keyed on the machine-readable
+ *   name.
+ */
+function hook_entity_browser_widget_validation_info_alter(&$validation_plugins) {
+  $field_displays['not_null']['label'] = t('Not null fabulous validator');
+}
+
+/**
  * @} End of "addtogroup hooks".
  */

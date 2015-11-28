@@ -87,6 +87,20 @@ interface WidgetInterface extends PluginInspectionInterface, ConfigurablePluginI
   public function validate(array &$form, FormStateInterface $form_state);
 
   /**
+   * Run widget validators.
+   *
+   * @param array $entities
+   *   Array of entity ids to validate.
+   * @param array $validators
+   *   Array of additional widget validator ids.
+   *
+   * @return \Symfony\Component\Validator\ConstraintViolationListInterface
+   *   A list of constraint violations. If the list is empty, validation
+   *   succeeded.
+   */
+  public function runWidgetValidators(array $entities, $validators = []);
+
+  /**
    * Submits form.
    *
    * @param array $element

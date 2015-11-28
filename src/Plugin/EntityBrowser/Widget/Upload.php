@@ -8,7 +8,10 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\Widget;
 
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\TypedData\DataDefinition;
+use Drupal\Core\TypedData\TypedData;
 use Drupal\entity_browser\WidgetBase;
+use Drupal\file\Plugin\Field\FieldType\FileItem;
 
 /**
  * Uses a view to provide entity listing in a browser's widget.
@@ -52,9 +55,15 @@ class Upload extends WidgetBase {
   public function validate(array &$form, FormStateInterface $form_state) {
     $uploaded_files = $form_state->getValue(['upload'], []);
     $trigger = $form_state->getTriggeringElement();
-    // Only validate if we are uploading a file.
-    if (empty($uploaded_files)  && $trigger['#value'] == 'Upload') {
-      $form_state->setError($form['widget']['upload'], t('At least one file should be uploaded.'));
+
+    if (in_array('::save', $trigger['#submit'] )) {
+      $violations = $this->runWidgetValidators($uploaded_files, ['not_empty' => ['min' => 1]]);
+      if (!empty($violations)) {
+        /** @var \Symfony\Component\Validator\ConstraintViolationListInterface $violation */
+        foreach ($violations as $violation) {
+          $form_state->setError($form['widget']['upload'], $violation->getMessage());
+        }
+      }
     }
   }
 

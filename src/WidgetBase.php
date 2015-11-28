@@ -180,6 +180,21 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    */
   public function validate(array &$form, FormStateInterface $form_state) {}
 
+
+  /**
+   * {@inheritdoc}
+   */
+  public function runWidgetValidators(array $entities, $validators = []) {
+    // @todo Get the list of validation ids.
+    $all_validators = $validators + [];
+
+    foreach ($validators as $validator_id => $options) {
+      /** @var \Drupal\entity_browser\WidgetValidationInterface $widget_validator */
+      $widget_validator = \Drupal::service('plugin.manager.entity_browser.widget_validation')->createInstance($validator_id, []);
+      return $widget_validator->validate($entities, $options);
+    }
+  }
+
   /**
    * {@inheritdoc}
    */
