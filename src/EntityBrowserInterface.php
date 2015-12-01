@@ -16,7 +16,7 @@ use Drupal\Core\Form\FormStateInterface;
 interface EntityBrowserInterface extends ConfigEntityInterface {
 
   /**
-   * Returns the entity browser name.
+   * Gets the entity browser name.
    *
    * @return string
    *   The name of the entity browser.
@@ -33,6 +33,50 @@ interface EntityBrowserInterface extends ConfigEntityInterface {
    *   The class instance this method is called on.
    */
   public function setName($name);
+
+  /**
+   * Sets the label of the entity browser.
+   *
+   * @param string $label
+   *   The label of the entity browser.
+   *
+   * @return \Drupal\entity_browser\EntityBrowserInterface
+   *   The class instance this method is called on.
+   */
+  public function setLabel($label);
+
+  /**
+   * Sets the id of the display plugin
+   *
+   * @param string $display
+   *   The id of the display plugin.
+   *
+   * @return \Drupal\entity_browser\EntityBrowserInterface
+   *   The class instance this method is called on.
+   */
+  public function setDisplay($display);
+
+  /**
+   * Sets the id of the widget selector plugin
+   *
+   * @param string $display
+   *   The id of the widget selector plugin.
+   *
+   * @return \Drupal\entity_browser\EntityBrowserInterface
+   *   The class instance this method is called on.
+   */
+  public function setWidgetSelector($widget_selector);
+
+  /**
+   * Sets the id of the selection display plugin
+   *
+   * @param string $display
+   *   The id of the selection display plugin.
+   *
+   * @return \Drupal\entity_browser\EntityBrowserInterface
+   *   The class instance this method is called on.
+   */
+  public function setSelectionDisplay($selection_display);
 
   /**
    * Returns the display.

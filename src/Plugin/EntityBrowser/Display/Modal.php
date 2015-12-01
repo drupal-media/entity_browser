@@ -343,4 +343,32 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
   public function __sleep() {
     return array('configuration');
   }
+  /**
+   * {@inheritdoc}
+   */
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    $configuration = $this->getConfiguration();
+    $form['width'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Width of the modal'),
+      '#min' => 1,
+      '#default_value' => $configuration['width'],
+    ];
+
+    $form['height'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Height of the modal'),
+      '#min' => 1,
+      '#default_value' => $configuration['height'],
+    ];
+
+    $form['link_text'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Link text'),
+      '#default_value' => $configuration['link_text'],
+    ];
+
+    return $form;
+  }
+
 }

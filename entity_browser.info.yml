@@ -3,5 +3,7 @@ description: 'Entity browser component for text and entity reference fields.'
 type: module
 package: Media
 core: 8.x
+dependencies:
+  - ctools
 test_dependencies:
   - ctools

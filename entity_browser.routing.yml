@@ -1,3 +1,21 @@
+entity.entity_browser.add_form:
+  path: '/admin/config/content/entity_browser/add'
+  defaults:
+    _entity_wizard: 'entity_browser.add'
+    _title: 'Add Entity browser'
+    tempstore_id: 'entity_browser.config'
+  requirements:
+    _permission: 'administer entity browsers'
+
+entity.entity_browser.edit_form:
+  path: '/admin/config/content/entity_browser/{machine_name}/{step}'
+  defaults:
+    _entity_wizard: 'entity_browser.edit'
+    _title: 'Edit Entity browser'
+    tempstore_id: 'entity_browser.config'
+  requirements:
+    _permission: 'administer entity browsers'
+
 route_callbacks:
   - 'entity_browser.route_subscriber:routes'
 
