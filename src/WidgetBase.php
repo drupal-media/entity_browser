@@ -20,6 +20,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 abstract class WidgetBase extends PluginBase implements WidgetInterface, ContainerFactoryPluginInterface {
 
+  use PluginConfigurationFormTrait;
+
   /**
    * Plugin id.
    *
