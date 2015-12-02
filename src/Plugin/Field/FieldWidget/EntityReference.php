@@ -210,6 +210,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     );
 
     $ids = [];
+    $entities = [];
     if (($trigger = $form_state->getTriggeringElement()) && in_array($this->fieldDefinition->getName(), $trigger['#parents'])) {
       // Submit was triggered by hidden "target_id" element when entities were
       // added via entity browser.
