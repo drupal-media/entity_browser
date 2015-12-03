@@ -13,6 +13,8 @@ use Drupal\entity_browser\DisplayManager;
 use Drupal\entity_browser\SelectionDisplayManager;
 use Drupal\entity_browser\WidgetManager;
 use Drupal\entity_browser\WidgetSelectorManager;
+use Drupal\user\SharedTempStore;
+use Drupal\user\SharedTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class GeneralInfoConfig extends FormBase {
@@ -46,6 +48,15 @@ class GeneralInfoConfig extends FormBase {
   protected $widgetManager;
 
   /**
+   * Tempstore Factory for keeping track of values in each step of the wizard.
+   *
+   * @var \Drupal\user\SharedTempStoreFactory
+   */
+  protected $tempstore;
+
+  protected $tempstoreId;
+  protected $machineName;
+  /**
    * Constructs GeneralInfoConfig form class.
    *
    * @param \Drupal\entity_browser\DisplayManager $display_manager
@@ -55,11 +66,12 @@ class GeneralInfoConfig extends FormBase {
    * @param \Drupal\entity_browser\SelectionDisplayManager
    *   Entity browser selection display plugin manager.
    */
-  function __construct(DisplayManager $display_manager, WidgetSelectorManager $widget_selector_manager, SelectionDisplayManager $selection_display_manager, WidgetManager $widget_manager) {
+  function __construct(DisplayManager $display_manager, WidgetSelectorManager $widget_selector_manager, SelectionDisplayManager $selection_display_manager, WidgetManager $widget_manager, SharedTempStoreFactory $temp_store, $tempstore_id = NULL, $machine_name = NULL) {
     $this->displayManager = $display_manager;
     $this->selectionDisplayManager = $selection_display_manager;
     $this->widgetSelectorManager = $widget_selector_manager;
     $this->widgetManager = $widget_manager;
+    $this->tempStore = $temp_store;
   }
 
   /**
@@ -70,7 +82,8 @@ class GeneralInfoConfig extends FormBase {
       $container->get('plugin.manager.entity_browser.display'),
       $container->get('plugin.manager.entity_browser.widget_selector'),
       $container->get('plugin.manager.entity_browser.selection_display'),
-      $container->get('plugin.manager.entity_browser.widget')
+      $container->get('plugin.manager.entity_browser.widget'),
+      $container->get('user.shared_tempstore')
     );
   }
 
@@ -125,24 +138,6 @@ class GeneralInfoConfig extends FormBase {
       '#required' => TRUE,
     ];
 
-    $widgets = [];
-    foreach ($this->widgetManager->getDefinitions() as $plugin_id => $plugin_definition) {
-      $widgets[$plugin_id] = $plugin_definition['label'];
-    }
-    $default_widgets = [];
-    foreach ($entity_browser->getWidgets() as $widget) {
-      /** @var \Drupal\entity_browser\WidgetInterface $widget */
-      $default_widgets[] = $widget->id();
-    }
-    $form['widget'] = [
-      '#type' => 'select',
-      '#multiple' => TRUE,
-      '#title' => $this->t('Widget plugins'),
-      '#default_value' => $default_widgets,
-      '#options' => $widgets,
-      '#required' => TRUE,
-    ];
-
     return $form;
   }
 
@@ -160,15 +155,14 @@ class GeneralInfoConfig extends FormBase {
 
     // TODO must be able to select single widget multiple times. We are adding
     // them which ends up with duplicates if we visit first step multiple times.
-    foreach ($form_state->getValue('widget') as $widget) {
-      $entity_browser->addWidget([
-        'id' => $widget,
-        'label' => $widget,
-        'weight' => 0,
-        // Configuration will be set on the widgets page.
-        'settings' => [],
-      ]);
-    }
+    /*$entity_browser->addWidget([
+      'id' => 'upload',
+      'label' => 'upload',
+      'weight' => 0,
+      // Configuration will be set on the widgets page.
+      'settings' => [],
+    ]);*/
+
   }
 
 }
