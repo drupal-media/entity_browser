@@ -55,10 +55,10 @@ entity_browser.browser.display.iframe:
   label: 'iFrame display configuration'
   mapping:
     width:
-      type: integer
+      type: string
       label: 'iFrame width'
     height:
-      type: integer
+      type: string
       label: 'iFrame height'
     link_text:
       type: string
@@ -69,10 +69,10 @@ entity_browser.browser.display.modal:
   label: 'Modal display configuration'
   mapping:
     width:
-      type: integer
+      type: string
       label: 'Modal width'
     height:
-      type: integer
+      type: string
       label: 'Modal height'
     link_text:
       type: string

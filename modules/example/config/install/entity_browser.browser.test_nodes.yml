@@ -10,8 +10,8 @@ name: test_nodes
 label: 'Test entity browser for nodes'
 display: iframe
 display_configuration:
-  width: 650
-  height: 500
+  width: '650'
+  height: '500'
   link_text: 'Select entities'
 selection_display: no_display
 selection_display_configuration: {  }

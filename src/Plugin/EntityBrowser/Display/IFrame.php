@@ -116,8 +116,8 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
    */
   public function defaultConfiguration() {
     return array(
-      'width' => 650,
-      'height' => 500,
+      'width' => '650',
+      'height' => '500',
       'link_text' => t('Select entities'),
       'auto_open' => FALSE,
     ) + parent::defaultConfiguration();
