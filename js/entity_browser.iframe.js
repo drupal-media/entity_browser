@@ -46,7 +46,7 @@
       Drupal.entityBrowser.registerJsCallbacks(this, drupalSettings.entity_browser.iframe[uuid].js_callbacks, 'entities-selected');
     }
 
-    $(this).parent().append(iframe);
+    $(this).parent().append(iframe).trigger('entityBrowserIFrameAppend');
     $(this).hide();
   };
 
