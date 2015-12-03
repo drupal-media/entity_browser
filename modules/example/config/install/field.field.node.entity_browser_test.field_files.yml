@@ -6,7 +6,6 @@ dependencies:
     - node.type.entity_browser_test
   module:
     - entity_browser_example
-    - entity_reference
   enforced:
     module:
       - entity_browser_example

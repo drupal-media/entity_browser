@@ -2,7 +2,6 @@ langcode: en
 status: true
 dependencies:
   module:
-    - entity_reference
     - node
 id: node.field_files1
 field_name: field_files1
@@ -10,7 +9,7 @@ entity_type: node
 type: entity_reference
 settings:
   target_type: file
-module: entity_reference
+module: entity_browser_example
 locked: false
 cardinality: -1
 translatable: false

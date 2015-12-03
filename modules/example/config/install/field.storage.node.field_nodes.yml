@@ -3,7 +3,6 @@ status: true
 dependencies:
   module:
     - entity_browser_example
-    - entity_reference
     - node
   enforced:
     module:
@@ -14,7 +13,7 @@ entity_type: node
 type: entity_reference
 settings:
   target_type: node
-module: entity_reference
+module: entity_browser_example
 locked: false
 cardinality: -1
 translatable: false
