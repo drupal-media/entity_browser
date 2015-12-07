@@ -34,7 +34,7 @@ class EntityForm extends WidgetBase {
    * {@inheritdoc}
    */
   public function getForm(array &$original_form, FormStateInterface $form_state, array $aditional_widget_parameters) {
-    if (empty($this->configuration['entity_type']) || empty($this->configuration['entity_type'])) {
+    if (empty($this->configuration['entity_type']) || empty($this->configuration['bundle'])) {
       return [
         '#markup' => t('Entity type or bundle are no configured correctly.'),
       ];
