@@ -8,6 +8,7 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\FieldWidgetDisplay;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
@@ -86,6 +87,13 @@ class RenderedEntity extends PluginBase implements FieldWidgetDisplayInterface, 
         '#options' => $options,
       ],
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isApplicable(EntityTypeInterface $entity_type) {
+    return TRUE;
   }
 
 }

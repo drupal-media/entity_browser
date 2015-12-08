@@ -123,9 +123,14 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       '#options' => $browsers,
     ];
 
+    $target_type = $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type');
+    $entity_type = \Drupal::entityTypeManager()->getStorage($target_type)->getEntityType();
+
     $displays = [];
     foreach ($this->fieldDisplayManager->getDefinitions() as $id => $definition) {
-      $displays[$id] = $definition['label'];
+      if ($this->fieldDisplayManager->createInstance($id)->isApplicable($entity_type)) {
+        $displays[$id] = $definition['label'];
+      }
     }
 
     $id = Html::getUniqueId('field-' . $this->fieldDefinition->getName() . '-display-settings-wrapper');
