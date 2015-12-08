@@ -7,10 +7,7 @@
 namespace Drupal\entity_browser\Plugin\EntityBrowser\FieldWidgetDisplay;
 
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Plugin\PluginBase;
-use Drupal\entity_browser\FieldWidgetDisplayInterface;
+use Drupal\entity_browser\FieldWidgetDisplayBase;
 
 /**
  * Displays a label of the entity.
@@ -21,27 +18,13 @@ use Drupal\entity_browser\FieldWidgetDisplayInterface;
  *   description = @Translation("Displays entity with a label.")
  * )
  */
-class EntityLabel extends PluginBase implements FieldWidgetDisplayInterface {
+class EntityLabel extends FieldWidgetDisplayBase {
 
   /**
    * {@inheritdoc}
    */
   public function view(EntityInterface $entity) {
     return $entity->label();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function settingsForm(array $form, FormStateInterface $form_state) {
-    return [];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isApplicable(EntityTypeInterface $entity_type) {
-    return TRUE;
   }
 
 }

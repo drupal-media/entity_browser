@@ -8,12 +8,10 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\FieldWidgetDisplay;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Plugin\PluginBase;
-use Drupal\entity_browser\FieldWidgetDisplayInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\entity_browser\FieldWidgetDisplayBase;
 
 /**
  * Displays the fully rendered entity.
@@ -24,7 +22,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   description = @Translation("Displays fully rendered entity.")
  * )
  */
-class RenderedEntity extends PluginBase implements FieldWidgetDisplayInterface, ContainerFactoryPluginInterface {
+class RenderedEntity extends FieldWidgetDisplayBase implements ContainerFactoryPluginInterface {
 
   /**
    * Entity manager service.
@@ -87,13 +85,6 @@ class RenderedEntity extends PluginBase implements FieldWidgetDisplayInterface, 
         '#options' => $options,
       ],
     ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function isApplicable(EntityTypeInterface $entity_type) {
-    return TRUE;
   }
 
 }

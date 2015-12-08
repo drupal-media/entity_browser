@@ -11,10 +11,9 @@ use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Plugin\PluginBase;
-use Drupal\entity_browser\FieldWidgetDisplayInterface;
 use Drupal\file\FileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\entity_browser\FieldWidgetDisplayBase;
 
 /**
  * Displays image thumbnail
@@ -25,7 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   description = @Translation("Displays image files as thumbnails")
  * )
  */
-class ImageThumbnail extends PluginBase implements FieldWidgetDisplayInterface, ContainerFactoryPluginInterface {
+class ImageThumbnail extends FieldWidgetDisplayBase implements ContainerFactoryPluginInterface {
 
   /**
    * Entity manager service.
