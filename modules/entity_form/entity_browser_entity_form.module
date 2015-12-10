@@ -86,7 +86,7 @@ function entity_browser_entity_form_reference_form_validate(&$reference_form, Fo
   $instance = $form_state->get(['inline_entity_form', $ief_id, 'instance']);
   $target_type = $instance->getFieldStorageDefinition()->getSetting('target_type');
   /** @var \Drupal\inline_entity_form\InlineEntityFormHandlerInterface $handler */
-  $handler = \Drupal::entityManager()->getHandler($target_type, 'inline entity form');
+  $handler = \Drupal::entityManager()->getHandler($target_type, 'inline_form');
   $labels = $handler->labels();
 
   $form_values = NestedArray::getValue($form_state->getValues(), $reference_form['#parents']);
