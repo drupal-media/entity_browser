@@ -36,7 +36,7 @@ entity_browser.browser.*:
           uuid:
             type: string
           label:
-            type: string
+            type: label
           weight:
             type: integer
           settings:
