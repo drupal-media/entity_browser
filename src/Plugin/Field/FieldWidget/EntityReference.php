@@ -216,7 +216,23 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
 
     $ids = [];
     $entities = [];
-    if (($trigger = $form_state->getTriggeringElement()) && in_array($this->fieldDefinition->getName(), $trigger['#parents'])) {
+
+    // Determine if we're submitting and if submit came from this widget.
+    $is_relevant_submit = FALSE;
+    if (($trigger = $form_state->getTriggeringElement())) {
+      // Can be triggered by hidden target_id element or "Remove" button.
+      if (end($trigger['#parents']) === 'target_id' || (end($trigger['#parents']) === 'remove_button')) {
+        $is_relevant_submit = TRUE;
+
+        // In case there are more instances of this widget on the same page we
+        // need to check if submit came from this instance.
+        $field_name_key = end($trigger['#parents']) === 'target_id' ? 2 : 5;
+        $field_name_key = sizeof($trigger['#parents']) - $field_name_key;
+        $is_relevant_submit &= ($trigger['#parents'][$field_name_key] === $this->fieldDefinition->getName());
+      }
+    };
+
+    if ($is_relevant_submit) {
       // Submit was triggered by hidden "target_id" element when entities were
       // added via entity browser.
       if (!empty($trigger['#ajax']['event']) && $trigger['#ajax']['event'] == 'entity_browser_value_updated') {
