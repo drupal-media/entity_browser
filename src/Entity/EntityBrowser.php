@@ -12,13 +12,9 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
 use Drupal\Core\Plugin\DefaultSingleLazyPluginCollection;
 use Drupal\entity_browser\EntityBrowserInterface;
-use Drupal\entity_browser\Events\EntitySelectionEvent;
-use Drupal\entity_browser\Events\Events;
-use Drupal\entity_browser\Events\SelectionDoneEvent;
 use Drupal\entity_browser\WidgetInterface;
 use Drupal\entity_browser\DisplayRouterInterface;
 use Drupal\entity_browser\WidgetsCollection;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -150,6 +146,13 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * @var array
    */
   protected $additional_widget_parameters = [];
+
+  /**
+   * Name of the form class.
+   *
+   * @var string
+   */
+  protected $form_class = '\Drupal\entity_browser\Form\EntityBrowserForm';
 
   /**
    * {@inheritdoc}
@@ -332,8 +335,8 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
       return new Route(
         $path,
         [
-          '_controller' => 'Drupal\entity_browser\Controllers\StandalonePage::page',
-          '_title_callback' => 'Drupal\entity_browser\Controllers\StandalonePage::title',
+          '_controller' => 'Drupal\entity_browser\Controllers\EntityBrowserFormController::getContentResult',
+          '_title_callback' => 'Drupal\entity_browser\Controllers\EntityBrowserFormController::title',
           'entity_browser_id' => $this->id(),
         ],
         ['_permission' => 'access ' . $this->id() . ' entity browser pages'],
@@ -393,4 +396,14 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     \Drupal::service('router.builder')->rebuild();
     return $return;
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormObject() {
+    $form_class = \Drupal::service('class_resolver')->getInstanceFromDefinition($this->form_class);
+    $form_class->setEntityBrowser($this);
+    return $form_class;
+  }
+
 }

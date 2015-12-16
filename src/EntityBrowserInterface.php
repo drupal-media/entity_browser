@@ -132,4 +132,12 @@ interface EntityBrowserInterface extends ConfigEntityInterface {
    */
   public function route();
 
+  /**
+   * Gets entity browser form object.
+   *
+   * @return \Drupal\entity_browser\EntityBrowserFormInterface
+   *   Entity browser form.
+   */
+  public function getFormObject();
+
 }
