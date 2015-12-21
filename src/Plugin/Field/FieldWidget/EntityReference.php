@@ -16,6 +16,7 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Url;
 use Drupal\entity_browser\Events\Events;
 use Drupal\entity_browser\Events\RegisterJSCallbacks;
 use Drupal\entity_browser\FieldWidgetDisplayManager;
@@ -100,6 +101,8 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     return array(
       'entity_browser' => NULL,
       'field_widget_display' => NULL,
+      'field_widget_edit' => TRUE,
+      'field_widget_remove' => TRUE,
       'field_widget_display_settings' => [],
     ) + parent::defaultSettings();
   }
@@ -145,6 +148,18 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       ],
     ];
 
+    $element['field_widget_edit'] = [
+      '#title' => t('Display Edit button'),
+      '#type' => 'checkbox',
+      '#default_value' => $this->getSetting('field_widget_edit')
+    ];
+
+    $element['field_widget_remove'] = [
+      '#title' => t('Display Remove button'),
+      '#type' => 'checkbox',
+      '#default_value' => $this->getSetting('field_widget_remove')
+    ];
+
     $element['field_widget_display_settings'] = [
       '#type' => 'fieldset',
       '#title' => t('Entity display plugin configuration'),
@@ -178,7 +193,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     return $form['fields'][$this->fieldDefinition->getName()]['plugin']['settings_edit_form']['settings']['field_widget_display_settings'];
   }
 
-    /**
+  /**
    * {@inheritdoc}
    */
   public function settingsSummary() {
@@ -332,6 +347,15 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
               '#name' => $this->fieldDefinition->getName() . '_remove_' . $id,
               '#limit_validation_errors' => [array_merge($field_parents, [$this->fieldDefinition->getName()])],
               '#attributes' => ['data-entity-id' => $id],
+              '#access' => (bool) $this->getSetting('field_widget_remove')
+            ],
+            'edit_button' => [
+              '#type' => 'submit',
+              '#value' => $this->t('Edit'),
+              '#ajax' => [
+                'url' => Url::fromRoute('entity_browser.edit_form', ['entity_type' => $entity->getEntityTypeId(), 'entity' => $entity->id()])
+              ],
+              '#access' => (bool) $this->getSetting('field_widget_edit')
             ]
           ];
 
