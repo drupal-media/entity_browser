@@ -222,6 +222,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
    * {@inheritdoc}
    */
   function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+
     $entity_type = $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type');
     $entity_storage = $this->entityManager->getStorage($entity_type);
     $field_widget_display = $this->fieldDisplayManager->createInstance(
@@ -278,31 +279,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     }
     $ids = array_filter($ids);
 
-    $hidden_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName() . '-target-id');
     $details_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName());
-    /** @var \Drupal\entity_browser\EntityBrowserInterface $entity_browser */
-    $entity_browser = $this->entityManager->getStorage('entity_browser')->load($this->getSetting('entity_browser'));
-
-    $element += [
-      '#id' => $details_id,
-      '#type' => 'details',
-      '#open' => !empty($ids),
-      'target_id' => [
-        '#type' => 'hidden',
-        '#id' => $hidden_id,
-        // We need to repeat ID here as it is otherwise skipped when rendering.
-        '#attributes' => ['id' => $hidden_id],
-        '#default_value' => $ids,
-        // #ajax is officially not supported for hidden elements but if we
-        // specify event manually it works.
-        '#ajax' => [
-          'callback' => [get_class($this), 'updateWidgetCallback'],
-          'wrapper' => $details_id,
-          'event' => 'entity_browser_value_updated',
-        ],
-      ],
-    ];
-
     $cardinality = $this->fieldDefinition->getFieldStorageDefinition()->getCardinality();
     if ($cardinality == FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED || count($ids) < $cardinality) {
       $element['entity_browser'] = $entity_browser->getDisplay()->displayEntityBrowser();
@@ -362,6 +339,15 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
         },
         $ids
       ),
+    ];
+
+    $element['browser'] = [
+      '#type' => 'entity_browser',
+      '#title' => t('Title'),
+      '#identifier' => $this->fieldDefinition->getName(),
+      '#entity_browser_id' => $this->getSetting('entity_browser'),
+      '#cardinality' => $cardinality,
+      '#default_value' => $ids,
     ];
 
     return $element;

@@ -36,6 +36,9 @@ function entity_browser_theme() {
       'render element' => 'html',
       'preprocess functions' => ['template_preprocess_page']
     ],
+    'entity_browser' => [
+      'render element' => 'element'
+    ],
   ];
 }
 
