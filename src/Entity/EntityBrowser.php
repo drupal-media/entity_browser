@@ -12,9 +12,13 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
 use Drupal\Core\Plugin\DefaultSingleLazyPluginCollection;
 use Drupal\entity_browser\EntityBrowserInterface;
+use Drupal\entity_browser\Events\EntitySelectionEvent;
+use Drupal\entity_browser\Events\Events;
+use Drupal\entity_browser\Events\SelectionDoneEvent;
 use Drupal\entity_browser\WidgetInterface;
 use Drupal\entity_browser\DisplayRouterInterface;
 use Drupal\entity_browser\WidgetsCollection;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -26,6 +30,10 @@ use Symfony\Component\Routing\Route;
  *   handlers = {
  *     "form" = {
  *       "entity_browser" = "Drupal\entity_browser\Form\EntityBrowserForm"
+ *     },
+ *     "wizard" = {
+ *       "add" = "Drupal\entity_browser\Wizard\EntityBrowserWizardAdd",
+ *       "edit" = "Drupal\entity_browser\Wizard\EntityBrowserWizard"
  *     }
  *   },
  *   admin_permission = "administer entity browsers",
@@ -89,7 +97,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    *
    * @var array
    */
-  protected $widgets;
+  protected $widgets = [];
 
   /**
    * Holds the collection of widgets that are used by this entity browser.
@@ -148,11 +156,9 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
   protected $additional_widget_parameters = [];
 
   /**
-   * Name of the form class.
-   *
-   * @var string
+   * @var
    */
-  protected $form_class = '\Drupal\entity_browser\Form\EntityBrowserForm';
+  protected $displayPluginCollection;
 
   /**
    * {@inheritdoc}
@@ -172,7 +178,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function setName($name) {
-    $this->set('name', $name);
+    $this->name = $name;
     return $this;
   }
 
@@ -181,6 +187,44 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function getDisplay() {
     return $this->displayPluginCollection()->get($this->display);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setLabel($label) {
+    $this->label = $label;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setDisplay($display) {
+    $this->display = $display;
+    $this->displayPluginCollection = NULL;
+    $this->getDisplay();
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setWidgetSelector($widget_selector) {
+    $this->widget_selector = $widget_selector;
+    $this->widgetSelectorCollection = NULL;
+    $this->getWidgetSelector();
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setSelectionDisplay($selection_display) {
+    $this->selection_display = $selection_display;
+    $this->selectionDisplayCollection = NULL;
+    $this->getSelectionDisplay();
+    return $this;
   }
 
   /**
@@ -335,8 +379,8 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
       return new Route(
         $path,
         [
-          '_controller' => 'Drupal\entity_browser\Controllers\EntityBrowserFormController::getContentResult',
-          '_title_callback' => 'Drupal\entity_browser\Controllers\EntityBrowserFormController::title',
+          '_controller' => 'Drupal\entity_browser\Controllers\StandalonePage::page',
+          '_title_callback' => 'Drupal\entity_browser\Controllers\StandalonePage::title',
           'entity_browser_id' => $this->id(),
         ],
         ['_permission' => 'access ' . $this->id() . ' entity browser pages'],
@@ -371,7 +415,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     // Save configuration for all plugins.
     $this->widgets = $this->getWidgets()->getConfiguration();
     $this->widget_selector_configuration = $this->widgetSelectorPluginCollection()->getConfiguration();
-    $this->display_configuration = $this->widgetSelectorPluginCollection()->getConfiguration();
+    $this->display_configuration = $this->displayPluginCollection()->getConfiguration();
     $this->selection_display_configuration = $this->selectionDisplayPluginCollection()->getConfiguration();
 
     return array_diff(
@@ -396,14 +440,4 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     \Drupal::service('router.builder')->rebuild();
     return $return;
   }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getFormObject() {
-    $form_class = \Drupal::service('class_resolver')->getInstanceFromDefinition($this->form_class);
-    $form_class->setEntityBrowser($this);
-    return $form_class;
-  }
-
 }

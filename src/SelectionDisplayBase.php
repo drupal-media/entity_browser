@@ -20,6 +20,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 abstract class SelectionDisplayBase extends PluginBase implements SelectionDisplayInterface, ContainerFactoryPluginInterface {
 
+  use PluginConfigurationFormTrait;
+
   /**
    * Plugin label.
    *

@@ -102,4 +102,14 @@ class Upload extends WidgetBase {
     return $files;
   }
 
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    $form['upload_location'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Upload location'),
+      '#default_value' => $this->configuration['upload_location'],
+    ];
+
+    return $form;
+  }
+
 }

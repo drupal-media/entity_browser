@@ -16,6 +16,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 abstract class DisplayBase extends PluginBase implements DisplayInterface, ContainerFactoryPluginInterface {
 
+  use PluginConfigurationFormTrait;
+
   /**
    * Plugin label.
    *
