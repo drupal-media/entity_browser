@@ -6,6 +6,7 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Widget;
 
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\entity_browser\WidgetBase;
@@ -84,21 +85,20 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
     $form = [];
     // TODO - do we need better error handling for view and view_display (in case
     // either of those is nonexistent or display not of correct type)?
-    /** @var \Drupal\views\ViewExecutable $view */
 
     $form['#attached']['library'] = ['entity_browser/view'];
 
+    /** @var \Drupal\views\ViewExecutable $view */
     $view = $this->entityManager
       ->getStorage('view')
       ->load($this->configuration['view'])
       ->getExecutable();
 
-    // Add exposed filter values, if present
-    foreach ($form_state->getUserInput() as $name => $value) {
-      if (strpos($name, 'entity_browser_exposed_') === 0) {
-        $name = str_replace('entity_browser_exposed_', '', $name);
-        $view->exposed_data[$name] = $value;
-      }
+    // Check if the current user has access to this view.
+    if (!$view->access($this->configuration['view_display'])) {
+      return [
+        '#markup' => t('You do not have access to this View.'),
+      ];
     }
 
     if (!empty($this->configuration['arguments'])) {
@@ -113,17 +113,6 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
     }
 
     $form['view'] = $view->executeDisplay($this->configuration['view_display']);
-
-    $ids = [];
-    foreach ($view->result as $row_id => $row_result) {
-      /** @var \Drupal\Core\Entity\EntityInterface $entity */
-      $entity = $row_result->_entity;
-      $ids[$row_id] = [
-        'id' => $entity->id(),
-        'type' => $entity->getEntityTypeId(),
-      ];
-    }
-    $form_state->set('view_widget_rows', $ids);
 
     if (empty($view->field['entity_browser_select'])) {
       $url = Url::fromRoute('entity.view.edit_form',['view'=>$this->configuration['view']])->toString();
@@ -149,33 +138,6 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
       }
     }
 
-    $form['view']['exposed_widgets']['filter'] = [
-      'submit' => [
-        '#type' => 'button',
-        '#value' => t('Filter'),
-        '#name' => 'filter',
-      ],
-    ];
-
-    // Add exposed widgets from the view, if present.
-    if (!empty($form['view']['view']['#view']->exposed_widgets)) {
-      $form['view']['exposed_widgets'] += $form['view']['view']['#view']->exposed_widgets;
-      $form['view']['exposed_widgets']['#weight'] = -1;
-      unset($form['view']['view']['#view']->exposed_widgets);
-
-      // Add exposed filter default values from the form state
-      foreach ($form_state->getUserInput() as $name => $value) {
-        if (strpos($name, 'entity_browser_exposed_') === 0) {
-          $form['view']['exposed_widgets'][$name]['#value'] = $value;
-        }
-      }
-    }
-    // Hide the filter button from view.
-    else {
-      // We are using this for pagers too so let's keep it in form.
-      $form['view']['exposed_widgets']['filter']['submit']['#attributes']['class'][] = 'visually-hidden';
-    }
-
     $form['view']['view'] = [
       '#markup' => \Drupal::service('renderer')->render($form['view']['view']),
     ];
@@ -198,12 +160,50 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
   /**
    * {@inheritdoc}
    */
+  public function validate(array &$form, FormStateInterface $form_state) {
+    $user_input = $form_state->getUserInput();
+    if (isset($user_input['entity_browser_select'])) {
+      $selected_rows = array_values(array_filter($user_input['entity_browser_select']));
+      foreach ($selected_rows as $row) {
+        // Verify that the user input is a string and split it.
+        // Each $row is in the format entity_type:id.
+        if (is_string($row) && $parts = explode(':', $row, 2)) {
+          // Make sure we have a type and id present.
+          if (count($parts) == 2) {
+            try {
+              $storage = $this->entityManager->getStorage($parts[0]);
+              if (!$storage->load($parts[1])) {
+                $message = t('The @type Entity @id does not exist.', [
+                  '@type' => $parts[0],
+                  '@id' => $parts[1]
+                ]);
+                $form_state->setError($form['widget']['view']['entity_browser_select'], $message);
+              }
+            }
+            catch (PluginNotFoundException $e) {
+              $message = t('The Entity Type @type does not exist.', [
+                '@type' => $parts[0],
+              ]);
+              $form_state->setError($form['widget']['view']['entity_browser_select'], $message);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function submit(array &$element, array &$form, FormStateInterface $form_state) {
-    $selected_rows = array_keys(array_filter($form_state->getValue('entity_browser_select')));
+    $selected_rows = array_values(array_filter($form_state->getUserInput()['entity_browser_select']));
     $entities = [];
-    $ids = $form_state->get('view_widget_rows');
     foreach ($selected_rows as $row) {
-      $entities[] = $this->entityManager->getStorage($ids[$row]['type'])->load($ids[$row]['id']);
+      list($type, $id) = explode(':', $row);
+      $storage = $this->entityManager->getStorage($type);
+      if ($entity = $storage->load($id)) {
+        $entities[] = $entity;
+      }
     }
 
     $this->selectEntities($entities, $form_state);
