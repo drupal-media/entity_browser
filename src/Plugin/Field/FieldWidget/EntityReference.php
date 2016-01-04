@@ -100,6 +100,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
   public static function defaultSettings() {
     return array(
       'entity_browser' => NULL,
+      'open' => FALSE,
       'field_widget_display' => NULL,
       'field_widget_edit' => TRUE,
       'field_widget_remove' => TRUE,
@@ -158,6 +159,12 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       '#title' => t('Display Remove button'),
       '#type' => 'checkbox',
       '#default_value' => $this->getSetting('field_widget_remove')
+    ];
+
+    $element['open'] = [
+      '#title' => t('Show widget details as open by default'),
+      '#type' => 'checkbox',
+      '#default_value' => $this->getSetting('open')
     ];
 
     $element['field_widget_display_settings'] = [
@@ -286,7 +293,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     $element += [
       '#id' => $details_id,
       '#type' => 'details',
-      '#open' => !empty($ids),
+      '#open' => !empty($ids) || $this->getSetting('open'),
       'target_id' => [
         '#type' => 'hidden',
         '#id' => $hidden_id,
