@@ -238,8 +238,8 @@ class EntityBrowserTest extends KernelTestBase {
 
     $this->assertEquals($route->getPath(), '/entity-browser/test', 'Dynamic path matches.');
     $this->assertEquals($route->getDefault('entity_browser_id'), $entity->id(), 'Entity browser ID matches.');
-    $this->assertEquals($route->getDefault('_controller'), 'Drupal\entity_browser\Controllers\EntityBrowserFormController::getContentResult', 'Controller matches.');
-    $this->assertEquals($route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\EntityBrowserFormController::title', 'Title callback matches.');
+    $this->assertEquals($route->getDefault('_controller'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
+    $this->assertEquals($route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\StandalonePage::title', 'Title callback matches.');
     $this->assertEquals($route->getRequirement('_permission'), 'access ' . $entity->id() . ' entity browser pages', 'Permission matches.');
 
     try {
@@ -252,8 +252,8 @@ class EntityBrowserTest extends KernelTestBase {
 
     $this->assertEquals($registered_route->getPath(), '/entity-browser/test', 'Dynamic path matches.');
     $this->assertEquals($registered_route->getDefault('entity_browser_id'), $entity->id(), 'Entity browser ID matches.');
-    $this->assertEquals($registered_route->getDefault('_controller'), 'Drupal\entity_browser\Controllers\EntityBrowserFormController::getContentResult', 'Controller matches.');
-    $this->assertEquals($registered_route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\EntityBrowserFormController::title', 'Title callback matches.');
+    $this->assertEquals($registered_route->getDefault('_controller'), 'Drupal\entity_browser\Controllers\StandalonePage::page', 'Controller matches.');
+    $this->assertEquals($registered_route->getDefault('_title_callback'), 'Drupal\entity_browser\Controllers\StandalonePage::title', 'Title callback matches.');
     $this->assertEquals($registered_route->getRequirement('_permission'), 'access ' . $entity->id() . ' entity browser pages', 'Permission matches.');
   }
 
@@ -288,9 +288,9 @@ class EntityBrowserTest extends KernelTestBase {
     /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
     $entity = $this->controller->load('test');
 
-    /** @var \Drupal\entity_browser\EntityBrowserFormInterface $form_object */
-    $form_object = $entity->getFormObject();
-    $form_object->setEntityBrowser($entity);
+    /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+    $form_object = $this->container->get('entity.manager')->getFormObject($entity->getEntityTypeId(), 'entity_browser');
+    $form_object->setEntity($entity);
     $form_state = new FormState();
 
     $form = [];
@@ -316,9 +316,9 @@ class EntityBrowserTest extends KernelTestBase {
     /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
     $entity = $this->controller->load('dummy_widget');
 
-    /** @var \Drupal\entity_browser\EntityBrowserFormInterface $form_object */
-    $form_object = $entity->getFormObject();
-    $form_object->setEntityBrowser($entity);
+    /** @var \Drupal\Core\Entity\EntityFormInterface $form_object */
+    $form_object = $this->container->get('entity.manager')->getFormObject($entity->getEntityTypeId(), 'entity_browser');
+    $form_object->setEntity($entity);
 
     $form_state = new FormState();
     $entity->getWidgets()->get($entity->getFirstWidget())->entity = $entity;

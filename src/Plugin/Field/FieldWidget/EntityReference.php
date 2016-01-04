@@ -16,7 +16,6 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Url;
 use Drupal\entity_browser\Events\Events;
 use Drupal\entity_browser\Events\RegisterJSCallbacks;
 use Drupal\entity_browser\FieldWidgetDisplayManager;
@@ -101,8 +100,6 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     return array(
       'entity_browser' => NULL,
       'field_widget_display' => NULL,
-      'field_widget_edit' => TRUE,
-      'field_widget_remove' => TRUE,
       'field_widget_display_settings' => [],
     ) + parent::defaultSettings();
   }
@@ -148,18 +145,6 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       ],
     ];
 
-    $element['field_widget_edit'] = [
-      '#title' => t('Display Edit button'),
-      '#type' => 'checkbox',
-      '#default_value' => $this->getSetting('field_widget_edit')
-    ];
-
-    $element['field_widget_remove'] = [
-      '#title' => t('Display Remove button'),
-      '#type' => 'checkbox',
-      '#default_value' => $this->getSetting('field_widget_remove')
-    ];
-
     $element['field_widget_display_settings'] = [
       '#type' => 'fieldset',
       '#title' => t('Entity display plugin configuration'),
@@ -193,7 +178,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     return $form['fields'][$this->fieldDefinition->getName()]['plugin']['settings_edit_form']['settings']['field_widget_display_settings'];
   }
 
-  /**
+    /**
    * {@inheritdoc}
    */
   public function settingsSummary() {
@@ -231,23 +216,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
 
     $ids = [];
     $entities = [];
-
-    // Determine if we're submitting and if submit came from this widget.
-    $is_relevant_submit = FALSE;
-    if (($trigger = $form_state->getTriggeringElement())) {
-      // Can be triggered by hidden target_id element or "Remove" button.
-      if (end($trigger['#parents']) === 'target_id' || (end($trigger['#parents']) === 'remove_button')) {
-        $is_relevant_submit = TRUE;
-
-        // In case there are more instances of this widget on the same page we
-        // need to check if submit came from this instance.
-        $field_name_key = end($trigger['#parents']) === 'target_id' ? 2 : 5;
-        $field_name_key = sizeof($trigger['#parents']) - $field_name_key;
-        $is_relevant_submit &= ($trigger['#parents'][$field_name_key] === $this->fieldDefinition->getName());
-      }
-    };
-
-    if ($is_relevant_submit) {
+    if (($trigger = $form_state->getTriggeringElement()) && in_array($this->fieldDefinition->getName(), $trigger['#parents'])) {
       // Submit was triggered by hidden "target_id" element when entities were
       // added via entity browser.
       if (!empty($trigger['#ajax']['event']) && $trigger['#ajax']['event'] == 'entity_browser_value_updated') {
@@ -347,15 +316,6 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
               '#name' => $this->fieldDefinition->getName() . '_remove_' . $id,
               '#limit_validation_errors' => [array_merge($field_parents, [$this->fieldDefinition->getName()])],
               '#attributes' => ['data-entity-id' => $id],
-              '#access' => (bool) $this->getSetting('field_widget_remove')
-            ],
-            'edit_button' => [
-              '#type' => 'submit',
-              '#value' => $this->t('Edit'),
-              '#ajax' => [
-                'url' => Url::fromRoute('entity_browser.edit_form', ['entity_type' => $entity->getEntityTypeId(), 'entity' => $entity->id()])
-              ],
-              '#access' => (bool) $this->getSetting('field_widget_edit')
             ]
           ];
 

@@ -61,3 +61,11 @@ view:
   js:
     js/entity_browser.view.js: {}
   dependencies:
+
+widget:
+  version: VERSION
+  js:
+    js/entity_browser.widget.js: {}
+  dependencies:
+    - core/jquery
+    - core/drupalSettings
