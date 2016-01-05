@@ -9,6 +9,7 @@ namespace Drupal\entity_browser\Plugin\Field\FieldWidget;
 
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -51,6 +52,15 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
    * @var \Drupal\entity_browser\FieldWidgetDisplayManager
    */
   protected $fieldDisplayManager;
+
+  /**
+   * The depth of the delete button.
+   *
+   * This property exists so it can be changed if subclasses
+   *
+   * @var int
+   */
+  protected static $deleteDepth = 4;
 
   /**
    * Constructs widget plugin.
@@ -231,10 +241,6 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
   function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $entity_type = $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type');
     $entity_storage = $this->entityManager->getStorage($entity_type);
-    $field_widget_display = $this->fieldDisplayManager->createInstance(
-      $this->getSetting('field_widget_display'),
-      $this->getSetting('field_widget_display_settings') + ['entity_type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')]
-    );
 
     $ids = [];
     $entities = [];
@@ -248,7 +254,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
 
         // In case there are more instances of this widget on the same page we
         // need to check if submit came from this instance.
-        $field_name_key = end($trigger['#parents']) === 'target_id' ? 2 : 5;
+        $field_name_key = end($trigger['#parents']) === 'target_id' ? 2 : static::$deleteDepth + 1;
         $field_name_key = sizeof($trigger['#parents']) - $field_name_key;
         $is_relevant_submit &= ($trigger['#parents'][$field_name_key] === $this->fieldDefinition->getName());
       }
@@ -263,7 +269,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       // Submit was triggered by one of the "Remove" buttons. We need to walk
       // few levels up to read value of "target_id" element.
       elseif ($trigger['#type'] == 'submit' && strpos($trigger['#name'], $this->fieldDefinition->getName() . '_remove_') === 0) {
-        $parents = array_merge(array_slice($trigger['#parents'], 0, -4), ['target_id']);
+        $parents = array_merge(array_slice($trigger['#parents'], 0, -static::$deleteDepth), ['target_id']);
       }
 
       if (isset($parents) && $value = $form_state->getValue($parents)) {
@@ -324,52 +330,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
 
     $field_parents = $element['#field_parents'];
 
-    $element['current'] = [
-      '#theme_wrappers' => ['container'],
-      '#attributes' => ['class' => ['entities-list']],
-      'items' => array_map(
-        function($id) use ($entity_storage, $field_widget_display, $details_id, $field_parents, $entities) {
-          $entity = $entities[$id];
-
-          $display = $field_widget_display->view($entity);
-          if (is_string($display)) {
-            $display = ['#markup' => $display];
-          }
-
-          return [
-            '#theme_wrappers' => ['container'],
-            '#attributes' => [
-              'class' => ['item-container'],
-              'data-entity-id' => $entity->id()
-            ],
-            'display' => $display,
-            'remove_button' => [
-              '#type' => 'submit',
-              '#value' => $this->t('Remove'),
-              '#ajax' => [
-                'callback' => [get_class($this), 'updateWidgetCallback'],
-                'wrapper' => $details_id,
-              ],
-              '#submit' => [[get_class($this), 'removeItemSubmit']],
-              '#name' => $this->fieldDefinition->getName() . '_remove_' . $id,
-              '#limit_validation_errors' => [array_merge($field_parents, [$this->fieldDefinition->getName()])],
-              '#attributes' => ['data-entity-id' => $id],
-              '#access' => (bool) $this->getSetting('field_widget_remove')
-            ],
-            'edit_button' => [
-              '#type' => 'submit',
-              '#value' => $this->t('Edit'),
-              '#ajax' => [
-                'url' => Url::fromRoute('entity_browser.edit_form', ['entity_type' => $entity->getEntityTypeId(), 'entity' => $entity->id()])
-              ],
-              '#access' => (bool) $this->getSetting('field_widget_edit')
-            ]
-          ];
-
-        },
-        $ids
-      ),
-    ];
+    $element['current'] = $this->displayCurrentSelection($details_id, $field_parents, $entities);
 
     return $element;
   }
@@ -400,7 +361,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       $parents = array_slice($trigger['#array_parents'], 0, -2);
     }
     elseif ($trigger['#type'] == 'submit' && strpos($trigger['#name'], '_remove_')) {
-      $parents = array_slice($trigger['#array_parents'], 0, -4);
+      $parents = array_slice($trigger['#array_parents'], 0, -static::$deleteDepth);
     }
 
     return NestedArray::getValue($form, $parents);
@@ -413,8 +374,8 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     $triggering_element = $form_state->getTriggeringElement();
     if (!empty($triggering_element['#attributes']['data-entity-id'])) {
       $id = $triggering_element['#attributes']['data-entity-id'];
-      $parents = array_slice($triggering_element['#parents'], 0, -4);
-      $array_parents = array_slice($triggering_element['#array_parents'], 0, -4);
+      $parents = array_slice($triggering_element['#parents'], 0, -static::$deleteDepth);
+      $array_parents = array_slice($triggering_element['#array_parents'], 0, -static::$deleteDepth);
 
       // Find and remove correct entity.
       $values = explode(' ', $form_state->getValue(array_merge($parents, ['target_id'])));
@@ -432,5 +393,73 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       // Rebuild form.
       $form_state->setRebuild();
     }
+  }
+
+  /**
+   * Builds the render array for displaying the current results.
+   *
+   * @param string $details_id
+   *   The ID for the details element.
+   * @param string[] $field_parents
+   *   Field parents.
+   * @param \Drupal\Core\Entity\ContentEntityInterface[] $entities
+   *
+   * @return array
+   *   The render array for the current selection.
+   */
+  protected function displayCurrentSelection($details_id, $field_parents, $entities) {
+
+    $field_widget_display = $this->fieldDisplayManager->createInstance(
+      $this->getSetting('field_widget_display'),
+      $this->getSetting('field_widget_display_settings') + ['entity_type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')]
+    );
+
+    return [
+      '#theme_wrappers' => ['container'],
+      '#attributes' => ['class' => ['entities-list']],
+      'items' => array_map(
+        function (ContentEntityInterface $entity) use ($field_widget_display, $details_id, $field_parents) {
+          $display = $field_widget_display->view($entity);
+          if (is_string($display)) {
+            $display = ['#markup' => $display];
+          }
+          return [
+            '#theme_wrappers' => ['container'],
+            '#attributes' => [
+              'class' => ['item-container'],
+              'data-entity-id' => $entity->id()
+            ],
+            'display' => $display,
+            'remove_button' => [
+              '#type' => 'submit',
+              '#value' => $this->t('Remove'),
+              '#ajax' => [
+                'callback' => [get_class($this), 'updateWidgetCallback'],
+                'wrapper' => $details_id,
+              ],
+              '#submit' => [[get_class($this), 'removeItemSubmit']],
+              '#name' => $this->fieldDefinition->getName() . '_remove_' . $entity->id(),
+              '#limit_validation_errors' => [array_merge($field_parents, [$this->fieldDefinition->getName()])],
+              '#attributes' => ['data-entity-id' => $entity->id()],
+              '#access' => (bool) $this->getSetting('field_widget_remove')
+            ],
+            'edit_button' => [
+              '#type' => 'submit',
+              '#value' => $this->t('Edit'),
+              '#ajax' => [
+                'url' => Url::fromRoute(
+                  'entity_browser.edit_form', [
+                  'entity_type' => $entity->getEntityTypeId(),
+                  'entity' => $entity->id()
+                ]
+                )
+              ],
+              '#access' => (bool) $this->getSetting('field_widget_edit')
+            ]
+          ];
+        },
+        $entities
+      ),
+    ];
   }
 }
