@@ -358,7 +358,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     // figure out where root of the widget is in the form structure and use this
     // information to return correct part of the form.
     if (!empty($trigger['#ajax']['event']) && $trigger['#ajax']['event'] == 'entity_browser_value_updated') {
-      $parents = array_slice($trigger['#array_parents'], 0, -2);
+      $parents = array_slice($trigger['#array_parents'], 0, -1);
     }
     elseif ($trigger['#type'] == 'submit' && strpos($trigger['#name'], '_remove_')) {
       $parents = array_slice($trigger['#array_parents'], 0, -static::$deleteDepth);
