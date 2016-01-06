@@ -50,7 +50,8 @@ function entity_browser_form_alter(&$form, FormStateInterface &$form_state) {
     $dummy_form = array();
     /** @var \Drupal\views\ViewExecutable $view */
     $view = $form_state->get('view');
-    /** @var \Drupal\views\Plugin\views\filter\FilterPluginBase $filter */
+
+    // Dupe exposed filters.
     foreach ($view->filter as $filter) {
       if ($filter->isExposed()) {
         $exposed = $filter->exposedInfo();
@@ -60,6 +61,11 @@ function entity_browser_form_alter(&$form, FormStateInterface &$form_state) {
         $dummy_form['#info']['filter-' . $dummy_key]['value'] = $dummy_key;
       }
     }
+
+    // Dupe exposed sorts.
+    $dummy_form['entity_browser_exposed_sort_by'] = $form['sort_by'];
+    $dummy_form['entity_browser_exposed_sort_order'] = $form['sort_order'];
+
     $dummy_form['#id'] = '';
     $dummy_form['#build_id'] = '';
     $dummy_form['#array_parents'] = [];
