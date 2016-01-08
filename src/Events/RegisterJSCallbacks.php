@@ -30,6 +30,26 @@ class RegisterJSCallbacks extends EventBase {
   }
 
   /**
+   * Remove callback.
+   *
+   * @param string $callback
+   *   Callback name.
+   */
+  public function removeCallback($callback) {
+    $this->callbacks = array_diff($this->callbacks, [$callback]);
+  }
+
+  /**
+   * Sets callbacks.
+   *
+   * @param array $callbacks
+   *   List of callbacks.
+   */
+  public function setCallbacks($callbacks) {
+    $this->callbacks = $callbacks;
+  }
+
+  /**
    * Gets callbacks.
    *
    * @return array
@@ -38,4 +58,5 @@ class RegisterJSCallbacks extends EventBase {
   public function getCallbacks() {
     return $this->callbacks;
   }
+
 }

@@ -9,7 +9,6 @@ dependencies:
     - node.type.entity_browser_test
   module:
     - entity_browser_example
-    - entity_reference
     - text
     - user
   enforced:

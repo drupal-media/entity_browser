@@ -8,12 +8,12 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\FieldWidgetDisplay;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\Core\Plugin\PluginBase;
-use Drupal\entity_browser\FieldWidgetDisplayInterface;
 use Drupal\file\FileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\entity_browser\FieldWidgetDisplayBase;
 
 /**
  * Displays image thumbnail
@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   description = @Translation("Displays image files as thumbnails")
  * )
  */
-class ImageThumbnail extends PluginBase implements FieldWidgetDisplayInterface, ContainerFactoryPluginInterface {
+class ImageThumbnail extends FieldWidgetDisplayBase implements ContainerFactoryPluginInterface {
 
   /**
    * Entity manager service.
@@ -66,17 +66,13 @@ class ImageThumbnail extends PluginBase implements FieldWidgetDisplayInterface, 
    * {@inheritdoc}
    */
   public function view(EntityInterface $entity) {
-    if ($entity instanceof FileInterface) {
-      return [
-        '#theme' => 'image_style',
-        '#style_name' => $this->configuration['image_style'],
-        '#title' => $entity->label(),
-        '#alt' => $entity->label(),
-        '#uri' => $entity->getFileUri(),
-      ];
-    }
-
-    return $entity->label();
+    return [
+      '#theme' => 'image_style',
+      '#style_name' => $this->configuration['image_style'],
+      '#title' => $entity->label(),
+      '#alt' => $entity->label(),
+      '#uri' => $entity->getFileUri(),
+    ];
   }
 
   /**
@@ -97,6 +93,13 @@ class ImageThumbnail extends PluginBase implements FieldWidgetDisplayInterface, 
         '#options' => $options,
       ],
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isApplicable(EntityTypeInterface $entity_type) {
+    return $entity_type->isSubclassOf(FileInterface::class);
   }
 
 }

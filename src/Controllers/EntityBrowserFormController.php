@@ -2,14 +2,18 @@
 
 /**
  * @file
- * Contains \Drupal\entity_browser\Controllers\StandalonePage.
+ * Contains \Drupal\entity_browser\Controllers\EntityBrowserFormController.
  */
 
 namespace Drupal\entity_browser\Controllers;
 
 use Drupal\Component\Utility\Xss;
-use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Controller\ControllerResolverInterface;
+use Drupal\Core\Controller\HtmlFormController;
+use Drupal\Core\DependencyInjection\ClassResolverInterface;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
 /**
  * Standalone entity browser page.
  */
-class StandalonePage extends ControllerBase {
+class EntityBrowserFormController extends HtmlFormController implements ContainerInjectionInterface {
 
   /**
    * Current route match service.
@@ -41,8 +45,14 @@ class StandalonePage extends ControllerBase {
   protected $request;
 
   /**
-   * Constructs StandalonePage route controller.
+   * Constructs Entity browser form controller.
    *
+   * @param \Drupal\Core\Controller\ControllerResolverInterface $controller_resolver
+   *   The controller resolver.
+   * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
+   *   The form builder.
+   * @param \Drupal\Core\DependencyInjection\ClassResolverInterface $class_resolver
+   *   The class resolver.
    * @param RouteMatchInterface $route_match
    *   Current route match service.
    * @param EntityManagerInterface $entity_manager
@@ -50,10 +60,12 @@ class StandalonePage extends ControllerBase {
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   Current request.
    */
-  public function __construct(RouteMatchInterface $route_match, EntityManagerInterface $entity_manager, Request $request) {
+  public function __construct(ControllerResolverInterface $controller_resolver, FormBuilderInterface $form_builder, ClassResolverInterface $class_resolver, RouteMatchInterface $route_match, EntityManagerInterface $entity_manager, Request $request) {
+    parent::__construct($controller_resolver, $form_builder, $class_resolver);
     $this->currentRouteMatch = $route_match;
     $this->browserStorage = $entity_manager->getStorage('entity_browser');
     $this->request = $request;
+    $this->formBuilder = $form_builder;
   }
 
   /**
@@ -61,6 +73,9 @@ class StandalonePage extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
+      $container->get('controller_resolver'),
+      $container->get('form_builder'),
+      $container->get('class_resolver'),
       $container->get('current_route_match'),
       $container->get('entity.manager'),
       $container->get('request_stack')->getCurrentRequest()
@@ -68,17 +83,10 @@ class StandalonePage extends ControllerBase {
   }
 
   /**
-   * Test implementation of standalone entity browser page.
+   * {@inheritdoc}
    */
-  public function page() {
-    $browser = $this->loadBrowser();
-
-    // The original path is sometimes needed: ie for views arguments.
-    if ($original_path = $this->request->get('original_path')) {
-      $browser->addAdditionalWidgetParameters(['path_parts' => explode('/', $original_path)]);
-    }
-
-    return $this->entityFormBuilder()->getForm($browser, 'entity_browser');
+  protected function getFormObject(RouteMatchInterface $route_match, $form_arg) {
+    return $this->loadBrowser()->getFormObject();
   }
 
   /**

@@ -25,7 +25,9 @@
     // generation from display to eb directly. When we do this, we can change
     // \Drupal\entity_browser\Plugin\Field\FieldWidget\EntityReference::formElement
     // also.
-    var cardinality = parseInt(drupalSettings['entity_browser']['field_settings'][uuid]['cardinality']);
+
+    // Checking if cardinality is set - assume unlimited.
+    var cardinality = isNaN(parseInt(drupalSettings['entity_browser'][uuid]['cardinality'])) ? -1 : parseInt(drupalSettings['entity_browser'][uuid]['cardinality']);
 
     // Having more elements than cardinality should never happen, because
     // server side authentication should prevent it, but we handle it here
@@ -35,7 +37,8 @@
     }
 
     // Update value form element with new entity IDs.
-    var entity_ids = $(this).parent().parent().find('input[type*=hidden]').val();
+    var selector = drupalSettings['entity_browser'][uuid]['selector'] ? $(drupalSettings['entity_browser'][uuid]['selector']) : $(this).parent().parent().find('input[type*=hidden]');
+    var entity_ids = selector.val();
     if (entity_ids.length != 0) {
       var existing_entities_array = entity_ids.split(' ');
 
@@ -59,8 +62,8 @@
       entity_ids = added_entities_array.join(' ');
     }
 
-    $(this).parent().parent().find('input[type*=hidden]').val(entity_ids);
-    $(this).parent().parent().find('input[type*=hidden]').trigger('entity_browser_value_updated');
+    selector.val(entity_ids);
+    selector.trigger('entity_browser_value_updated');
   };
 
   /**
