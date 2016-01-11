@@ -6,6 +6,7 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Display;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
@@ -209,7 +210,8 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
         'width' => '100%',
         'height' => $this->configuration['height'] - 90,
         'frameborder' => 0,
-        'style' => 'padding:'
+        'style' => 'padding:',
+        'name' => Html::cleanCssIdentifier('entity-browser-iframe-' . $this->configuration['entity_browser_id'])
       ],
     ];
     $html = drupal_render($content);
