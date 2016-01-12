@@ -32,6 +32,9 @@ use Symfony\Component\Routing\Route;
  *       "edit" = "Drupal\entity_browser\Wizard\EntityBrowserWizard"
  *     }
  *   },
+ *   links = {
+ *     "collection" = "/admin/config/content/entity_browser/list",
+ *   },
  *   admin_permission = "administer entity browsers",
  *   config_prefix = "browser",
  *   entity_keys = {
