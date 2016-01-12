@@ -16,5 +16,13 @@ entity.entity_browser.edit_form:
   requirements:
     _permission: 'administer entity browsers'
 
+entity.entity_browser.collection:
+  path: '/admin/config/content/entity_browser/list'
+  defaults:
+    _entity_list: entity_browser
+    _title: 'Entity Browser List'
+  requirements:
+    _permission: 'aminister entity browser'
+
 route_callbacks:
   - 'entity_browser.route_subscriber:routes'

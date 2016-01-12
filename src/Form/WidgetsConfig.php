@@ -27,7 +27,7 @@ class WidgetsConfig extends FormBase {
    *
    * @var \Drupal\user\SharedTempStoreFactory
    */
-  protected $tempstore;
+  protected $tempStore;
 
   /**
    * Constructs GeneralInfoConfig form class.
@@ -84,6 +84,7 @@ class WidgetsConfig extends FormBase {
       '#ajax' => [
         'callback' => [get_class($this), 'addWidgetCallback'],
         'wrapper' => 'widgets',
+        'event' => 'change'
       ],
       '#executes_submit_callback' => TRUE,
       '#submit' => [[get_class($this), 'submitAddWidget']],
@@ -120,7 +121,6 @@ class WidgetsConfig extends FormBase {
       ];
       $row['form'] = [];
       $row['form'] = $widget->buildConfigurationForm($row['form'], $form_state);
-      $row['operations'] = [];
       $row['weight'] = [
         '#type' => 'weight',
         '#default_value' => $widget->getWeight(),
@@ -132,6 +132,7 @@ class WidgetsConfig extends FormBase {
       ];
       $form['widgets'][$widget->uuid()] = $row;
     }
+    $form['#attached']['library'][] = 'entity_browser/widgets';
     return $form;
   }
 
