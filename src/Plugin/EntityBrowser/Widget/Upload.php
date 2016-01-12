@@ -56,8 +56,8 @@ class Upload extends WidgetBase {
     $uploaded_files = $form_state->getValue(['upload'], []);
     $trigger = $form_state->getTriggeringElement();
 
-    if (in_array('::save', $trigger['#submit'] )) {
-      $violations = $this->runWidgetValidators($uploaded_files, ['not_empty' => ['min' => 1]]);
+    if (in_array('submit', $trigger['#array_parents'] )) {
+      $violations = $this->runWidgetValidators($uploaded_files, ['cardinality' => ['min' => 2]]);
       if (!empty($violations)) {
         /** @var \Symfony\Component\Validator\ConstraintViolationListInterface $violation */
         foreach ($violations as $violation) {

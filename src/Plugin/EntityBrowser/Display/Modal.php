@@ -10,6 +10,7 @@ use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\entity_browser\DisplayAjaxInterface;
@@ -92,8 +93,8 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
    * @param \Drupal\Component\Uuid\UuidInterface
    *   UUID generator interface.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, RouteMatchInterface $current_route_match, UuidInterface $uuid, CurrentPathStack $current_path, Request $request) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, KeyValueStoreExpirableInterface $key_value, RouteMatchInterface $current_route_match, UuidInterface $uuid, CurrentPathStack $current_path, Request $request) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $key_value);
     $this->currentRouteMatch = $current_route_match;
     $this->uuidGenerator = $uuid;
     $this->currentPath = $current_path;
@@ -109,6 +110,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
       $plugin_id,
       $plugin_definition,
       $container->get('event_dispatcher'),
+      $container->get('keyvalue.expirable')->get('entity_browser'),
       $container->get('current_route_match'),
       $container->get('uuid'),
       $container->get('path.current'),
@@ -148,6 +150,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
           'query' => [
             'uuid' => $uuid,
             'original_path' => $original_path,
+            'validators' => $this->
           ],
         ])->toString(),
       ],

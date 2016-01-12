@@ -54,4 +54,30 @@ interface DisplayInterface extends PluginInspectionInterface, ConfigurablePlugin
    *   The uuid string.
    */
   public function getUuid();
+
+  /**
+   * Set validators.
+   *
+   * Saves Entity Browser Widget validators in key/value storage if an identical
+   * set of constraints is not already stored there.
+   *
+   * @param array $validators
+   *   An array where keys are validator ids and values configurations for them.
+   *
+   * @return string
+   *   The hash generated from hashing the validators array.
+   */
+  public function setValidators(array $validators);
+
+  /**
+   * Get validators.
+   *
+   * @param \Drupal\entity_browser\string $hash
+   *   The hash generated from hashing the validators array.
+   *
+   * @return mixed
+   *   An array where keys are validator ids and values configurations for them
+   *   or empty array if no validators are stored.
+   */
+  public function getValidators(string $hash);
 }

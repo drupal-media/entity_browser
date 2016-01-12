@@ -328,6 +328,10 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       ];
     }
 
+    // Gather and set validators.
+    // @todo Is there a better place to do that?
+    $entity_browser->getDisplay()->setValidators(['cardinality' => ['min' => $cardinality]]);
+
     $field_parents = $element['#field_parents'];
 
     $element['current'] = $this->displayCurrentSelection($details_id, $field_parents, $entities);

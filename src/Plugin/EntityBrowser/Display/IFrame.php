@@ -8,6 +8,7 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\Display;
 
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\entity_browser\DisplayBase;
@@ -87,8 +88,8 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
    * @param \Drupal\Core\Path\CurrentPathStack $current_path
    *   The current path.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, RouteMatchInterface $current_route_match, UuidInterface $uuid, Request $request, CurrentPathStack $current_path) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, KeyValueStoreExpirableInterface $key_value, RouteMatchInterface $current_route_match, UuidInterface $uuid, Request $request, CurrentPathStack $current_path) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $key_value);
     $this->currentRouteMatch = $current_route_match;
     $this->uuidGenerator = $uuid;
     $this->request = $request;
@@ -104,6 +105,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
       $plugin_id,
       $plugin_definition,
       $container->get('event_dispatcher'),
+      $container->get('keyvalue.expirable')->get('entity_browser'),
       $container->get('current_route_match'),
       $container->get('uuid'),
       $container->get('request_stack')->getCurrentRequest(),
