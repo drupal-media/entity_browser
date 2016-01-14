@@ -27,12 +27,15 @@ use Symfony\Component\Routing\Route;
  *     "form" = {
  *       "entity_browser" = "Drupal\entity_browser\Form\EntityBrowserForm"
  *     },
+ *     "access" = "Drupal\entity_browser\EntityBrowserAccessControlHandler",
+ *     "list_builder" = "Drupal\entity_browser\Controllers\EntityBrowserListBuilder",
  *     "wizard" = {
  *       "add" = "Drupal\entity_browser\Wizard\EntityBrowserWizardAdd",
  *       "edit" = "Drupal\entity_browser\Wizard\EntityBrowserWizard"
  *     }
  *   },
  *   links = {
+ *     "canonical" = "/admin/config/content/entity_browser/{entity_browser}",
  *     "collection" = "/admin/config/content/entity_browser/list",
  *   },
  *   admin_permission = "administer entity browsers",

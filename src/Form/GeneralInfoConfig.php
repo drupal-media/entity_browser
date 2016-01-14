@@ -152,17 +152,6 @@ class GeneralInfoConfig extends FormBase {
       ->setDisplay($form_state->getValue('display'))
       ->setWidgetSelector($form_state->getValue('widget_selector'))
       ->setSelectionDisplay($form_state->getValue('selection_display'));
-
-    // TODO must be able to select single widget multiple times. We are adding
-    // them which ends up with duplicates if we visit first step multiple times.
-    /*$entity_browser->addWidget([
-      'id' => 'upload',
-      'label' => 'upload',
-      'weight' => 0,
-      // Configuration will be set on the widgets page.
-      'settings' => [],
-    ]);*/
-
   }
 
 }

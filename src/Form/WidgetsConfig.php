@@ -30,14 +30,11 @@ class WidgetsConfig extends FormBase {
   protected $tempStore;
 
   /**
-   * Constructs GeneralInfoConfig form class.
-   *
-   * @param \Drupal\entity_browser\DisplayManager $display_manager
-   *   Entity browser display plugin manager.
-   * @param \Drupal\entity_browser\WidgetSelectorManager $widget_selector
-   *   Entity browser widget selector plugin manager.
-   * @param \Drupal\entity_browser\SelectionDisplayManager
-   *   Entity browser selection display plugin manager.
+   * WidgetsConfig constructor.
+   * @param \Drupal\entity_browser\WidgetManager $widget_manager
+   * @param \Drupal\user\SharedTempStoreFactory $temp_store
+   * @param null $tempstore_id
+   * @param null $machine_name
    */
   function __construct(WidgetManager $widget_manager, SharedTempStoreFactory $temp_store, $tempstore_id = NULL, $machine_name = NULL) {
     $this->widgetManager = $widget_manager;
@@ -136,6 +133,11 @@ class WidgetsConfig extends FormBase {
     return $form;
   }
 
+  /**
+   * @param $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * @param null $tempstore_id
+   */
   public static function submitAddWidget($form, FormStateInterface $form_state, $tempstore_id = NULL) {
     $cached_values = $form_state->getTemporaryValue('wizard');
     /** @var \Drupal\entity_browser\EntityBrowserInterface $entity_browser */
@@ -154,6 +156,11 @@ class WidgetsConfig extends FormBase {
     $form_state->setRebuild();
   }
 
+  /**
+   * @param $form
+   * @param $form_state
+   * @return mixed
+   */
   public static function addWidgetCallback($form, $form_state) {
     return $form['widgets'];
   }
