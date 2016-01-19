@@ -33,10 +33,8 @@ class WidgetsConfig extends FormBase {
    * WidgetsConfig constructor.
    * @param \Drupal\entity_browser\WidgetManager $widget_manager
    * @param \Drupal\user\SharedTempStoreFactory $temp_store
-   * @param null $tempstore_id
-   * @param null $machine_name
    */
-  function __construct(WidgetManager $widget_manager, SharedTempStoreFactory $temp_store, $tempstore_id = NULL, $machine_name = NULL) {
+  function __construct(WidgetManager $widget_manager, SharedTempStoreFactory $temp_store) {
     $this->widgetManager = $widget_manager;
     $this->tempStore = $temp_store;
   }
@@ -99,7 +97,7 @@ class WidgetsConfig extends FormBase {
       '#header' => [
         $this->t('Form'),
         $this->t('Operations'),
-        $this->t('Remove'),
+        $this->t('Actions'),
         $this->t('Weight'),
       ],
       '#empty' => $this->t('There are no widgets.'),
@@ -111,7 +109,7 @@ class WidgetsConfig extends FormBase {
     ];
 
     /** @var \Drupal\entity_browser\WidgetInterface $widget */
-    foreach ($entity_browser->getWidgets() as $widget) {
+    foreach ($entity_browser->getWidgets() as $uuid => $widget) {
       $row = [
         '#attributes' => [
           'class' => ['draggable'],
@@ -127,6 +125,7 @@ class WidgetsConfig extends FormBase {
       $row['remove'] = [
         '#type' => 'submit',
         '#value' => $this->t('Delete'),
+        '#name' => 'remove' . $uuid,
         '#ajax' => [
           'callback' => [get_class($this), 'addWidgetCallback'],
           'wrapper' => 'widgets',
@@ -134,7 +133,7 @@ class WidgetsConfig extends FormBase {
         ],
         '#executes_submit_callback' => TRUE,
         '#submit' => [[get_class($this), 'submitDeleteWidget']],
-        '#arguments' => $widget->uuid(),
+        '#arguments' => $uuid,
       ];
       $row['weight'] = [
         '#type' => 'weight',
@@ -145,7 +144,7 @@ class WidgetsConfig extends FormBase {
           'class' => ['variant-weight'],
         ],
       ];
-      $form['widgets']['table'][$widget->uuid()] = $row;
+      $form['widgets']['table'][$uuid] = $row;
     }
     return $form;
   }
@@ -153,9 +152,8 @@ class WidgetsConfig extends FormBase {
   /**
    * @param $form
    * @param \Drupal\Core\Form\FormStateInterface $form_state
-   * @param null $tempstore_id
    */
-  public static function submitAddWidget($form, FormStateInterface $form_state, $tempstore_id = NULL) {
+  public static function submitAddWidget($form, FormStateInterface $form_state) {
     $cached_values = $form_state->getTemporaryValue('wizard');
     /** @var \Drupal\entity_browser\EntityBrowserInterface $entity_browser */
     $entity_browser = $cached_values['entity_browser'];
@@ -218,9 +216,9 @@ class WidgetsConfig extends FormBase {
     /** @var \Drupal\entity_browser\EntityBrowserInterface $entity_browser */
     $entity_browser = $form_state->getTemporaryValue('wizard')['entity_browser'];
     /** @var \Drupal\entity_browser\WidgetInterface $widget */
-    foreach ($entity_browser->getWidgets() as $key=>$widget) {
+    foreach ($entity_browser->getWidgets() as $uuid => $widget) {
       $widget->submitConfigurationForm($form, $form_state);
-      $widget->setWeight($form_state->getValue('table')[$key]['weight']);
+      $widget->setWeight($form_state->getValue('table')[$uuid]['weight']);
     }
   }
 
