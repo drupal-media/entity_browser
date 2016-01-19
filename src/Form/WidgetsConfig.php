@@ -90,10 +90,16 @@ class WidgetsConfig extends FormBase {
     $form_state->unsetValue('widget');
 
     $form['widgets'] = [
+      '#type' => 'container',
+      '#attributes' => ['id' => 'widgets'],
+    ];
+
+    $form['widgets']['table'] = [
       '#type' => 'table',
       '#header' => [
         $this->t('Form'),
         $this->t('Operations'),
+        $this->t('Remove'),
         $this->t('Weight'),
       ],
       '#empty' => $this->t('There are no widgets.'),
@@ -118,6 +124,18 @@ class WidgetsConfig extends FormBase {
       ];
       $row['form'] = [];
       $row['form'] = $widget->buildConfigurationForm($row['form'], $form_state);
+      $row['remove'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Delete'),
+        '#ajax' => [
+          'callback' => [get_class($this), 'addWidgetCallback'],
+          'wrapper' => 'widgets',
+          'event' => 'click'
+        ],
+        '#executes_submit_callback' => TRUE,
+        '#submit' => [[get_class($this), 'submitDeleteWidget']],
+        '#arguments' => $widget->uuid(),
+      ];
       $row['weight'] = [
         '#type' => 'weight',
         '#default_value' => $widget->getWeight(),
@@ -127,9 +145,8 @@ class WidgetsConfig extends FormBase {
           'class' => ['variant-weight'],
         ],
       ];
-      $form['widgets'][$widget->uuid()] = $row;
+      $form['widgets']['table'][$widget->uuid()] = $row;
     }
-    $form['#attached']['library'][] = 'entity_browser/widgets';
     return $form;
   }
 
@@ -142,14 +159,31 @@ class WidgetsConfig extends FormBase {
     $cached_values = $form_state->getTemporaryValue('wizard');
     /** @var \Drupal\entity_browser\EntityBrowserInterface $entity_browser */
     $entity_browser = $cached_values['entity_browser'];
+    $widgets_num = count($entity_browser->getWidgets());
     $widget = $form_state->getValue('widget');
+    $weight = $widgets_num + 1;
     $entity_browser->addWidget([
       'id' => $widget,
       'label' => $widget,
-      'weight' => 0,
+      'weight' => $weight,
       // Configuration will be set on the widgets page.
       'settings' => [],
     ]);
+    \Drupal::service('user.shared_tempstore')
+      ->get('entity_browser.config')
+      ->set($entity_browser->id(), $cached_values);
+    $form_state->setRebuild();
+  }
+
+  /**
+   * @param $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   */
+  public static function submitDeleteWidget($form, FormStateInterface $form_state) {
+    $cached_values = $form_state->getTemporaryValue('wizard');
+    /** @var \Drupal\entity_browser\EntityBrowserInterface $entity_browser */
+    $entity_browser = $cached_values['entity_browser'];
+    $entity_browser->deleteWidget($entity_browser->getWidget($form_state->getTriggeringElement()['#arguments']));
     \Drupal::service('user.shared_tempstore')
       ->get('entity_browser.config')
       ->set($entity_browser->id(), $cached_values);
@@ -184,8 +218,9 @@ class WidgetsConfig extends FormBase {
     /** @var \Drupal\entity_browser\EntityBrowserInterface $entity_browser */
     $entity_browser = $form_state->getTemporaryValue('wizard')['entity_browser'];
     /** @var \Drupal\entity_browser\WidgetInterface $widget */
-    foreach ($entity_browser->getWidgets() as $widget) {
+    foreach ($entity_browser->getWidgets() as $key=>$widget) {
       $widget->submitConfigurationForm($form, $form_state);
+      $widget->setWeight($form_state->getValue('table')[$key]['weight']);
     }
   }
 

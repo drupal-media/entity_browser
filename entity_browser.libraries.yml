@@ -61,9 +61,3 @@ view:
   js:
     js/entity_browser.view.js: {}
   dependencies:
-
-widgets:
-  version: VERSION
-  js:
-    js/entity_browser.widgets.js: {}
-  dependencies:

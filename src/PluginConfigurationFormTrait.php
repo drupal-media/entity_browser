@@ -36,7 +36,7 @@ trait PluginConfigurationFormTrait {
     $values = $form_state->getValues();
 
     if ($this instanceof WidgetInterface) {
-      $values = $values[$this->id()];
+      $values = $values['table'][$this->uuid()];
     }
 
     if (!empty($values)) {

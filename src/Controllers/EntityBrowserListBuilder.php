@@ -2,10 +2,10 @@
 
 /**
  * @file
- * Contains \Drupal\entity_browser\Entity\Controllers\EntityBrowserListBuilder.
+ * Contains \Drupal\entity_browser\Controllers\EntityBrowserListBuilder.
  */
 
-namespace Drupal\content_entity_example\Entity\Controller;
+namespace Drupal\entity_browser\Controllers;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
