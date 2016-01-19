@@ -295,7 +295,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * {@inheritdoc}
    */
   public function deleteWidget(WidgetInterface $widget) {
-    $this->getWidgets()->removeInstanceId($widget->getUuid());
+    $this->getWidgets()->removeInstanceId($widget->uuid());
     $this->save();
     return $this;
   }
