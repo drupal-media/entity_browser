@@ -9,7 +9,7 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\SelectionDisplay;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_browser\SelectionDisplayBase;
 
-/*
+/**
  * Show current selection and delivers selected entities.
  *
  * @EntityBrowserSelectionDisplay(
@@ -34,14 +34,23 @@ class NewDisplay extends SelectionDisplayBase {
    * {@inheritdoc}
    */
   public function getForm(array &$original_form, FormStateInterface $form_state) {
+
     $form = [];
 
-    $selected_entities = &$form_state->getStorage()['entity_browser']['selected_entities'];
+    $storage = &$form_state->getStorage();
 
-    foreach ($selected_entities as $entity) {
-      $form['label'] = [
+    //$selected_entities = $storage['entity_browser']['selected_entities'];
+    $selected_entities = ['en1', 'en2', 'en3', 'en4'];
+
+    $form['selected'] = [
+      '#type' => 'container',
+      '#attributes' => ['id' => 'selected'],
+    ];
+    foreach ($selected_entities as $key => $value) {
+      $form['selected']['element'][$key] = [
         '#type' => 'label',
-        '$value' => t('Entity')
+        '$value' => t('Entity'),
+        '#title' => $value
       ];
     }
 
