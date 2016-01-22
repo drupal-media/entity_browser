@@ -6,7 +6,6 @@
 
 namespace Drupal\entity_browser;
 
-use Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -49,7 +48,6 @@ abstract class DisplayBase extends PluginBase implements DisplayInterface, Conta
    *   The plugin implementation definition.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher service.
-
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -103,4 +101,5 @@ abstract class DisplayBase extends PluginBase implements DisplayInterface, Conta
   public function label() {
     return $this->label;
   }
+
 }

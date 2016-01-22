@@ -58,5 +58,4 @@ interface DisplayInterface extends PluginInspectionInterface, ConfigurablePlugin
    *   The uuid string.
    */
   public function getUuid();
-
 }
