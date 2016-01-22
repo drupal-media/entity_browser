@@ -24,7 +24,7 @@ class Standalone extends DisplayBase implements DisplayRouterInterface {
   /**
    * {@inheritdoc}
    */
-  public function displayEntityBrowser() {
+  public function displayEntityBrowser($validators = '') {
     // @TODO Implement it.
   }
 

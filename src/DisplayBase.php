@@ -39,11 +39,6 @@ abstract class DisplayBase extends PluginBase implements DisplayInterface, Conta
   protected $eventDispatcher;
 
   /**
-   * @var \Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface
-   */
-  protected $keyValue;
-
-  /**
    * Constructs display plugin.
    *
    * @param array $configuration
@@ -54,14 +49,12 @@ abstract class DisplayBase extends PluginBase implements DisplayInterface, Conta
    *   The plugin implementation definition.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher service.
-   * @param \Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface $key_value
-   *   The key value store.
+
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, KeyValueStoreExpirableInterface $key_value) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->configuration += $this->defaultConfiguration();
     $this->eventDispatcher = $event_dispatcher;
-    $this->keyValue = $key_value;
   }
 
   /**
@@ -72,8 +65,7 @@ abstract class DisplayBase extends PluginBase implements DisplayInterface, Conta
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('event_dispatcher'),
-      $container->get('keyvalue.expirable')->get('entity_browser')
+      $container->get('event_dispatcher')
     );
   }
 
@@ -111,25 +103,4 @@ abstract class DisplayBase extends PluginBase implements DisplayInterface, Conta
   public function label() {
     return $this->label;
   }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setValidators(array $validators) {
-    // Generate the hash that we use as key for the key/value.
-    $hash = md5(serialize($validators));
-
-    if (!$this->keyValue->has($hash)) {
-      $this->keyValue->set($hash, $validators);
-    }
-    return $hash;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getValidators(string $hash) {
-    return $this->keyValue->get($hash, []);
-  }
-
 }

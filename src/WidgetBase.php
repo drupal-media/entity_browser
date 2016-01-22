@@ -6,6 +6,7 @@
 
 namespace Drupal\entity_browser;
 
+use Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -14,6 +15,7 @@ use Drupal\entity_browser\Events\EntitySelectionEvent;
 use Drupal\entity_browser\Events\Events;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Base class for widget plugins.
@@ -60,6 +62,14 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    * @var \Drupal\Core\Entity\EntityManagerInterface
    */
   protected $entityManager;
+  /**
+   * @var \Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface
+   */
+  private $keyValue;
+  /**
+   * @var \Symfony\Component\HttpFoundation\Request
+   */
+  private $request;
 
   /**
    * Constructs widget plugin.
@@ -73,11 +83,13 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityManagerInterface $entity_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityManagerInterface $entity_manager, KeyValueStoreExpirableInterface $key_value, Request $request) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->eventDispatcher = $event_dispatcher;
     $this->entityManager = $entity_manager;
     $this->setConfiguration($configuration);
+    $this->keyValue = $key_value;
+    $this->request = $request;
   }
 
   /**
@@ -89,7 +101,9 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
       $plugin_id,
       $plugin_definition,
       $container->get('event_dispatcher'),
-      $container->get('entity.manager')
+      $container->get('entity.manager'),
+      $container->get('keyvalue.expirable')->get('entity_browser'),
+      $container->get('request_stack')->getCurrentRequest()
     );
   }
 
@@ -185,8 +199,14 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    * {@inheritdoc}
    */
   public function runWidgetValidators(array $entities, $validators = []) {
-    // @todo Get the list of validation ids.
-    $all_validators = $validators + [];
+    // @todo Implement a centralized way to get arguments from path for all widgets?
+    if ($validators_hash = $this->request->get('validators')) {
+      $passed_validators = $this->keyValue->get($validators_hash);
+
+      if (!empty($passed_validators)) {
+        $validators += $passed_validators;
+      }
+    }
 
     foreach ($validators as $validator_id => $options) {
       /** @var \Drupal\entity_browser\WidgetValidationInterface $widget_validator */
@@ -218,4 +238,5 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
         $entities
       ));
   }
+
 }

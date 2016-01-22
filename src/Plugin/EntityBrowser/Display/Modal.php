@@ -132,7 +132,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
   /**
    * {@inheritdoc}
    */
-  public function displayEntityBrowser() {
+  public function displayEntityBrowser($validators = '') {
     $uuid = $this->getUuid();
     /** @var \Drupal\entity_browser\Events\RegisterJSCallbacks $event */
     // TODO - $uuid is unused in this event but we need to pass it as
@@ -150,7 +150,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
           'query' => [
             'uuid' => $uuid,
             'original_path' => $original_path,
-            'validators' => $this->
+            'validators' => $validators,
           ],
         ])->toString(),
       ],
