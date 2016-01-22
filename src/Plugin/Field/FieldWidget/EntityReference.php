@@ -430,7 +430,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
           return [
             '#theme_wrappers' => ['container'],
             '#attributes' => [
-              'class' => ['item-container'],
+              'class' => ['item-container', Html::getClass($field_widget_display->getPluginId())],
               'data-entity-id' => $entity->id()
             ],
             'display' => $display,

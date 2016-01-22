@@ -45,10 +45,8 @@ class SelectForm extends FieldPluginBase {
   /**
    * Form constructor for the bulk form.
    *
-   * @param array $form
+   * @param array $render
    *   An associative array containing the structure of the form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
    */
   public function viewsForm(&$render) {
     // Only add the bulk form options and buttons if there are results.
@@ -57,10 +55,15 @@ class SelectForm extends FieldPluginBase {
       $render[$this->options['id']]['#tree'] = TRUE;
       $render[$this->options['id']]['#printed'] = TRUE;
       foreach ($this->view->result as $row_index => $row) {
+        /** @var \Drupal\Core\Entity\EntityInterface $entity */
+        $entity = $row->_entity;
+
         $render[$this->options['id']][$row_index] = [
           '#type' => 'checkbox',
           '#title' => $this->t('Select this item'),
           '#title_display' => 'invisible',
+          '#return_value' => $entity->getEntityTypeId() . ':' . $entity->id(),
+          '#attributes' => ['name' => "entity_browser_select[$row_index]"],
           '#default_value' => NULL,
         ];
       }

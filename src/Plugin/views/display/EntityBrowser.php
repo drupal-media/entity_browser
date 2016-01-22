@@ -7,7 +7,7 @@
 
 namespace Drupal\entity_browser\Plugin\views\display;
 
-use Drupal\Core\DependencyInjection\DependencySerializationTrait;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
 
 /**
@@ -33,6 +33,52 @@ class EntityBrowser extends DisplayPluginBase {
     $render = ['view' => $this->view->render()];
     $this->handleForm($render);
     return $render;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function ajaxEnabled() {
+    // Force AJAX as this Display Plugin will almost always be embedded inside
+    // EntityBrowserForm, which breaks normal exposed form submits.
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function defineOptions() {
+    $options = parent::defineOptions();
+    $options['use_ajax']['default'] = TRUE;
+    return $options;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function optionsSummary(&$categories, &$options) {
+    parent::optionsSummary($categories, $options);
+    if (isset($options['use_ajax'])) {
+      $options['use_ajax']['value'] = $this->t('Yes (Forced)');
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildOptionsForm(&$form, FormStateInterface $form_state) {
+    parent::buildOptionsForm($form, $form_state);
+    // Disable the ability to toggle AJAX support, as we forcibly enable AJAX
+    // in our ajaxEnabled() implementation.
+    if (isset($form['use_ajax'])) {
+      $form['use_ajax'] = [
+        '#description' => $this->t('Entity Browser requires Views to use AJAX.'),
+        '#type' => 'checkbox',
+        '#title' => $this->t('Use AJAX'),
+        '#default_value' => 1,
+        '#disabled' => TRUE,
+      ];
+    }
   }
 
   /**
@@ -128,6 +174,13 @@ class EntityBrowser extends DisplayPluginBase {
       $search[] = $placeholder;
       $replace[] = $substitution;
     }
+
+    // We cannot render exposed form within the View, as nested forms are not
+    // standard and will break entity selection.
+    $search[] = '<form';
+    $replace[] = '<div';
+    $search[] = '</form>';
+    $replace[] = '</div>';
 
     $content = str_replace($search, $replace, $content);
 
