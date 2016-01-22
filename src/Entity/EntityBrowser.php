@@ -25,7 +25,9 @@ use Symfony\Component\Routing\Route;
  *   label = @Translation("Entity browser"),
  *   handlers = {
  *     "form" = {
- *       "entity_browser" = "Drupal\entity_browser\Form\EntityBrowserForm"
+ *       "entity_browser" = "Drupal\entity_browser\Form\EntityBrowserForm",
+ *       "edit" = "Drupal\entity_browser\Form\EntityBrowserEditForm",
+ *       "delete" = "Drupal\entity_browser\Form\EntityBrowserDeleteForm",
  *     },
  *     "access" = "Drupal\entity_browser\EntityBrowserAccessControlHandler",
  *     "list_builder" = "Drupal\entity_browser\Controllers\EntityBrowserListBuilder",
@@ -37,6 +39,8 @@ use Symfony\Component\Routing\Route;
  *   links = {
  *     "canonical" = "/admin/config/content/entity_browser/{entity_browser}",
  *     "collection" = "/admin/config/content/entity_browser/list",
+ *     "edit-form" = "/admin/config/content/entity_browser/{entity_browser}",
+ *     "delete-form" = "/admin/config/content/entity_browser/{entity_browser}/delete",
  *   },
  *   admin_permission = "administer entity browsers",
  *   config_prefix = "browser",

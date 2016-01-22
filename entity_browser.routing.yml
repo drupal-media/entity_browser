@@ -16,6 +16,30 @@ entity.entity_browser.edit_form:
   requirements:
     _permission: 'administer entity browsers'
 
+entity.entity_browser.list:
+  path: '/admin/config/content/entity_browser'
+  defaults:
+    _entity_list: 'entity_browser'
+    _title: 'Config Entity Browser'
+  requirements:
+    _permission: 'administer entity browser'
+
+entity.entity_browser.edit_eb_form:
+  path: '/admin/config/content/entity_browser/{entity_browser}'
+  defaults:
+    _entity_form: 'entity_browser.edit'
+    _title: 'Edit Entity browser'
+  requirements:
+    _permission: 'administer entity browsers'
+
+entity.entity_browser.delete_eb_form:
+  path: '/admin/config/content/entity_browser/{entity_browser}/delete'
+  defaults:
+    _entity_form: 'entity_browser.delete'
+    _title: 'Delete Entity browser'
+  requirements:
+    _permission: 'administer entity browsers'
+
 entity.entity_browser.canonical:
   path: '/admin/config/content/entity_browser/{entity_browser}'
   defaults:
