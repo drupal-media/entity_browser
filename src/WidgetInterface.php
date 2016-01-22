@@ -10,11 +10,12 @@ namespace Drupal\entity_browser;
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Plugin\PluginFormInterface;
 
 /**
  * Defines the interface for entity browser widgets.
  */
-interface WidgetInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
+interface WidgetInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
 
   /**
    * Returns the widget id.
