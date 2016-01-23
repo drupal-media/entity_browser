@@ -87,7 +87,10 @@ abstract class SelectionDisplayBase extends PluginBase implements SelectionDispl
    * {@inheritdoc}
    */
   public function getConfiguration() {
-    return $this->configuration;
+    return array_diff_key(
+      $this->configuration,
+      ['entity_browser_id' => 0]
+    );
   }
 
   /**

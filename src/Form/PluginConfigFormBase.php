@@ -11,6 +11,9 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_browser\EntityBrowserInterface;
 
+/**
+ * Base class for steps in entity browser form wizard.
+ */
 abstract class PluginConfigFormBase extends FormBase {
 
   /**

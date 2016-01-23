@@ -51,7 +51,6 @@ class EntityBrowserWizard extends EntityFormWizardBase {
    * {@inheritdoc}
    */
   public function getOperations($cached_values) {
-    $a = 1;
     return [
       'general' => [
         'title' => $this->t('General information'),
@@ -74,14 +73,6 @@ class EntityBrowserWizard extends EntityFormWizardBase {
         'form' => WidgetsConfig::class,
       ],
     ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function finish(array &$form, FormStateInterface $form_state) {
-    parent::finish($form, $form_state);
-    $form_state->setRedirectUrl(Url::fromUri('internal:/'));
   }
 
 }

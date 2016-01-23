@@ -102,6 +102,9 @@ class Upload extends WidgetBase {
     return $files;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form['upload_location'] = [
       '#type' => 'textfield',

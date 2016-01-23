@@ -7,10 +7,11 @@
 
 namespace Drupal\entity_browser\Form;
 
-use Drupal\Core\Form\FormBase;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_browser\EntityBrowserInterface;
 
+/**
+ * Selection display configuration step in entity browser form wizard.
+ */
 class SelectionDisplayConfig extends PluginConfigFormBase {
 
   /**

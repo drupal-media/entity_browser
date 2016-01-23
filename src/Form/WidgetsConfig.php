@@ -10,9 +10,11 @@ namespace Drupal\entity_browser\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_browser\WidgetManager;
-use Drupal\user\SharedTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Widget configuration step in entity browser form wizard.
+ */
 class WidgetsConfig extends FormBase {
 
   /**
@@ -23,20 +25,13 @@ class WidgetsConfig extends FormBase {
   protected $widgetManager;
 
   /**
-   * Tempstore Factory for keeping track of values in each step of the wizard.
-   *
-   * @var \Drupal\user\SharedTempStoreFactory
-   */
-  protected $tempStore;
-
-  /**
    * WidgetsConfig constructor.
+   *
    * @param \Drupal\entity_browser\WidgetManager $widget_manager
-   * @param \Drupal\user\SharedTempStoreFactory $temp_store
+   *   Entity browser widget plugin manager.
    */
-  function __construct(WidgetManager $widget_manager, SharedTempStoreFactory $temp_store) {
+  function __construct(WidgetManager $widget_manager) {
     $this->widgetManager = $widget_manager;
-    $this->tempStore = $temp_store;
   }
 
   /**
@@ -44,8 +39,7 @@ class WidgetsConfig extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('plugin.manager.entity_browser.widget'),
-      $container->get('user.shared_tempstore')
+      $container->get('plugin.manager.entity_browser.widget')
     );
   }
 
@@ -77,7 +71,7 @@ class WidgetsConfig extends FormBase {
       '#title' => $this->t('Add widget plugin'),
       '#options' => ['_none_' => '- ' . $this->t('Select a widget to add it') . ' -'] + $widgets,
       '#ajax' => [
-        'callback' => [get_class($this), 'addWidgetCallback'],
+        'callback' => [get_class($this), 'tableUpdatedAjaxCallback'],
         'wrapper' => 'widgets',
         'event' => 'change'
       ],
@@ -127,7 +121,7 @@ class WidgetsConfig extends FormBase {
         '#value' => $this->t('Delete'),
         '#name' => 'remove' . $uuid,
         '#ajax' => [
-          'callback' => [get_class($this), 'addWidgetCallback'],
+          'callback' => [get_class($this), 'tableUpdatedAjaxCallback'],
           'wrapper' => 'widgets',
           'event' => 'click'
         ],
@@ -150,8 +144,7 @@ class WidgetsConfig extends FormBase {
   }
 
   /**
-   * @param $form
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * AJAX submit callback for adding widgets to the entity browser.
    */
   public static function submitAddWidget($form, FormStateInterface $form_state) {
     $cached_values = $form_state->getTemporaryValue('wizard');
@@ -174,8 +167,7 @@ class WidgetsConfig extends FormBase {
   }
 
   /**
-   * @param $form
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * AJAX submit callback for removing widgets from the entity browser.
    */
   public static function submitDeleteWidget($form, FormStateInterface $form_state) {
     $cached_values = $form_state->getTemporaryValue('wizard');
@@ -189,11 +181,9 @@ class WidgetsConfig extends FormBase {
   }
 
   /**
-   * @param $form
-   * @param $form_state
-   * @return mixed
+   * AJAX callback for all operations that update widgets table.
    */
-  public static function addWidgetCallback($form, $form_state) {
+  public static function tableUpdatedAjaxCallback($form, $form_state) {
     return $form['widgets'];
   }
 
@@ -224,9 +214,8 @@ class WidgetsConfig extends FormBase {
         'weight' => $table[$uuid]['weight'],
         'label' => $table[$uuid]['label'],
         'uuid' => $uuid,
-        'id' => $table[$uuid]['label'],
+        'id' => $widget->id(),
       ]);
-      $widget->setWeight($table[$uuid]['weight']);
     }
   }
 

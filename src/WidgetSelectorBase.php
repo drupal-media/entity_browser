@@ -57,7 +57,10 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
    * {@inheritdoc}
    */
   public function getConfiguration() {
-    return $this->configuration;
+    return array_diff_key(
+      $this->configuration,
+      ['widget_ids' => 0]
+    );
   }
 
   /**

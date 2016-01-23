@@ -26,20 +26,19 @@ use Symfony\Component\Routing\Route;
  *   handlers = {
  *     "form" = {
  *       "entity_browser" = "Drupal\entity_browser\Form\EntityBrowserForm",
- *       "edit" = "Drupal\entity_browser\Form\EntityBrowserEditForm",
  *       "delete" = "Drupal\entity_browser\Form\EntityBrowserDeleteForm",
  *     },
- *     "access" = "Drupal\entity_browser\EntityBrowserAccessControlHandler",
+ *     "access" = "Drupal\Core\Entity\EntityAccessControlHandler",
  *     "list_builder" = "Drupal\entity_browser\Controllers\EntityBrowserListBuilder",
  *     "wizard" = {
  *       "add" = "Drupal\entity_browser\Wizard\EntityBrowserWizardAdd",
- *       "edit" = "Drupal\entity_browser\Wizard\EntityBrowserWizard"
+ *       "edit" = "Drupal\entity_browser\Wizard\EntityBrowserWizard",
  *     }
  *   },
  *   links = {
- *     "canonical" = "/admin/config/content/entity_browser/{entity_browser}",
- *     "collection" = "/admin/config/content/entity_browser/list",
- *     "edit-form" = "/admin/config/content/entity_browser/{entity_browser}",
+ *     "canonical" = "/admin/config/content/entity_browser/{machine_name}/{step}",
+ *     "collection" = "/admin/config/content/entity_browser",
+ *     "edit-form" = "/admin/config/content/entity_browser/{machine_name}/{step}",
  *     "delete-form" = "/admin/config/content/entity_browser/{entity_browser}/delete",
  *   },
  *   admin_permission = "administer entity browsers",
@@ -456,6 +455,23 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     $form_class = \Drupal::service('class_resolver')->getInstanceFromDefinition($this->form_class);
     $form_class->setEntityBrowser($this);
     return $form_class;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function urlRouteParameters($rel) {
+    $uri_route_parameters = parent::urlRouteParameters($rel);
+
+    // Form wizard expects step argument and uses machine_name instead of
+    // entity_browser.
+    if ($rel == 'edit-form') {
+      $uri_route_parameters['step'] = 'general';
+      $uri_route_parameters['machine_name'] = $uri_route_parameters['entity_browser'];
+      unset($uri_route_parameters['entity_browser']);
+    }
+
+    return $uri_route_parameters;
   }
 
 }

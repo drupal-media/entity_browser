@@ -341,8 +341,9 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
   }
 
   public function __sleep() {
-    return array('configuration');
+    return ['configuration'];
   }
+
   /**
    * {@inheritdoc}
    */

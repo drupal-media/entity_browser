@@ -13,10 +13,12 @@ use Drupal\entity_browser\DisplayManager;
 use Drupal\entity_browser\SelectionDisplayManager;
 use Drupal\entity_browser\WidgetManager;
 use Drupal\entity_browser\WidgetSelectorManager;
-use Drupal\user\SharedTempStore;
 use Drupal\user\SharedTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * General information configuration step in entity browser form wizard.
+ */
 class GeneralInfoConfig extends FormBase {
 
   /**
@@ -48,30 +50,22 @@ class GeneralInfoConfig extends FormBase {
   protected $widgetManager;
 
   /**
-   * Tempstore Factory for keeping track of values in each step of the wizard.
-   *
-   * @var \Drupal\user\SharedTempStoreFactory
-   */
-  protected $tempstore;
-
-  protected $tempstoreId;
-  protected $machineName;
-  /**
    * Constructs GeneralInfoConfig form class.
    *
    * @param \Drupal\entity_browser\DisplayManager $display_manager
    *   Entity browser display plugin manager.
-   * @param \Drupal\entity_browser\WidgetSelectorManager $widget_selector
+   * @param \Drupal\entity_browser\WidgetSelectorManager $widget_selector_manager
    *   Entity browser widget selector plugin manager.
-   * @param \Drupal\entity_browser\SelectionDisplayManager
+   * @param \Drupal\entity_browser\SelectionDisplayManager $selection_display_manager
    *   Entity browser selection display plugin manager.
+   * @param \Drupal\entity_browser\WidgetManager $widget_manager
+   *   Entity browser widget plugin manager.
    */
-  function __construct(DisplayManager $display_manager, WidgetSelectorManager $widget_selector_manager, SelectionDisplayManager $selection_display_manager, WidgetManager $widget_manager, SharedTempStoreFactory $temp_store, $tempstore_id = NULL, $machine_name = NULL) {
+  function __construct(DisplayManager $display_manager, WidgetSelectorManager $widget_selector_manager, SelectionDisplayManager $selection_display_manager, WidgetManager $widget_manager) {
     $this->displayManager = $display_manager;
     $this->selectionDisplayManager = $selection_display_manager;
     $this->widgetSelectorManager = $widget_selector_manager;
     $this->widgetManager = $widget_manager;
-    $this->tempStore = $temp_store;
   }
 
   /**
@@ -82,8 +76,7 @@ class GeneralInfoConfig extends FormBase {
       $container->get('plugin.manager.entity_browser.display'),
       $container->get('plugin.manager.entity_browser.widget_selector'),
       $container->get('plugin.manager.entity_browser.selection_display'),
-      $container->get('plugin.manager.entity_browser.widget'),
-      $container->get('user.shared_tempstore')
+      $container->get('plugin.manager.entity_browser.widget')
     );
   }
 

@@ -7,66 +7,46 @@
 
 namespace Drupal\entity_browser\Form;
 
+use Drupal\Core\Entity\EntityDeleteForm;
 use Drupal\Core\Url;
-use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Class EntityBrowserDeleteForm.
- *
+ * Delete confirm form for entity browsers.
  */
-class EntityBrowserDeleteForm extends EntityBrowserForm {
+class EntityBrowserDeleteForm extends EntityDeleteForm {
 
   /**
-   * Gathers a confirmation question.
-   *
-   * @return string
-   *   Translated string.
+   * {@inheritdoc}
    */
   public function getQuestion() {
-    return $this->t('Are you sure you want to delete entity browser %label?', array(
-      '%label' => $this->entity->label(),
-    ));
+    return $this->t(
+      'Are you sure you want to delete entity browser %label?',
+      ['%label' => $this->entity->label()]
+    );
   }
 
   /**
-   * Gather the confirmation text.
-   *
-   * @return string
-   *   Translated string.
+   * {@inheritdoc}
    */
   public function getConfirmText() {
     return $this->t('Delete Entity Browser');
   }
 
   /**
-   * Gets the cancel URL.
-   *
-   * @return \Drupal\Core\Url
-   *   The URL to go to if the user cancels the deletion.
+   * {@inheritdoc}
    */
   public function getCancelUrl() {
-    return new Url('entity.entity_browser.list');
+    return new Url('entity.entity_browser.collection');
   }
 
   /**
-   * The submit handler for the confirm form.
-   *
-   * @param array $form
-   *   An associative array containing the structure of the form.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   An associative array containing the current state of the form.
+   * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Delete the entity.
-    $this->entity->delete();
-
-    // Set a message that the entity was deleted.
-    drupal_set_message($this->t('Entity_browser %label was deleted.', array(
-      '%label' => $this->entity->label(),
-    )));
-
-    // Redirect the user to the list controller when complete.
-    $form_state->setRedirectUrl($this->getCancelUrl());
+  protected function getDeletionMessage() {
+    return $this->t(
+      'Entity browser %label was deleted.',
+      ['%label' => $this->entity->label()]
+    );
   }
 
 }
