@@ -62,11 +62,17 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    * @var \Drupal\Core\Entity\EntityManagerInterface
    */
   protected $entityManager;
+
   /**
+   * The Expirable key value store.
+   *
    * @var \Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface
    */
   private $keyValue;
+
   /**
+   * The Request object.
+   *
    * @var \Symfony\Component\HttpFoundation\Request
    */
   private $request;
@@ -192,8 +198,20 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
   /**
    * {@inheritdoc}
    */
-  public function validate(array &$form, FormStateInterface $form_state) {}
+  public function validate(array &$form, FormStateInterface $form_state) {
+    $uploaded_files = $form_state->getValue(['upload'], []);
+    $trigger = $form_state->getTriggeringElement();
 
+    if (in_array('submit', $trigger['#array_parents'])) {
+      $violations = $this->runWidgetValidators($uploaded_files);
+      if (count($violations !== 0)) {
+        /** @var \Symfony\Component\Validator\ConstraintViolationListInterface $violation */
+        foreach ($violations as $violation) {
+          $form_state->setError($form['widget']['upload'], $violation->getMessage());
+        }
+      }
+    }
+  }
 
   /**
    * {@inheritdoc}

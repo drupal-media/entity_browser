@@ -49,23 +49,7 @@ class Upload extends WidgetBase {
     return $form;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function validate(array &$form, FormStateInterface $form_state) {
-    $uploaded_files = $form_state->getValue(['upload'], []);
-    $trigger = $form_state->getTriggeringElement();
-
-    if (in_array('submit', $trigger['#array_parents'] )) {
-      $violations = $this->runWidgetValidators($uploaded_files);
-      if (count($violations !== 0)) {
-        /** @var \Symfony\Component\Validator\ConstraintViolationListInterface $violation */
-        foreach ($violations as $violation) {
-          $form_state->setError($form['widget']['upload'], $violation->getMessage());
-        }
-      }
-    }
-  }
+  public function generateEntities
 
   /**
    * {@inheritdoc}
