@@ -6,6 +6,7 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\SelectionDisplay;
 
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_browser\SelectionDisplayBase;
 
@@ -34,33 +35,72 @@ class NewDisplay extends SelectionDisplayBase {
    * {@inheritdoc}
    */
   public function getForm(array &$original_form, FormStateInterface $form_state) {
-
     $form = [];
+    $form['#attached']['library'][] = 'entity_browser/entity_reference';
 
-    $storage = &$form_state->getStorage();
+    $selected_entities = &$form_state->getStorage()['entity_browser']['selected_entities'];
+    $ids = array_keys($selected_entities);
 
-    //$selected_entities = $storage['entity_browser']['selected_entities'];
-    $selected_entities = ['en1', 'en2', 'en3', 'en4'];
-
-    $form['selected'] = [
-      '#type' => 'container',
-      '#attributes' => ['id' => 'selected'],
+    $form['current'] = [
+      '#theme_wrappers' => ['container'],
+      '#attributes' => ['class' => ['entities-list']],
+      'items' => array_map(
+        function($id) use ($selected_entities) {
+          $entity = $selected_entities[$id];
+          return [
+            '#theme_wrappers' => ['container'],
+            '#attributes' => [
+              'class' => ['item-container'],
+              'data-entity-id' => $entity->id()
+            ],
+            'display' => ['#markup' => $entity->label()],
+            'remove_button' => [
+              '#type' => 'submit',
+              '#value' => $this->t('Remove'),
+              '#submit' => [[get_class($this), 'removeItemSubmit']],
+              '#name' => 'remove_' . $id,
+              '#attributes' => ['data-entity-id' => $id]
+            ],
+          ];
+        },
+        $ids
+      ),
     ];
-    foreach ($selected_entities as $key => $value) {
-      $form['selected']['element'][$key] = [
-        '#type' => 'label',
-        '$value' => t('Entity'),
-        '#title' => $value
-      ];
-    }
-
     $form['use_selected'] = array(
       '#type' => 'submit',
-      '#value' => t('Use selection'),
+      '#value' => t('Use selected'),
       '#name' => 'use_selected',
     );
 
     return $form;
+  }
+
+  /**
+   * Submit callback for remove buttons.
+   */
+  public static function removeItemSubmit(&$form, FormStateInterface $form_state) {
+    $triggering_element = $form_state->getTriggeringElement();
+    if (!empty($triggering_element['#attributes']['data-entity-id'])) {
+      $id = $triggering_element['#attributes']['data-entity-id'];
+      $parents = array_slice($triggering_element['#parents'], 0, -4);
+      $array_parents = array_slice($triggering_element['#array_parents'], 0, -4);
+
+      // Find and remove correct entity.
+      $values = explode(' ', $form_state->getValue(array_merge($parents, ['target_id'])));
+      $values = array_filter(
+        $values,
+        function($item) use ($id) { return $item != $id; }
+      );
+      $values = implode(' ', $values);
+
+      // Set new value for this widget.
+      $target_id_element = &NestedArray::getValue($form, array_merge($array_parents, ['target_id']));
+      $form_state->setValueForElement($target_id_element, $values);
+      NestedArray::setValue($form_state->getUserInput(), $target_id_element['#parents'], $values);
+
+      // Rebuild form.
+      $form_state->setRebuild();
+    }
   }
 
   /**
