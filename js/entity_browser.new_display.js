@@ -35,8 +35,7 @@
     for (var i = 0; i < items.length; i++) {
       ids[i] = $(items[i]).attr('data-entity-id');
     }
-
-    $(this).parent().parent().find('input[type*=hidden]').val(ids.join(' '));
+    $(this).find('.selected-entities-weights').val(ids.join(' '));
   };
 
 }(jQuery, Drupal, drupalSettings));
