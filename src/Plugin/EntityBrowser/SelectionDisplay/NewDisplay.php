@@ -91,7 +91,7 @@ class NewDisplay extends SelectionDisplayBase {
     $selected = $form_state->get(['entity_browser', 'selected_entities']);
     $new_order = [];
     if ($form_state->getTriggeringElement()['#name'] == 'use_selected') {
-      if(!empty($order)){
+      if(!empty($order[0])){
         foreach($order as $key => $value) {
           $new_order[$key] = $selected[$value];
         }
