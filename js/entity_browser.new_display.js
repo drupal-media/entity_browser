@@ -31,11 +31,9 @@
    */
   Drupal.entityBrowserNewDisplay.entitiesReordered = function(event, ui) {
     var items = $(this).find('.selected-item-container');
-    var ids = [];
     for (var i = 0; i < items.length; i++) {
-      ids[i] = $(items[i]).attr('data-entity-id');
+      $(items[i]).find('.weight').val(i);
     }
-    $(this).find('.selected-entities-weights').val(ids.join(' '));
   };
 
 }(jQuery, Drupal, drupalSettings));

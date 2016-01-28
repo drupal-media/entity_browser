@@ -6,6 +6,7 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\SelectionDisplay;
 
+use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_browser\SelectionDisplayBase;
 
@@ -42,16 +43,12 @@ class NewDisplay extends SelectionDisplayBase {
       '#theme_wrappers' => ['container'],
       '#attributes' => ['class' => ['selected-entities-list']],
     ];
-    $form['selected']['weights'] = [
-      '#type' => 'hidden',
-      '#attributes' => ['class' => ['selected-entities-weights']]
-    ];
     foreach ($selected_entities as $id => $entity) {
       $form['selected']['items'][$id] = [
         '#theme_wrappers' => ['container'],
         '#attributes' => [
           'class' => ['selected-item-container'],
-          'data-entity-id' => $id
+          'data-entity-id' => $entity->id()
         ],
         'display' => ['#markup' => $entity->label()],
         'remove_button' => [
@@ -59,8 +56,13 @@ class NewDisplay extends SelectionDisplayBase {
           '#value' => $this->t('Remove'),
           '#submit' => [[get_class($this), 'removeItemSubmit']],
           '#name' => 'remove_' . $id,
-          '#attributes' => ['data-entity-id' => $id]
+          '#attributes' => ['data-row-id' => $id]
         ],
+        'weight' => [
+          '#type' => 'hidden',
+          '#value' => $id,
+          '#attributes' => ['class' => ['weight']]
+        ]
       ];
     }
     $form['use_selected'] = array(
@@ -74,9 +76,11 @@ class NewDisplay extends SelectionDisplayBase {
 
   /**
    * Submit callback for remove buttons.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
-  public static function removeItemSubmit(&$form, FormStateInterface $form_state) {
-    $id = $form_state->getTriggeringElement()['#attributes']['data-entity-id'];
+  public static function removeItemSubmit(array &$form, FormStateInterface $form_state) {
+    $id = $form_state->getTriggeringElement()['#attributes']['data-row-id'];
     $selected_entities = $form_state->get(['entity_browser', 'selected_entities']);
     unset($selected_entities[$id]);
     $form_state->set(['entity_browser', 'selected_entities'], $selected_entities);
@@ -87,16 +91,10 @@ class NewDisplay extends SelectionDisplayBase {
    * {@inheritdoc}
    */
   public function submit(array &$form, FormStateInterface $form_state) {
-    $order = explode(" ", $form_state->getValue('weights'));
-    $selected = $form_state->get(['entity_browser', 'selected_entities']);
-    $new_order = [];
     if ($form_state->getTriggeringElement()['#name'] == 'use_selected') {
-      if(!empty($order[0])){
-        foreach($order as $key => $value) {
-          $new_order[$key] = $selected[$value];
-        }
-        $form_state->set(['entity_browser', 'selected_entities'], $new_order);
-      }
+      $selected = $form_state->get(['entity_browser', 'selected_entities']);
+      usort($selected, array(new SortArray(), "sortByWeightElement"));
+      $form_state->set(['entity_browser', 'selected_entities'], $selected);
       $this->selectionDone($form_state);
     }
   }
