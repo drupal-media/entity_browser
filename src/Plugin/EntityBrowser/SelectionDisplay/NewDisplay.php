@@ -42,9 +42,10 @@ class NewDisplay extends SelectionDisplayBase {
     $form['selected'] = [
       '#theme_wrappers' => ['container'],
       '#attributes' => ['class' => ['selected-entities-list']],
+      '#tree' => TRUE
     ];
     foreach ($selected_entities as $id => $entity) {
-      $form['selected']['items'][$id] = [
+      $form['selected']['items_'. $entity->id()] = [
         '#theme_wrappers' => ['container'],
         '#attributes' => [
           'class' => ['selected-item-container'],
@@ -55,12 +56,12 @@ class NewDisplay extends SelectionDisplayBase {
           '#type' => 'submit',
           '#value' => $this->t('Remove'),
           '#submit' => [[get_class($this), 'removeItemSubmit']],
-          '#name' => 'remove_' . $id,
+          '#name' => 'remove_' . $entity->id(),
           '#attributes' => ['data-row-id' => $id]
         ],
         'weight' => [
           '#type' => 'hidden',
-          '#value' => $id,
+          '#default_value' => $id,
           '#attributes' => ['class' => ['weight']]
         ]
       ];
@@ -77,6 +78,7 @@ class NewDisplay extends SelectionDisplayBase {
   /**
    * Submit callback for remove buttons.
    *
+   * @param array $form
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public static function removeItemSubmit(array &$form, FormStateInterface $form_state) {
@@ -91,10 +93,10 @@ class NewDisplay extends SelectionDisplayBase {
    * {@inheritdoc}
    */
   public function submit(array &$form, FormStateInterface $form_state) {
+    $selected = $form_state->getValue('selected');
+    uasort($selected, array(new SortArray(), "sortByWeightElement"));
+    $form_state->setValue('selected', $selected);
     if ($form_state->getTriggeringElement()['#name'] == 'use_selected') {
-      $selected = $form_state->get(['entity_browser', 'selected_entities']);
-      usort($selected, array(new SortArray(), "sortByWeightElement"));
-      $form_state->set(['entity_browser', 'selected_entities'], $selected);
       $this->selectionDone($form_state);
     }
   }
