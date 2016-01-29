@@ -94,8 +94,17 @@ class NewDisplay extends SelectionDisplayBase {
    */
   public function submit(array &$form, FormStateInterface $form_state) {
     $selected = $form_state->getValue('selected');
-    uasort($selected, array(new SortArray(), "sortByWeightElement"));
-    $form_state->setValue('selected', $selected);
+    if (!empty($selected)) {
+      $weights = array_column($selected, 'weight');
+      $selected_entities = $form_state->get(['entity_browser', 'selected_entities']);
+      $ordered = [];
+      if (is_array($weights)) {
+        foreach ($weights as $key => $value) {
+          $ordered[$value] = $selected_entities[$key];
+        }
+      }
+      $form_state->set(['entity_browser', 'selected_entities'], $ordered);
+    }
     if ($form_state->getTriggeringElement()['#name'] == 'use_selected') {
       $this->selectionDone($form_state);
     }
