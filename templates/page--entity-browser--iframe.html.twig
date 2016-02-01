@@ -9,6 +9,15 @@
 #}
 <div class="layout-container">
 
+    {#
+      We ommit most of the regions in this template, which generally includes
+      messages too. Since this is not desired we try to figure out where messages
+      live and display them separately.
+
+      @see entity_browser_preprocess_page__entity_browser__iframe()
+    #}
+    {{ messages }}
+
     <main role="main">
         <a id="main-content" tabindex="-1"></a>{# link is in html.html.twig #}
 
