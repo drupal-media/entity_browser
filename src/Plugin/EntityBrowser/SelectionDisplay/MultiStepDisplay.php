@@ -1,12 +1,11 @@
 <?php
 
 /**
- * Contains \Drupal\entity_browser\Plugin\EntityBrowser\SelectionDisplay\NewDisplay.
+ * Contains \Drupal\entity_browser\Plugin\EntityBrowser\SelectionDisplay\MultiStepDisplay.
  */
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\SelectionDisplay;
 
-use Drupal\Component\Utility\SortArray;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_browser\SelectionDisplayBase;
 
@@ -14,22 +13,12 @@ use Drupal\entity_browser\SelectionDisplayBase;
  * Show current selection and delivers selected entities.
  *
  * @EntityBrowserSelectionDisplay(
- *   id = "new_display",
- *   label = @Translation("New selection display"),
+ *   id = "multi_step_display",
+ *   label = @Translation("Multi step selection display"),
  *   description = @Translation("Show current selection display and delivers selected entities.")
  * )
  */
-class NewDisplay extends SelectionDisplayBase {
-
-  /**
-   * {@inheritdoc}
-   */
-  public function defaultConfiguration() {
-    return array(
-      'view' => NULL,
-      'view_display' => NULL,
-    ) + parent::defaultConfiguration();
-  }
+class MultiStepDisplay extends SelectionDisplayBase {
 
   /**
    * {@inheritdoc}
@@ -38,7 +27,7 @@ class NewDisplay extends SelectionDisplayBase {
     $selected_entities = $form_state->get(['entity_browser', 'selected_entities']);
 
     $form = [];
-    $form['#attached']['library'][] = 'entity_browser/new_display';
+    $form['#attached']['library'][] = 'entity_browser/multi_step_display';
     $form['selected'] = [
       '#theme_wrappers' => ['container'],
       '#attributes' => ['class' => ['selected-entities-list']],
@@ -90,16 +79,16 @@ class NewDisplay extends SelectionDisplayBase {
     $selected_entities = $form_state->get(['entity_browser', 'selected_entities']);
     $selected = $form_state->getValue('selected');
     unset($selected_entities[$id]);
-    $weight = $selected[$entity]['weight'];
     unset($selected[$entity]);
-    $ordered = $selected;
-    foreach ($selected as $key => $sel) {
-      if ($sel['weight'] > $weight) {
-        $ordered[$key]['weight'] = (string)($sel['weight'] - 1);
-      }
-    }
     $form_state->set(['entity_browser', 'selected_entities'], $selected_entities);
-    $form_state->setValue('selected', $ordered);
+    // If selected array is not empty we must keep order.
+    if (!empty($selected)) {
+      $weights = array_column($selected, 'weight');
+      $selected_entities = $form_state->get(['entity_browser', 'selected_entities']);
+      $ordered = array_combine($weights, $selected_entities);
+      ksort($ordered);
+      $form_state->set(['entity_browser', 'selected_entities'], $ordered);
+    }
     $form_state->setRebuild();
   }
 
@@ -111,12 +100,26 @@ class NewDisplay extends SelectionDisplayBase {
     if (!empty($selected)) {
       $weights = array_column($selected, 'weight');
       $selected_entities = $form_state->get(['entity_browser', 'selected_entities']);
-      $ordered = $selected_entities;
-      if (is_array($weights)) {
-        foreach ($weights as $key => $value) {
-          $ordered[$value] = $selected_entities[$key];
+
+      // Selected and selected_entities is not the same when we trigering with select.
+      // and we have two parts of array selected_entities, for first we got the weights.
+      if ($form_state->getTriggeringElement()['#name'] == 'op') {
+        $se1 = array_slice($selected_entities, 0, count($weights));
+        $or1 = array_combine($weights, $se1);
+        ksort($or1);
+        $se2 = array_slice($selected_entities, count($weights));
+        $weights_second = [];
+        foreach ($se2 as $key => $value) {
+          $weights_second[] = max($weights) + $key + 1;
         }
+        $or2 = array_combine($weights_second, $se2);
+        $ordered = array_merge($or1, $or2);
+      // When triger is use_selected than arrays selected and selected_entities is same.
+      } else {
+        $ordered = array_combine($weights, $selected_entities);
       }
+
+      ksort($ordered);
       $form_state->set(['entity_browser', 'selected_entities'], $ordered);
     }
     if ($form_state->getTriggeringElement()['#name'] == 'use_selected') {

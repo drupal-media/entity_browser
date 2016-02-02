@@ -1,5 +1,5 @@
 /**
- * @file entity_browser.entity_reference.js
+ * @file entity_browser.multi_step_display.js
  *
  */
 (function ($, Drupal, drupalSettings) {
@@ -9,17 +9,17 @@
   /**
    * Registers behaviours related to selected entities.
    */
-  Drupal.behaviors.entityBrowserNewDisplay = {
+  Drupal.behaviors.entityBrowserMultiStepDisplay = {
     attach: function (context) {
-      $(context).find('.entity-browser-test-files-form').each(function () {
+      $(context).find('.entity-browser-form').each(function () {
         $(this).find('.selected-entities-list').sortable({
-          stop: Drupal.entityBrowserNewDisplay.entitiesReordered
+          stop: Drupal.entityBrowserMultiStepDisplay.entitiesReordered
         });
       });
     }
   };
 
-  Drupal.entityBrowserNewDisplay = {};
+  Drupal.entityBrowserMultiStepDisplay = {};
 
   /**
    * Reacts on sorting of the entities.
@@ -29,7 +29,7 @@
    * @param ui
    *   Object with detailed information about the sort event.
    */
-  Drupal.entityBrowserNewDisplay.entitiesReordered = function(event, ui) {
+  Drupal.entityBrowserMultiStepDisplay.entitiesReordered = function(event, ui) {
     var items = $(this).find('.selected-item-container');
     for (var i = 0; i < items.length; i++) {
       $(items[i]).find('.weight').val(i);

@@ -62,10 +62,9 @@ view:
     js/entity_browser.view.js: {}
   dependencies:
 
-new_display:
+multi_step_display:
   version: VERSION
   js:
-    js/entity_browser.new_display.js: {}
+    js/entity_browser.multi_step_display.js: {}
   dependencies:
-    - entity_browser/common
     - core/jquery.ui.sortable
