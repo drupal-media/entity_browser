@@ -1,5 +1,5 @@
 name: Entity Browser
-description: 'Entity browser component for text and entity reference fields.'
+description: 'Entity browsing and selecting component.'
 type: module
 package: Media
 core: 8.x
