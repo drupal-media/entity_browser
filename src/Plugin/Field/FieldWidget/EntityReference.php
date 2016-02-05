@@ -232,9 +232,12 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       return [t('No entity browser selected.')];
     }
     else {
-      $browser = $this->entityManager->getStorage('entity_browser')
-        ->load($entity_browser_id);
-      $summary[] = t('Entity browser: @browser', ['@browser' => $browser->label()]);
+      if ($browser = $this->entityManager->getStorage('entity_browser')->load($entity_browser_id)) {
+        $summary[] = t('Entity browser: @browser', ['@browser' => $browser->label()]);
+      } else {
+        drupal_set_message(t('Missing entity browser!'), 'error');
+        return [t('Missing entity browser!')];
+      }
     }
 
     if (!empty($field_widget_display)) {

@@ -37,7 +37,8 @@
         'width' : drupalSettings['entity_browser']['iframe'][uuid]['width'],
         'height' : drupalSettings['entity_browser']['iframe'][uuid]['height'],
         'data-uuid' : uuid,
-        'data-original-path' : original_path
+        'data-original-path' : original_path,
+        'name' : 'entity-browser-iframe-' + drupalSettings['entity_browser']['iframe'][uuid]['entity_browser_id'].replace('_', '-')
       }
     );
 
