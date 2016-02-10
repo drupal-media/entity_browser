@@ -3,5 +3,7 @@ description: 'Entity browsing and selecting component.'
 type: module
 package: Media
 core: 8.x
+dependencies:
+  - ctools
 test_dependencies:
   - ctools

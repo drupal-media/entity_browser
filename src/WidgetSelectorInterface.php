@@ -7,14 +7,15 @@
 
 namespace Drupal\entity_browser;
 
-use Drupal\Component\Plugin\LazyPluginCollection;
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Plugin\PluginFormInterface;
 
 /**
  * Defines the interface for entity browser widget selectors.
  */
-interface WidgetSelectorInterface extends PluginInspectionInterface {
+interface WidgetSelectorInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
 
   /**
    * Returns the widget selector label.

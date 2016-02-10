@@ -63,6 +63,9 @@ entity_browser.browser.display.iframe:
     link_text:
       type: string
       label: 'Link text'
+    auto_open:
+      type: boolean
+      label: 'Auto open'
 
 entity_browser.browser.display.modal:
   type: mapping
