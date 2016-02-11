@@ -62,11 +62,13 @@ function entity_browser_form_alter(&$form, FormStateInterface &$form_state) {
  * Tries to figure out where messages block lives and display it separately.
  */
 function entity_browser_preprocess_page__entity_browser__iframe(&$variables) {
+  $variables['messages'] = '';
   $blocks = \Drupal::entityTypeManager()->getStorage('block')->loadByProperties([
     'theme' => \Drupal::theme()->getActiveTheme()->getName(),
     'plugin' => 'system_messages_block',
   ]);
-  if ($messages = current($blocks)) {
+
+  if (($messages = current($blocks)) && !empty($variables['page'][$messages->getRegion()][$messages->id()])) {
     $variables['messages'] = $variables['page'][$messages->getRegion()][$messages->id()];
   }
 }
