@@ -54,4 +54,13 @@ interface DisplayInterface extends PluginInspectionInterface, ConfigurablePlugin
    *   The uuid string.
    */
   public function getUuid();
+
+  /**
+   * Sets the uuid for this display.
+   *
+   * @param string $uuid
+   *   The uuid string.
+   */
+  public function setUuid($uuid);
+
 }

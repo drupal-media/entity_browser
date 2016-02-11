@@ -49,4 +49,11 @@ class Standalone extends DisplayBase implements DisplayRouterInterface {
     return '';
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function setUuid($uuid) {
+    // @TODO Implement it.
+  }
+
 }

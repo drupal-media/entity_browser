@@ -221,6 +221,13 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
   }
 
   /**
+    * {@inheritdoc}
+    */
+  public function setUuid($uuid) {
+    $this->uuid = $uuid;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function path() {

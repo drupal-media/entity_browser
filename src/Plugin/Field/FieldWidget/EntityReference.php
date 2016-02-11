@@ -321,7 +321,10 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
 
     $cardinality = $this->fieldDefinition->getFieldStorageDefinition()->getCardinality();
     if ($cardinality == FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED || count($ids) < $cardinality) {
-      $element['entity_browser'] = $entity_browser->getDisplay()->displayEntityBrowser();
+      $entity_browser_uuid = sha1(implode('-', array_merge($form['#parents'], [$this->fieldDefinition->getName(), $delta])));
+      $entity_browser_display = $entity_browser->getDisplay();
+      $entity_browser_display->setUuid($entity_browser_uuid);
+      $element['entity_browser'] = $entity_browser_display->displayEntityBrowser();
       $element['#attached']['library'][] = 'entity_browser/entity_reference';
       $element['#attached']['drupalSettings']['entity_browser'] = [
         $entity_browser->getDisplay()->getUuid() => [
