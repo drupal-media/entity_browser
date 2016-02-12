@@ -285,9 +285,11 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     // data from removed entity references.
     else {
       foreach ($items as $item) {
-        $entity = $entity_storage->load($item->target_id);
-        if (!empty($entity)) {
-          $entities[$item->target_id] = $entity;
+        if (isset($item->target_id)) {
+          $entity = $entity_storage->load($item->target_id);
+          if (!empty($entity)) {
+            $entities[$item->target_id] = $entity;
+          }
         }
       }
       $ids = array_keys($entities);
