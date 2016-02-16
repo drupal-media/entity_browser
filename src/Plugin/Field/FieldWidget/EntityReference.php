@@ -280,6 +280,11 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
         $entities = $entity_storage->loadMultiple($ids);
       }
     }
+    // IDs from a previous request might be saved in the form state.
+    elseif ($form_state->has(['entity_browser_widget', $this->fieldDefinition->getName()])) {
+      $ids = $form_state->get(['entity_browser_widget', $this->fieldDefinition->getName()]);
+      $entities = $entity_storage->loadMultiple($ids);
+    }
     // We are loading for for the first time so we need to load any existing
     // values that might already exist on the entity. Also, remove any leftover
     // data from removed entity references.
@@ -295,6 +300,13 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       $ids = array_keys($entities);
     }
     $ids = array_filter($ids);
+    // We store current entity IDs as we might need them in future requests. If
+    // some other part of the form triggers an AJAX request with #limit_validation_errors
+    // we won't have access to the value of the target_id element and won't be
+    // able to build the form as a result of that. This will cause missing
+    // submit (Remove, Edit, ...) elements, which might result in unpredictable
+    // results.
+    $form_state->set(['entity_browser_widget', $this->fieldDefinition->getName()], $ids);
 
     $hidden_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName() . '-target-id');
     $details_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName());
