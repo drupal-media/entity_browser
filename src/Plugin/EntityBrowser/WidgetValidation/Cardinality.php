@@ -28,7 +28,12 @@ class Cardinality extends WidgetValidationBase {
     $plugin_definition = $this->getPluginDefinition();
     $data_definition->addConstraint($plugin_definition['constraint'], $options);
 
-    $typed_data = \Drupal::typedDataManager()->create($data_definition, $entities);
+    $ids = [];
+    foreach ($entities as $entity) {
+      $ids[] = $entity->id();
+    }
+
+    $typed_data = \Drupal::typedDataManager()->create($data_definition, $ids);
     return $typed_data->validate();
   }
 }

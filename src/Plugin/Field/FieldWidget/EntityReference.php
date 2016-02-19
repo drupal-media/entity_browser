@@ -333,7 +333,10 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     // Gather and set validators.
     // @todo Is there a better place to do that?
     $cardinality = $this->fieldDefinition->getFieldStorageDefinition()->getCardinality();
-    $validators = $this->prepareValidators(['cardinality' => ['min' => $cardinality]]);
+    $validators = $this->prepareValidators([
+      'cardinality' => ['min' => $cardinality],
+      'entity_type' => ['type' => $entity_type],
+    ]);
 
     if ($cardinality == FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED || count($ids) < $cardinality) {
       $element['entity_browser'] = $entity_browser->getDisplay()->displayEntityBrowser($validators);

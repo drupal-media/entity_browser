@@ -49,7 +49,16 @@ class Upload extends WidgetBase {
     return $form;
   }
 
-  public function generateEntities
+  /**
+   * {@inheritdoc}
+   */
+  public function prepareEntities(FormStateInterface $form_state) {
+    $files = [];
+    foreach ($form_state->getValue(['upload'], []) as $fid) {
+      $files[] = $this->entityManager->getStorage('file')->load($fid);
+    }
+    return $files;
+  }
 
   /**
    * {@inheritdoc}

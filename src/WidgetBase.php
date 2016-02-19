@@ -198,13 +198,20 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
   /**
    * {@inheritdoc}
    */
+  public function prepareEntities(FormStateInterface $form_state) {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function validate(array &$form, FormStateInterface $form_state) {
-    $uploaded_files = $form_state->getValue(['upload'], []);
     $trigger = $form_state->getTriggeringElement();
 
     if (in_array('submit', $trigger['#array_parents'])) {
-      $violations = $this->runWidgetValidators($uploaded_files);
-      if (count($violations !== 0)) {
+      $entities = $this->prepareEntities($form_state);
+      $violations = $this->runWidgetValidators($entities);
+      if (!empty($violations)) {
         /** @var \Symfony\Component\Validator\ConstraintViolationListInterface $violation */
         foreach ($violations as $violation) {
           $form_state->setError($form['widget']['upload'], $violation->getMessage());
@@ -229,8 +236,8 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
     foreach ($validators as $validator_id => $options) {
       /** @var \Drupal\entity_browser\WidgetValidationInterface $widget_validator */
       $widget_validator = \Drupal::service('plugin.manager.entity_browser.widget_validation')->createInstance($validator_id, []);
-      return $widget_validator->validate($entities, $options);
     }
+    return $widget_validator->validate($entities, $options);
   }
 
   /**
