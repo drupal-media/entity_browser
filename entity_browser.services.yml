@@ -17,3 +17,8 @@ services:
   entity_browser.route_subscriber:
     class: Drupal\entity_browser\RouteSubscriber
     arguments: ['@entity.manager', '@plugin.manager.entity_browser.display', '@entity.query']
+  entity_browser.ctools_fallback_route_enhancer:
+    class: Drupal\entity_browser\Routing\CtoolsFallbackRouteEnhancer
+    arguments: ['@module_handler']
+    tags:
+      - { name: route_enhancer }

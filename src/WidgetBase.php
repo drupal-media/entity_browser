@@ -20,6 +20,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 abstract class WidgetBase extends PluginBase implements WidgetInterface, ContainerFactoryPluginInterface {
 
+  use PluginConfigurationFormTrait;
+
   /**
    * Plugin id.
    *
@@ -105,7 +107,10 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    */
   public function getConfiguration() {
     return [
-      'settings' => $this->configuration,
+      'settings' => array_diff_key(
+        $this->configuration,
+        ['entity_browser_id' => 0]
+      ),
       'uuid' => $this->uuid(),
       'weight' => $this->getWeight(),
       'label' => $this->label(),

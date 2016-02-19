@@ -9,11 +9,12 @@ namespace Drupal\entity_browser;
 
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use Drupal\Core\Plugin\PluginFormInterface;
 
 /**
  * Defines the interface for entity browser displays.
  */
-interface DisplayInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
+interface DisplayInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
 
   /**
    * Returns the display label.

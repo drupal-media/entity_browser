@@ -10,11 +10,12 @@ namespace Drupal\entity_browser;
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Plugin\PluginFormInterface;
 
 /**
  * Defines the interface for entity browser selection displays.
  */
-interface SelectionDisplayInterface extends PluginInspectionInterface, ConfigurablePluginInterface {
+interface SelectionDisplayInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
 
   /**
    * Returns the selection display label.

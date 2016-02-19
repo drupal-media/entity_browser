@@ -8,6 +8,7 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\Display;
 
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\entity_browser\DisplayBase;
@@ -232,6 +233,52 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
    */
   public function path() {
     return '/entity-browser/iframe/' . $this->configuration['entity_browser_id'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    $configuration = $this->getConfiguration();
+    $form['width'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Width of the iFrame'),
+      '#min' => 1,
+      '#default_value' => $configuration['width'],
+    ];
+
+    $form['height'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Height of the iFrame'),
+      '#min' => 1,
+      '#default_value' => $configuration['height'],
+    ];
+
+    $form['link_text'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Link text'),
+      '#default_value' => $configuration['link_text'],
+    ];
+
+    $form['auto_open'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Auto open entity browser'),
+      '#default_value' => $configuration['auto_open'],
+    ];
+
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
+    if ($form_state->getValue('width') <= 0) {
+      $form_state->setError($form['width'], $this->t('Width must be greather than 0.'));
+    }
+    if ($form_state->getValue('height') <= 0) {
+      $form_state->setError($form['height'], $this->t('Height must be greather than 0.'));
+    }
   }
 
 }

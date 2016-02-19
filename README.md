@@ -7,19 +7,15 @@ Provides standardized interface to list, create and select entities.
 ## Requirements
 
 * Latest dev release of Drupal 8.x.
+* [Chaos tool set](https://drupal.org/project/ctools) (soft dependency for configuration UI)
 
 ## Configuration
 
-There is no UI to configure entity browsers ATM. In order to test this module 
-you need to import yml files using drush or configuration management admin pages
-(admin/config/development/configuration/single/import). 
+Module ships with a simple configuration UI which allows you to create, edit
+and delete entity browsers. It depends on
+[Chaos tool set](https://drupal.org/project/ctools). Enable it and navigate to
+/admin/config/content/entity_browser.
 
-We also provided a module that will create:
- - content type with two entity reference fields
- - two entity browsers (listing files and nodes)
- - a view that is used on nodes entity browser
- - form display configuration for entity reference fields to use entity browsers
- 
 In order to use this configuration for testing or to help you contribute just 
 enable "Entity Browser example" module (entity_browser_example).
 
