@@ -160,7 +160,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
         '#value' => $this->configuration['link_text'],
         '#limit_validation_errors' => [],
         '#submit' => [],
-        '#name' => 'op_' . $this->configuration['entity_browser_id'],
+        '#name' => Html::getId('op_' . $this->configuration['entity_browser_id'] . '_' . $uuid),
         '#ajax' => [
           'callback' => [$this, 'openModal'],
           'event' => 'click',
@@ -345,7 +345,43 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
     return $this->uuid;
   }
 
-  public function __sleep() {
-    return array('configuration');
+  /**
+    * {@inheritdoc}
+    */
+  public function setUuid($uuid) {
+    $this->uuid = $uuid;
   }
+
+  /**
+   * @inheritDoc
+   */
+  public function __sleep() {
+    return ['configuration'];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    $configuration = $this->getConfiguration();
+    $form['width'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Width of the modal'),
+      '#min' => 1,
+      '#default_value' => $configuration['width'],
+    ];
+    $form['height'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Height of the modal'),
+      '#min' => 1,
+      '#default_value' => $configuration['height'],
+    ];
+    $form['link_text'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Link text'),
+      '#default_value' => $configuration['link_text'],
+    ];
+    return $form;
+  }
+
 }

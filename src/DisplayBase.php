@@ -16,6 +16,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 abstract class DisplayBase extends PluginBase implements DisplayInterface, ContainerFactoryPluginInterface {
 
+  use PluginConfigurationFormTrait;
+
   /**
    * Plugin label.
    *
@@ -78,7 +80,10 @@ abstract class DisplayBase extends PluginBase implements DisplayInterface, Conta
    * {@inheritdoc}
    */
   public function getConfiguration() {
-    return $this->configuration;
+    return array_diff_key(
+      $this->configuration,
+      ['entity_browser_id' => 0]
+    );
   }
 
   /**

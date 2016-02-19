@@ -61,8 +61,6 @@ class EntityBrowserTest extends KernelTestBase {
     FileCacheFactory::setPrefix($this->randomString(4));
     parent::setUp();
 
-    $this->installSchema('system', 'router');
-
     $this->controller = $this->container->get('entity.manager')->getStorage('entity_browser');
     $this->widgetUUID = $this->container->get('uuid')->generate();
     $this->routeProvider = $this->container->get('router.route_provider');

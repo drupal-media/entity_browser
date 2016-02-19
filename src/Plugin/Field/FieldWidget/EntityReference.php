@@ -290,19 +290,33 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
         $entities = $entity_storage->loadMultiple($ids);
       }
     }
+    // IDs from a previous request might be saved in the form state.
+    elseif ($form_state->has(['entity_browser_widget', $this->fieldDefinition->getName()])) {
+      $ids = $form_state->get(['entity_browser_widget', $this->fieldDefinition->getName()]);
+      $entities = $entity_storage->loadMultiple($ids);
+    }
     // We are loading for for the first time so we need to load any existing
     // values that might already exist on the entity. Also, remove any leftover
     // data from removed entity references.
     else {
       foreach ($items as $item) {
-        $entity = $entity_storage->load($item->target_id);
-        if (!empty($entity)) {
-          $entities[$item->target_id] = $entity;
+        if (isset($item->target_id)) {
+          $entity = $entity_storage->load($item->target_id);
+          if (!empty($entity)) {
+            $entities[$item->target_id] = $entity;
+          }
         }
       }
       $ids = array_keys($entities);
     }
     $ids = array_filter($ids);
+    // We store current entity IDs as we might need them in future requests. If
+    // some other part of the form triggers an AJAX request with #limit_validation_errors
+    // we won't have access to the value of the target_id element and won't be
+    // able to build the form as a result of that. This will cause missing
+    // submit (Remove, Edit, ...) elements, which might result in unpredictable
+    // results.
+    $form_state->set(['entity_browser_widget', $this->fieldDefinition->getName()], $ids);
 
     $hidden_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName() . '-target-id');
     $details_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName());
@@ -339,7 +353,10 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     ]);
 
     if ($cardinality == FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED || count($ids) < $cardinality) {
-      $element['entity_browser'] = $entity_browser->getDisplay()->displayEntityBrowser($validators);
+      $entity_browser_uuid = sha1(implode('-', array_merge($form['#parents'], [$this->fieldDefinition->getName(), $delta])));
+      $entity_browser_display = $entity_browser->getDisplay();
+      $entity_browser_display->setUuid($entity_browser_uuid);
+      $element['entity_browser'] = $entity_browser_display->displayEntityBrowser();
       $element['#attached']['library'][] = 'entity_browser/entity_reference';
       $element['#attached']['drupalSettings']['entity_browser'] = [
         $entity_browser->getDisplay()->getUuid() => [
