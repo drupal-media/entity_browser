@@ -41,7 +41,6 @@ class EntityForm extends WidgetBase {
       'inline_entity_form' => [
         '#type' => 'inline_entity_form',
         '#op' => 'add',
-        '#handle_submit' => FALSE,
         '#entity_type' => $this->configuration['entity_type'],
         '#bundle' => $this->configuration['bundle'],
       ],
@@ -52,11 +51,6 @@ class EntityForm extends WidgetBase {
    * {@inheritdoc}
    */
   public function submit(array &$element, array &$form, FormStateInterface $form_state) {
-    // We handle submit on our own in order to take control over what's going on.
-    foreach ($element['inline_entity_form']['#ief_element_submit'] as $function) {
-      $function($element['inline_entity_form'], $form_state);
-    }
-
     $this->selectEntities([$element['inline_entity_form']['#entity']], $form_state);
   }
 
