@@ -209,13 +209,8 @@ class WidgetsConfig extends FormBase {
     /** @var \Drupal\entity_browser\WidgetInterface $widget */
     foreach ($entity_browser->getWidgets() as $uuid => $widget) {
       $widget->submitConfigurationForm($form, $form_state);
-      $widget->setConfiguration([
-        'settings' => !empty($table[$uuid]['form']) ? $table[$uuid]['form'] : [],
-        'weight' => $table[$uuid]['weight'],
-        'label' => $table[$uuid]['label'],
-        'uuid' => $uuid,
-        'id' => $widget->id(),
-      ]);
+      $widget->setWeight($table[$uuid]['weight']);
+      $widget->setLabel($table[$uuid]['label']);
     }
   }
 
