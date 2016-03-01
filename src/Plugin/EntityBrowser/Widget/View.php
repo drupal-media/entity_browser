@@ -8,6 +8,7 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\Widget;
 
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface;
 use Drupal\Core\Render\Element;
 use Drupal\entity_browser\WidgetBase;
 use Drupal\Core\Url;
@@ -16,6 +17,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Uses a view to provide entity listing in a browser's widget.
@@ -55,7 +57,9 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
       $plugin_definition,
       $container->get('event_dispatcher'),
       $container->get('entity.manager'),
-      $container->get('current_user')
+      $container->get('current_user'),
+      $container->get('keyvalue.expirable')->get('entity_browser'),
+      $container->get('request_stack')->getCurrentRequest()
     );
   }
 
@@ -73,8 +77,8 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
    */
-   public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityManagerInterface $entity_manager, AccountInterface $current_user) {
-     parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_manager);
+   public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityManagerInterface $entity_manager, AccountInterface $current_user, KeyValueStoreExpirableInterface $key_value, Request $request) {
+     parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_manager, $key_value, $request);
      $this->currentUser = $current_user;
   }
 

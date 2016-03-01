@@ -89,6 +89,20 @@ interface WidgetInterface extends PluginInspectionInterface, ConfigurablePluginI
   public function getForm(array &$original_form, FormStateInterface $form_state, array $aditional_widget_parameters);
 
   /**
+   * Prepares the entities without saving them.
+   *
+   * We need this method when we want to validation or perform other operations
+   * before submit.
+   *
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state object.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface[]
+   *   Array of entities.
+   */
+  public function prepareEntities(FormStateInterface $form_state);
+
+  /**
    * Validates form.
    *
    * @param array $form
@@ -97,6 +111,20 @@ interface WidgetInterface extends PluginInspectionInterface, ConfigurablePluginI
    *   Form state object.
    */
   public function validate(array &$form, FormStateInterface $form_state);
+
+  /**
+   * Run widget validators.
+   *
+   * @param array $entities
+   *   Array of entity ids to validate.
+   * @param array $validators
+   *   Array of additional widget validator ids.
+   *
+   * @return \Symfony\Component\Validator\ConstraintViolationListInterface
+   *   A list of constraint violations. If the list is empty, validation
+   *   succeeded.
+   */
+  public function runWidgetValidators(array $entities, $validators = []);
 
   /**
    * Submits form.

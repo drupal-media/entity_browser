@@ -16,6 +16,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Url;
 use Drupal\entity_browser\Events\Events;
@@ -54,6 +55,11 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
   protected $fieldDisplayManager;
 
   /**
+   * @var \Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface
+   */
+  protected $keyValue;
+
+  /**
    * The depth of the delete button.
    *
    * This property exists so it can be changed if subclasses
@@ -81,11 +87,14 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
    *   Event dispatcher.
    * @param \Drupal\entity_browser\FieldWidgetDisplayManager $field_display_manager
    *   Field widget display plugin manager.
+   * @param \Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface $key_value
+   *   The key value store.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityManagerInterface $entity_manager, EventDispatcherInterface $event_dispatcher, FieldWidgetDisplayManager $field_display_manager) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityManagerInterface $entity_manager, EventDispatcherInterface $event_dispatcher, FieldWidgetDisplayManager $field_display_manager, KeyValueStoreExpirableInterface $key_value) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->entityManager = $entity_manager;
     $this->fieldDisplayManager = $field_display_manager;
+    $this->keyValue = $key_value;
   }
 
   /**
@@ -100,7 +109,8 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       $configuration['third_party_settings'],
       $container->get('entity.manager'),
       $container->get('event_dispatcher'),
-      $container->get('plugin.manager.entity_browser.field_widget_display')
+      $container->get('plugin.manager.entity_browser.field_widget_display'),
+      $container->get('keyvalue.expirable')->get('entity_browser')
     );
   }
 
@@ -333,7 +343,15 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       ],
     ];
 
+
+    // Gather and set validators.
+    // @todo Is there a better place to do that?
     $cardinality = $this->fieldDefinition->getFieldStorageDefinition()->getCardinality();
+    $validators = $this->prepareValidators([
+      'cardinality' => ['min' => $cardinality],
+      'entity_type' => ['type' => $entity_type],
+    ]);
+
     if ($cardinality == FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED || count($ids) < $cardinality) {
       $entity_browser_uuid = sha1(implode('-', array_merge($form['#parents'], [$this->fieldDefinition->getName(), $delta])));
       $entity_browser_display = $entity_browser->getDisplay();
@@ -481,5 +499,42 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
         $entities
       ),
     ];
+  }
+
+  /**
+   * Prepare validators.
+   *
+   * Saves Entity Browser Widget validators in key/value storage if an identical
+   * set of constraints is not already stored there.
+   *
+   * @param array $validators
+   *   An array where keys are validator ids and values configurations for them.
+   *
+   * @return string
+   *   The hash generated from hashing the validators array.
+   */
+  public function prepareValidators(array $validators) {
+    // Generate the hash that we use as key for the key/value.
+    $hash = md5(serialize($validators));
+
+    if (!$this->keyValue->has($hash)) {
+      $this->keyValue->set($hash, $validators);
+    }
+
+    return $hash;
+  }
+
+  /**
+   * Get validators.
+   *
+   * @param \Drupal\entity_browser\string $hash
+   *   The hash generated from hashing the validators array.
+   *
+   * @return mixed
+   *   An array where keys are validator ids and values configurations for them
+   *   or empty array if no validators are stored.
+   */
+  public function getValidators($hash) {
+    return $this->keyValue->get($hash, []);
   }
 }

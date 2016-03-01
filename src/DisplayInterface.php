@@ -31,10 +31,14 @@ interface DisplayInterface extends PluginInspectionInterface, ConfigurablePlugin
    * with it. It will take care about displaying entity browser in one way or
    * another.
    *
-   * @return array
-   *   An array suitable for drupal_render().
+   * @param string $validators
+   *   (optional) Validators hash identifier as returned by
+   *   EntityReference::prepareValidators().
+   *
+   * @return array An array suitable for drupal_render().
+   * An array suitable for drupal_render().
    */
-  public function displayEntityBrowser();
+  public function displayEntityBrowser($validators = '');
 
   /**
    * Indicates completed selection.
