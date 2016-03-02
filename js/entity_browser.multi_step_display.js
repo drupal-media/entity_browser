@@ -2,7 +2,7 @@
  * @file entity_browser.multi_step_display.js
  *
  */
-(function ($, Drupal, drupalSettings) {
+(function ($, Drupal) {
 
   "use strict";
 
@@ -11,10 +11,8 @@
    */
   Drupal.behaviors.entityBrowserMultiStepDisplay = {
     attach: function (context) {
-      $(context).find('.entity-browser-form').each(function () {
-        $(this).find('.selected-entities-list').sortable({
-          stop: Drupal.entityBrowserMultiStepDisplay.entitiesReordered
-        });
+      $(context).find('.entities-list').sortable({
+        stop: Drupal.entityBrowserMultiStepDisplay.entitiesReordered
       });
     }
   };
@@ -30,10 +28,10 @@
    *   Object with detailed information about the sort event.
    */
   Drupal.entityBrowserMultiStepDisplay.entitiesReordered = function(event, ui) {
-    var items = $(this).find('.selected-item-container');
+    var items = $(this).find('.item-container');
     for (var i = 0; i < items.length; i++) {
       $(items[i]).find('.weight').val(i);
     }
   };
 
-}(jQuery, Drupal, drupalSettings));
+}(jQuery, Drupal));

@@ -5,6 +5,12 @@ common:
   dependencies:
     - core/underscore
 
+entity_list:
+  version: VERSION
+  css:
+    component:
+      css/entity_browser.entity_list.css: {}
+
 iframe:
   version: VERSION
   js:
@@ -22,13 +28,11 @@ iframe_selection:
 
 entity_reference:
   version: VERSION
-  css:
-    component:
-      css/entity_browser.entity_reference.css: {}
   js:
     js/entity_browser.entity_reference.js: {}
   dependencies:
     - entity_browser/common
+    - entity_browser/entity_list
     - core/jquery.ui.sortable
 
 modal:
@@ -67,4 +71,5 @@ multi_step_display:
   js:
     js/entity_browser.multi_step_display.js: {}
   dependencies:
+    - entity_browser/entity_list
     - core/jquery.ui.sortable
