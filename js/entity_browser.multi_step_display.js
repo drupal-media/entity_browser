@@ -4,7 +4,7 @@
  */
 (function ($, Drupal) {
 
-  "use strict";
+  'use strict';
 
   /**
    * Registers behaviours related to selected entities.
@@ -22,12 +22,12 @@
   /**
    * Reacts on sorting of the entities.
    *
-   * @param event
+   * @param {object} event
    *   Event object.
-   * @param ui
+   * @param {object} ui
    *   Object with detailed information about the sort event.
    */
-  Drupal.entityBrowserMultiStepDisplay.entitiesReordered = function(event, ui) {
+  Drupal.entityBrowserMultiStepDisplay.entitiesReordered = function (event, ui) {
     var items = $(this).find('.item-container');
     for (var i = 0; i < items.length; i++) {
       $(items[i]).find('.weight').val(i);

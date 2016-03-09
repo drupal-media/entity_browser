@@ -6,7 +6,8 @@
  */
 (function ($, Drupal) {
 
-  "use strict";
+  'use strict';
+
   /**
    * Registers behaviours related to entity reference field widget.
    */
@@ -25,12 +26,12 @@
   /**
    * Reacts on sorting of the entities.
    *
-   * @param event
+   * @param {object} event
    *   Event object.
-   * @param ui
+   * @param {object} ui
    *   Object with detailed information about the sort event.
    */
-  Drupal.entityBrowserEntityReference.entitiesReordered = function(event, ui) {
+  Drupal.entityBrowserEntityReference.entitiesReordered = function (event, ui) {
     var items = $(this).find('.item-container');
     var ids = [];
     for (var i = 0; i < items.length; i++) {
