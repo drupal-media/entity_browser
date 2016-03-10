@@ -42,6 +42,17 @@ interface WidgetInterface extends PluginInspectionInterface, ConfigurablePluginI
   public function label();
 
   /**
+   * Sets the widget's label.
+   *
+   * @param string $label
+   *   New plugin label.
+   *
+   * @return \Drupal\entity_browser\WidgetInterface
+   *   This object.
+   */
+  public function setLabel($label);
+
+  /**
    * Returns the widget's weight.
    *
    * @return int
