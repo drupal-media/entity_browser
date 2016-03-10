@@ -8,6 +8,7 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\Display;
 
 use Drupal\entity_browser\DisplayBase;
 use Drupal\entity_browser\DisplayRouterInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Presents entity browser as a standalone form.
@@ -24,7 +25,7 @@ class Standalone extends DisplayBase implements DisplayRouterInterface {
   /**
    * {@inheritdoc}
    */
-  public function displayEntityBrowser() {
+  public function displayEntityBrowser(FormStateInterface $form_state) {
     // @TODO Implement it.
   }
 
