@@ -210,7 +210,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
         'width' => '100%',
         'height' => $this->configuration['height'] - 90,
         'frameborder' => 0,
-        'style' => 'padding:',
+        'style' => 'padding:0',
         'name' => Html::cleanCssIdentifier('entity-browser-iframe-' . $this->configuration['entity_browser_id'])
       ],
     ];
@@ -218,8 +218,13 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
 
     $response = new AjaxResponse();
     $response->addCommand(new OpenModalDialogCommand($this->configuration['link_text'], $html, [
-      'width' => $this->configuration['width'],
-      'height' => $this->configuration['height'],
+      'width' => 'auto',
+      'height' => 'auto',
+      'maxWidth' => $this->configuration['width'],
+      'maxHeight' => $this->configuration['height'],
+      'fluid' => true,
+      'autoResize' => false,
+      'resizable' => false,
     ]));
     return $response;
   }
@@ -364,14 +369,14 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
     $form['width'] = [
       '#type' => 'number',
       '#title' => $this->t('Width of the modal'),
-      '#min' => 1,
       '#default_value' => $configuration['width'],
+      '#description' => t('Empty value for responsive width'),
     ];
     $form['height'] = [
       '#type' => 'number',
       '#title' => $this->t('Height of the modal'),
-      '#min' => 1,
       '#default_value' => $configuration['height'],
+      '#description' => t('Empty value for responsive width'),
     ];
     $form['link_text'] = [
       '#type' => 'textfield',
