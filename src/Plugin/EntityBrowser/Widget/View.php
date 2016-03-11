@@ -24,6 +24,7 @@ use Drupal\Core\Entity\EntityManagerInterface;
  * @EntityBrowserWidget(
  *   id = "view",
  *   label = @Translation("View"),
+ *   provider = "views",
  *   description = @Translation("Uses a view to provide entity listing in a browser's widget.")
  * )
  */
