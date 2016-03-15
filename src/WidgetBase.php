@@ -250,7 +250,11 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
       /** @var \Drupal\entity_browser\WidgetValidationInterface $widget_validator */
       $widget_validator = \Drupal::service('plugin.manager.entity_browser.widget_validation')->createInstance($validator_id, []);
     }
-    return $widget_validator->validate($entities, $options);
+
+    if ($widget_validator) {
+      return $widget_validator->validate($entities, $options);
+    }
+    return [];
   }
 
   /**

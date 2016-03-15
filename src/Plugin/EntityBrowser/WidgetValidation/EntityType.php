@@ -7,8 +7,8 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\WidgetValidation;
 
-use Drupal\Core\TypedData\ListDataDefinition;
 use Drupal\entity_browser\WidgetValidationBase;
+use Symfony\Component\Validator\ConstraintViolationList;
 
 /**
  * Validates that the widget returns the appropriate number of elements.
@@ -16,7 +16,6 @@ use Drupal\entity_browser\WidgetValidationBase;
  * @EntityBrowserWidgetValidation(
  *   id = "entity_type",
  *   label = @Translation("Entity type validator"),
- *   constraint = "EntityType"
  * )
  */
 class EntityType extends WidgetValidationBase {
@@ -24,11 +23,16 @@ class EntityType extends WidgetValidationBase {
    * {@inheritdoc}
    */
   public function validate(array $entities, $options = []) {
-    $data_definition = ListDataDefinition::create('integer');
+    $data_definition = \Drupal::typedDataManager()->createDataDefinition('entity_reference');
     $plugin_definition = $this->getPluginDefinition();
     $data_definition->addConstraint($plugin_definition['constraint'], $options);
 
-    $typed_data = \Drupal::typedDataManager()->create($data_definition, $entities);
-    return $typed_data->validate();
+    $violations = new ConstraintViolationList([]);
+    foreach ($entities as $entity) {
+      $validation_result = \Drupal::typedDataManager()->create($data_definition, $entity)->validate();
+      $violations->addAll($validation_result);
+    }
+
+    return $violations;
   }
 }
