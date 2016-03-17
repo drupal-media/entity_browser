@@ -48,13 +48,23 @@
 
       // on window resize run function
       $(window).resize(function (context) {
-        fluidDialog();
+        Drupal.entityBrowser.fluidDialog();
       });
 
       // catch dialog if opened within a viewport smaller than the dialog width
       // run function on all dialog opens
       $(document).on("dialogopen", ".ui-dialog", function (event, ui) {
         Drupal.entityBrowser.fluidDialog();
+      });
+
+      // Disable scrolling of the whole browser window to not interfere with a iframe scrollbar
+      $(window).on({
+        'dialog:aftercreate': function (event, dialog, $element, settings) {
+          $("body").css({ overflow: 'hidden' })
+        },
+        'dialog:beforeclose': function (event, dialog, $element) {
+          $("body").css({ overflow: 'inherit' })
+        }
       });
     }
   };
