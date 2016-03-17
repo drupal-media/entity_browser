@@ -370,13 +370,13 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
       '#type' => 'number',
       '#title' => $this->t('Width of the modal'),
       '#default_value' => $configuration['width'],
-      '#description' => t('Empty value for responsive width'),
+      '#description' => t('Empty value for responsive width.'),
     ];
     $form['height'] = [
       '#type' => 'number',
       '#title' => $this->t('Height of the modal'),
       '#default_value' => $configuration['height'],
-      '#description' => t('Empty value for responsive height'),
+      '#description' => t('Empty value for responsive height.'),
     ];
     $form['link_text'] = [
       '#type' => 'textfield',

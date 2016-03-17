@@ -7,6 +7,8 @@
 
   'use strict';
 
+  Drupal.entityBrowser = {};
+
   Drupal.AjaxCommands.prototype.select_entities = function (ajax, response, status) {
     var uuid = drupalSettings.entity_browser.modal.uuid;
 
@@ -38,6 +40,9 @@
     }
   };
 
+  /**
+   * Registers behaviours related to modal open and windows resize for fluid modal.
+   */
   Drupal.behaviors.fluidModal = {
     attach: function (context) {
 
@@ -49,12 +54,16 @@
       // catch dialog if opened within a viewport smaller than the dialog width
       // run function on all dialog opens
       $(document).on("dialogopen", ".ui-dialog", function (event, ui) {
-        fluidDialog();
+        Drupal.entityBrowser.fluidDialog();
       });
     }
   };
 
-  var fluidDialog = function fluidDialog() {
+  /**
+   * Allows a fluid modal dialog
+   */
+  Drupal.entityBrowser.fluidDialog = function () {
+
     var $visible = $(".ui-dialog:visible");
     // each open dialog
     $visible.each(function () {
