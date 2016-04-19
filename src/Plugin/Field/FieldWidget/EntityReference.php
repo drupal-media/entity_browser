@@ -317,6 +317,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       '#id' => $details_id,
       '#type' => 'details',
       '#open' => !empty($ids) || $this->getSetting('open'),
+      '#required' => $this->fieldDefinition->isRequired(),
       'target_id' => [
         '#type' => 'hidden',
         '#id' => $hidden_id,
