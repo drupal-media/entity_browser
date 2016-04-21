@@ -18,11 +18,14 @@ use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Url;
+use Drupal\Core\Validation\Plugin\Validation\Constraint\NotNullConstraint;
 use Drupal\entity_browser\Events\Events;
 use Drupal\entity_browser\Events\RegisterJSCallbacks;
 use Drupal\entity_browser\FieldWidgetDisplayManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Validator\ConstraintViolation;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 /**
  * Plugin implementation of the 'entity_reference' widget for entity browser.
@@ -236,6 +239,32 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     }
 
     return $summary;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function flagErrors(FieldItemListInterface $items, ConstraintViolationListInterface $violations, array $form, FormStateInterface $form_state) {
+    if ($violations->count() > 0) {
+      /** @var \Symfony\Component\Validator\ConstraintViolation $violation */
+      foreach ($violations as $offset => $violation) {
+        if ($violation->getConstraint() instanceof NotNullConstraint) {
+          $violations->set($offset, new ConstraintViolation(
+            $this->t('@name field is required.', ['@name' => $items->getFieldDefinition()->getLabel()]),
+            '',
+            [],
+            $violation->getRoot(),
+            $violation->getPropertyPath(),
+            $violation->getInvalidValue(),
+            $violation->getPlural(),
+            $violation->getCode(),
+            $violation->getConstraint(),
+            $violation->getCause()
+          ));
+        }
+      }
+    }
+    return parent::flagErrors($items, $violations, $form, $form_state);
   }
 
   /**
