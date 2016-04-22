@@ -248,6 +248,9 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     if ($violations->count() > 0) {
       /** @var \Symfony\Component\Validator\ConstraintViolation $violation */
       foreach ($violations as $offset => $violation) {
+        // The value of the required field is checked through the "not null"
+        // constraint, whose message is not very useful. We override it here for
+        // better UX.
         if ($violation->getConstraint() instanceof NotNullConstraint) {
           $violations->set($offset, new ConstraintViolation(
             $this->t('@name field is required.', ['@name' => $items->getFieldDefinition()->getLabel()]),
@@ -264,7 +267,8 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
         }
       }
     }
-    return parent::flagErrors($items, $violations, $form, $form_state);
+
+    parent::flagErrors($items, $violations, $form, $form_state);
   }
 
   /**
