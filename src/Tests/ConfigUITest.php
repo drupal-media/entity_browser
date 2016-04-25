@@ -82,10 +82,12 @@ class ConfigUITest extends WebTestBase {
 
     // Widget selector step.
     $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/widget_selector', ['query' => ['js' => 'nojs']]);
+    $this->assertText('This plugin has no configuration options.');
     $this->drupalPostForm(NULL, [], 'Next');
 
     // Selection display step.
     $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/selection_display', ['query' => ['js' => 'nojs']]);
+    $this->assertText('This plugin has no configuration options.');
     $this->drupalPostForm(NULL, [], 'Next');
 
     // Widgets step.
