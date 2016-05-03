@@ -17,6 +17,7 @@ iframe:
     js/entity_browser.iframe.js: {}
   dependencies:
     - core/drupalSettings
+    - core/jquery.once
     - entity_browser/common
 
 iframe_selection:
@@ -59,12 +60,14 @@ tabs:
     js/entity_browser.tabs.js: {}
   dependencies:
     - core/drupalSettings
+    - core/jquery.once
 
 view:
   version: VERSION
   js:
     js/entity_browser.view.js: {}
   dependencies:
+    - core/jquery.once
 
 multi_step_display:
   version: VERSION
