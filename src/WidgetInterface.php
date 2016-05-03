@@ -14,6 +14,10 @@ use Drupal\Core\Plugin\PluginFormInterface;
 
 /**
  * Defines the interface for entity browser widgets.
+ *
+ * Entity browser widgets present a form for actually selecting entities in an
+ * entity browser. Once entities have been selected, they are delivered upstream
+ * to the entity browser's selection display plugin.
  */
 interface WidgetInterface extends PluginInspectionInterface, ConfigurablePluginInterface, PluginFormInterface {
 
