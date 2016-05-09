@@ -32,7 +32,7 @@ class EntityBrowserController extends ControllerBase {
     // Load the right translation for referenced entity if it's exists
     // or create new translation if it does not exists.
     if ($entity->isTranslatable()) {
-      $language =  $this->languageManager()->getCurrentLanguage()->getId();
+      $language = $this->languageManager()->getCurrentLanguage()->getId();
       $entity = $entity->hasTranslation($language) ? $entity->getTranslation($language) : $entity->addTranslation($language, $entity->toArray());
     }
     // Build the entity edit form.
