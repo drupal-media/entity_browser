@@ -52,6 +52,7 @@ use Symfony\Component\Routing\Route;
  *     "widget_selector",
  *     "widget_selector_configuration",
  *     "widgets",
+ *     "submit_text",
  *   },
  * )
  */
@@ -91,6 +92,13 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    * @var \Drupal\Core\Plugin\DefaultSingleLazyPluginCollection
    */
   protected $displayCollection;
+
+  /**
+   * Text for the submit button.
+   *
+   * @var string
+   */
+  protected $submit_text = 'Select';
 
   /**
    * The array of widgets for this entity browser.
@@ -206,6 +214,21 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
     $this->display = $display;
     $this->displayPluginCollection = NULL;
     $this->getDisplay();
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSubmitButtonText() {
+    return $this->submit_text;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setSubmitButtonText($submit_text) {
+    $this->submit_text = $submit_text;
     return $this;
   }
 

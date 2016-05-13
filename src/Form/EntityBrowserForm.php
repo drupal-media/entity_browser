@@ -78,7 +78,7 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
     $form['actions'] = [
       'submit' => [
         '#type' => 'submit',
-        '#value' => t('Select'),
+        '#value' => $this->entity_browser->getSubmitButtonText(),
         '#attributes' => [
           'class' => ['is-entity-browser-submit'],
         ],

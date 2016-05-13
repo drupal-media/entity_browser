@@ -20,6 +20,9 @@ entity_browser.browser.*:
       label: 'Selection display plugin ID'
     selection_display_configuration:
       type: entity_browser.browser.selection_display.[%parent.selection_display]
+    submit_text:
+      type: string
+      label: 'Main submit button'
     widget_selector:
       type: string
       label: 'Widget selector plugin ID'

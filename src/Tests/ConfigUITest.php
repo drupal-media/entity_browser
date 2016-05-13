@@ -1,11 +1,7 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_browser\Tests\ConfigUITest.
- */
-
 namespace Drupal\entity_browser\Tests;
+
 use Drupal\entity_browser\Plugin\EntityBrowser\Display\IFrame;
 use Drupal\entity_browser\Plugin\EntityBrowser\SelectionDisplay\NoDisplay;
 use Drupal\entity_browser\Plugin\EntityBrowser\WidgetSelector\Tabs;
@@ -67,6 +63,7 @@ class ConfigUITest extends WebTestBase {
       'display' => 'iframe',
       'widget_selector' => 'tabs',
       'selection_display' => 'no_display',
+      'submit_text' => 'Different Select',
     ];
     $this->drupalPostForm(NULL, $edit, 'Next');
 
@@ -138,6 +135,7 @@ class ConfigUITest extends WebTestBase {
     $this->assertOptionSelected('edit-display', 'iframe', 'Correct display selected.');
     $this->assertOptionSelected('edit-widget-selector', 'tabs', 'Correct widget selector selected.');
     $this->assertOptionSelected('edit-selection-display', 'no_display', 'Correct selection display selected.');
+    $this->assertFieldByName('submit_text', 'Different Select', 'Correct select button text.');
 
     $this->drupalPostForm(NULL,[], 'Next');
     $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/display', ['query' => ['js' => 'nojs']]);

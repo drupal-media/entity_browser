@@ -93,6 +93,7 @@ class EntityBrowserTest extends KernelTestBase {
       'selection_display_configuration' => [],
       'widget_selector' => 'single',
       'widget_selector_configuration' => [],
+      'submit_text' => 'Select entities',
       'widgets' => [
         $this->widgetUUID => [
           'id' => 'view',
@@ -173,6 +174,7 @@ class EntityBrowserTest extends KernelTestBase {
           ],
         ],
       ],
+      'submit_text' => 'Select entities',
     ];
 
     $this->assertEquals($actual_properties, $expected_properties, 'Actual config properties are structured as expected.');
