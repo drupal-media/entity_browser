@@ -9,7 +9,7 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\Display;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Uuid\UuidInterface;
-use Drupal\Core\Ajax\OpenModalDialogCommand;
+use Drupal\Core\Ajax\OpenDialogCommand;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
@@ -210,6 +210,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
     $input = $form_state->getUserInput();
     $src = NestedArray::getValue($input, $parents);
 
+    $element_name = Html::cleanCssIdentifier($this->configuration['entity_browser_id']);
     $content = [
       '#type' => 'html_tag',
       '#tag' => 'iframe',
@@ -219,13 +220,14 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
         'height' => $this->configuration['height'] - 90,
         'frameborder' => 0,
         'style' => 'padding:',
-        'name' => Html::cleanCssIdentifier('entity-browser-iframe-' . $this->configuration['entity_browser_id'])
+        'name' => 'entity-browser-iframe-' . $element_name
       ],
     ];
     $html = drupal_render($content);
 
     $response = new AjaxResponse();
-    $response->addCommand(new OpenModalDialogCommand($this->configuration['link_text'], $html, [
+    $response->addCommand(new OpenDialogCommand('#' . $element_name . '-dialog', $this->configuration['link_text'], $html, [
+      'modal' => TRUE,
       'width' => $this->configuration['width'],
       'height' => $this->configuration['height'],
     ]));
