@@ -23,7 +23,12 @@
 
       $form.find('.tab').each(function (index, element) {
         var $element = $(element);
-        var classes = $element.attr('disabled') ? 'is-active active' : '';
+        var classesArray = [];
+        classesArray.push($element.attr('disabled') ? 'is-active active' : '');
+        var text = $element.text();
+        var textClass = text.toLowerCase().replace(/ /g, '-');
+        classesArray.push(textClass);
+        var classes = classesArray.join(' ');
         var tabSettings = {
           class: classes,
           id: $element.attr('id'),
