@@ -1,5 +1,5 @@
 name: Entity Browser
-description: 'Entity browsing and selecting component.'
+description: 'Provide a generic entity browser/picker/selector.'
 type: module
 package: Media
 core: 8.x
