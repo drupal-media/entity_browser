@@ -43,6 +43,9 @@ class ConfigUITest extends WebTestBase {
    * Tests the entity browser config UI.
    */
   public function testConfigUI() {
+    // We need token module to test upload widget settings.
+    $this->container->get('module_installer')->install(['token']);
+
     $this->drupalGet('/admin/config/content/entity_browser');
     $this->assertResponse(403, "Anonymous user can't access entity browser listing page.");
     $this->drupalGet('/admin/config/content/entity_browser/add');
@@ -90,6 +93,8 @@ class ConfigUITest extends WebTestBase {
     // Widgets step.
     $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/widgets', ['query' => ['js' => 'nojs']]);
     $this->drupalPostAjaxForm(NULL, ['widget' => 'upload'], 'widget');
+    $this->assertText('You can use tokens in the upload location.');
+    $this->assertLink('Browse available tokens.');
     $this->drupalPostForm(NULL, [], 'Finish');
 
     // Back on listing page.

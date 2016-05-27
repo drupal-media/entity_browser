@@ -1,14 +1,15 @@
 <?php
 
-/**
- * Contains \Drupal\entity_browser\Plugin\EntityBrowser\Widget\Upload.
- */
-
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Widget;
 
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Utility\Token;
 use Drupal\entity_browser\WidgetBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Uses a view to provide entity listing in a browser's widget.
@@ -20,6 +21,59 @@ use Drupal\entity_browser\WidgetBase;
  * )
  */
 class Upload extends WidgetBase {
+
+  /**
+   * The module handler service.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * The token service.
+   *
+   * @var \Drupal\Core\Utility\Token
+   */
+  protected $token;
+
+  /**
+   * Constructs upload plugin.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   Event dispatcher service.
+   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   *   The entity manager.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler.
+   * @param \Drupal\Core\Utility\Token $token
+   *   The token service.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityManagerInterface $entity_manager, ModuleHandlerInterface $module_handler, Token $token) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_manager);
+    $this->moduleHandler = $module_handler;
+    $this->token = $token;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('event_dispatcher'),
+      $container->get('entity.manager'),
+      $container->get('module_handler'),
+      $container->get('token')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -39,7 +93,7 @@ class Upload extends WidgetBase {
       '#type' => 'managed_file',
       '#title' => t('Choose a file'),
       '#title_display' => 'invisible',
-      '#upload_location' => $this->configuration['upload_location'],
+      '#upload_location' => $this->token->replace($this->configuration['upload_location']),
       '#multiple' => TRUE,
     ];
 
@@ -111,6 +165,14 @@ class Upload extends WidgetBase {
       '#title' => $this->t('Upload location'),
       '#default_value' => $this->configuration['upload_location'],
     ];
+
+    if ($this->moduleHandler->moduleExists('token')) {
+      $form['token_help'] = [
+        '#theme' => 'token_tree_link',
+        '#token_types' => ['file'],
+      ];
+      $form['upload_location']['#description'] = $this->t('You can use tokens in the upload location.');
+    }
 
     return $form;
   }

@@ -2,6 +2,7 @@
 
 namespace Drupal\entity_browser\Tests;
 
+use Drupal\file\Entity\File;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -44,6 +45,29 @@ class EntityBrowserUITest extends WebTestBase {
     $this->drupalPostForm(NULL, [], 'Finish');
     $this->drupalGet('/entity-browser/iframe/test_entity_browser_iframe');
     $this->assertRaw('Different');
+  }
+
+  /**
+   * Tests entity browser token support for upload widget.
+   */
+  public function testEntityBrowserToken() {
+    $this->container->get('module_installer')->install(['token', 'file']);
+    $account = $this->drupalCreateUser([
+      'access test_entity_browser_token entity browser pages',
+    ]);
+    $this->drupalLogin($account);
+    // Go to the entity browser iframe link.
+    $this->drupalGet('/entity-browser/iframe/test_entity_browser_token');
+    $image = current($this->drupalGetTestFiles('image'));
+    $edit = [
+      'files[upload][]' => $this->container->get('file_system')->realpath($image->uri),
+    ];
+    $this->drupalPostForm(NULL, $edit, 'Select');
+
+    $file = File::load(1);
+    // Test entity browser token that has upload location configured to
+    // public://[current-user:account-name]/
+    $this->assertEqual($file->getFileUri(), 'public://' . $account->getUsername() . '/' . $file->getFilename(), 'Image has the correct uri.');
   }
 
 }
