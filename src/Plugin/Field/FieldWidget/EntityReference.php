@@ -272,6 +272,19 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
   }
 
   /**
+   * Returns a key used to store the previously loaded entity.
+   *
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
+   *   The field items.
+   *
+   * @return string
+   *   A key for form state storage.
+   */
+  protected function getFormStateKey(FieldItemListInterface $items) {
+    return $items->getEntity()->uuid() . ':' . $items->getFieldDefinition()->getName();
+  }
+
+  /**
    * {@inheritdoc}
    */
   function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
@@ -314,8 +327,8 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
       }
     }
     // IDs from a previous request might be saved in the form state.
-    elseif ($form_state->has(['entity_browser_widget', $this->fieldDefinition->getName()])) {
-      $ids = $form_state->get(['entity_browser_widget', $this->fieldDefinition->getName()]);
+    elseif ($form_state->has(['entity_browser_widget', $this->getFormStateKey($items)])) {
+      $ids = $form_state->get(['entity_browser_widget', $this->getFormStateKey($items)]);
       $entities = $entity_storage->loadMultiple($ids);
     }
     // We are loading for for the first time so we need to load any existing
@@ -339,7 +352,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     // able to build the form as a result of that. This will cause missing
     // submit (Remove, Edit, ...) elements, which might result in unpredictable
     // results.
-    $form_state->set(['entity_browser_widget', $this->fieldDefinition->getName()], $ids);
+    $form_state->set(['entity_browser_widget', $this->getFormStateKey($items)], $ids);
 
     $hidden_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName() . '-target-id');
     $details_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName());
