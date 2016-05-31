@@ -396,8 +396,13 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
     }
 
     $field_parents = $element['#field_parents'];
+    $context = [
+      'items' => $items,
+      'form' => $form,
+      'form_state' => $form_state,
+    ];
 
-    $element['current'] = $this->displayCurrentSelection($details_id, $field_parents, $entities);
+    $element['current'] = $this->displayCurrentSelection($details_id, $field_parents, $entities, $context);
 
     return $element;
   }
@@ -470,11 +475,13 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
    * @param string[] $field_parents
    *   Field parents.
    * @param \Drupal\Core\Entity\ContentEntityInterface[] $entities
+   * @param array $context
+   *   Context from the full widget form.
    *
    * @return array
    *   The render array for the current selection.
    */
-  protected function displayCurrentSelection($details_id, $field_parents, $entities) {
+  protected function displayCurrentSelection($details_id, $field_parents, $entities, $context) {
 
     $field_widget_display = $this->fieldDisplayManager->createInstance(
       $this->getSetting('field_widget_display'),
