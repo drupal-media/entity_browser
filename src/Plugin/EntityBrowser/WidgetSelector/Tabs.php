@@ -42,16 +42,7 @@ class Tabs extends WidgetSelectorBase {
       );
     }
 
-    $element['#attached'] = [
-      'library' => [
-        'entity_browser/tabs',
-      ],
-      'drupalSettings' => [
-        'entityBrowserTabs' => [
-          'tabsClass' => ['tabs', 'secondary'],
-        ],
-      ],
-    ];
+    $element['#attached']['library'][] = 'entity_browser/tabs';
 
     return $element;
   }
