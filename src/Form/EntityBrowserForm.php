@@ -109,8 +109,10 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
       ->getForm($form, $form_state, $this->entity_browser->getAdditionalWidgetParameters());
 
     $form['actions'] = [
+      '#type' => 'actions',
       'submit' => [
         '#type' => 'submit',
+        '#button_type' => 'primary',
         '#value' => $this->entity_browser->getSubmitButtonText(),
         '#attributes' => [
           'class' => ['is-entity-browser-submit'],
