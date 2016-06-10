@@ -62,6 +62,9 @@ function entity_browser_form_alter(&$form, FormStateInterface &$form_state) {
  * Tries to figure out where messages block lives and display it separately.
  */
 function entity_browser_preprocess_page__entity_browser__iframe(&$variables) {
+  if (!\Drupal::moduleHandler()->moduleExists('block')) {
+    return;
+  }
   $variables['messages'] = '';
   $blocks = \Drupal::entityTypeManager()->getStorage('block')->loadByProperties([
     'theme' => \Drupal::theme()->getActiveTheme()->getName(),
