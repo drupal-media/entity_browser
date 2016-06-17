@@ -1,4 +1,4 @@
-field.widget.third_party.entity_browser:
+field.widget.third_party.entity_browser_entity_form:
   type: mapping
   label: 'IEF entity browser existing functionality'
   mapping:

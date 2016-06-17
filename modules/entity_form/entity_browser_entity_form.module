@@ -1,5 +1,8 @@
 <?php
 
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\WidgetInterface;
+use Drupal\Core\Url;
 use \Drupal\entity_browser\Events\Events;
 use \Drupal\Core\Form\FormStateInterface;
 use \Drupal\Component\Utility\NestedArray;
@@ -24,10 +27,11 @@ function entity_browser_entity_form_inline_entity_form_reference_form_alter(&$re
   // See https://www.drupal.org/node/2510274
   $form_display = $entity_manager->getStorage('entity_form_display')->load($entity_form_id);
 
-  $widget = $form_display->getComponent($instance->getName());
+  $widget = $form_display->getRenderer($instance->getName());
 
-  if (!empty($widget['third_party_settings']['entity_browser']['entity_browser_id'])) {
-    $entity_browser_id = $widget['third_party_settings']['entity_browser']['entity_browser_id'];
+  if (!empty($widget->getThirdPartySetting('entity_browser_entity_form', 'entity_browser_id')) &&
+    $widget->getThirdPartySetting('entity_browser_entity_form', 'entity_browser_id') !== '_none') {
+    $entity_browser_id = $widget->getThirdPartySetting('entity_browser_entity_form', 'entity_browser_id');
     if ($browser = $entity_manager->getStorage('entity_browser')->load($entity_browser_id)) {
       /** @var \Drupal\entity_browser\EntityBrowserInterface $browser */
       $display = $browser->getDisplay();
@@ -141,4 +145,50 @@ function entity_browser_entity_form_reference_form_submit($reference_form, FormS
   $form_state->setValueForElement($reference_form['entity_id'], '');
   $input = &$form_state->getUserInput();
   NestedArray::unsetValue($input, array_merge($reference_form['#parents'], ['entity_id']));
+}
+
+/**
+ * Implements hook_field_widget_third_party_settings_form().
+ */
+function entity_browser_entity_form_field_widget_third_party_settings_form(WidgetInterface $plugin, FieldDefinitionInterface $field_definition, $form_mode, $form, FormStateInterface $form_state) {
+  if ($plugin->getPluginId() == 'inline_entity_form_complex') {
+    $entity_browsers = \Drupal::service('entity_type.manager')->getStorage('entity_browser')->loadMultiple();
+    if ($entity_browsers) {
+      $options = [];
+      foreach ($entity_browsers as $entity_browser) {
+        $options[$entity_browser->id()] = $entity_browser->label();
+      }
+      $element['entity_browser_id'] = [
+        '#type' => 'select',
+        '#title' => t('Entity browser'),
+        '#options' => $options,
+        '#empty_option' => t('- None -'),
+        '#empty_value' => '_none',
+        '#default_value' => $plugin->getThirdPartySetting('entity_browser_entity_form', 'entity_browser_id'),
+      ];
+    }
+    else {
+      $element['message'] = [
+        '#markup' => t('There are no entity browsers available. You can create one <a href="@url">here</a>.', ['@url' => Url::fromRoute('entity.entity_browser.collection')->toString()]),
+      ];
+    }
+    return $element;
+  }
+}
+
+/**
+ * Implements hook_field_widget_settings_summary_alter().
+ */
+function entity_browser_entity_form_field_widget_settings_summary_alter(&$summary, $context) {
+  $plugin = $context['widget'];
+  if ($plugin->getPluginId() == 'inline_entity_form_complex' && $plugin->getThirdPartySetting('entity_browser_entity_form', 'entity_browser_id') && $plugin->getThirdPartySetting('entity_browser_entity_form', 'entity_browser_id') !== '_none') {
+    $entity_browser_id = $plugin->getThirdPartySetting('entity_browser_entity_form', 'entity_browser_id');
+    $entity_browser = \Drupal::service('entity_type.manager')->getStorage('entity_browser')->load($entity_browser_id);
+    if ($entity_browser) {
+      $summary[] = t('Entity browser: @entity_browser.', [
+        '@entity_browser' => $entity_browser->label(),
+      ]);
+    }
+    return $summary;
+  }
 }
