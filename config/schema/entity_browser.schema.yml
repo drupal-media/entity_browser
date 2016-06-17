@@ -134,3 +134,7 @@ field.widget.settings.entity_browser_entity_reference:
         view_mode:
           type: string
           label: 'View mode'
+
+views.display.entity_browser:
+  type: views_display
+  label: 'Entity browser display options'
