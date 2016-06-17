@@ -196,6 +196,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
       '#tag' => 'iframe',
       '#attributes' => [
         'src' => $src,
+        'class' => 'entity-browser-modal-iframe',
         'width' => '100%',
         'height' => $this->configuration['height'] - 90,
         'frameborder' => 0,
