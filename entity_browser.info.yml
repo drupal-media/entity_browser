@@ -6,3 +6,4 @@ core: 8.x
 test_dependencies:
   - ctools
   - token
+configure: entity.entity_browser.collection
