@@ -9,6 +9,7 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\SelectionDisplay;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_browser\SelectionDisplayBase;
+use Drupal\views\Views;
 
 /**
  * Displays current selection in a View.
@@ -75,4 +76,42 @@ class View extends SelectionDisplayBase {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    $options = [];
+
+    // Get all views displays.
+    $views = Views::getAllViews();
+    foreach ($views as $view_id => $view) {
+      foreach ($view->get('display') as $display_id => $display)  {
+        $options[$view_id . '.' . $display_id] = $this->t('@view : @display', array('@view' => $view->label(), '@display' => $display['display_title']));
+      }
+    }
+
+    $form['view'] = [
+      '#type' => 'select',
+      '#title' => $this->t('View : View display'),
+      '#default_value' => $this->configuration['view'] . '.' . $this->configuration['view_display'],
+      '#options' => $options,
+      '#required' => TRUE,
+      '#description' => 'View display to use for displaying currently selected items. Do note that to get something usefull out of this display, its first contextual filter should be a filter on the primary identifier field of your entity type (e.g., Node ID, Media ID).',
+    ];
+
+    return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
+    $values = $form_state->getValues();
+
+    if (!empty($values['view'])) {
+      list($view_id, $display_id) = explode('.', $values['view']);
+      $this->configuration['view'] = $view_id;
+      $this->configuration['view_display'] = $display_id;
+    }
+  }
 }
