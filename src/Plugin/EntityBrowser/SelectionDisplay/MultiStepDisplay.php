@@ -2,7 +2,6 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\SelectionDisplay;
 
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_browser\FieldWidgetDisplayManager;
@@ -70,6 +69,7 @@ class MultiStepDisplay extends SelectionDisplayBase {
       'entity_type' => 'node',
       'display' => 'label',
       'display_settings' => [],
+      'select_text' => 'Use selected',
     ] + parent::defaultConfiguration();
   }
 
@@ -120,11 +120,12 @@ class MultiStepDisplay extends SelectionDisplayBase {
         ]
       ];
     }
-    $form['use_selected'] = array(
+    $form['use_selected'] = [
       '#type' => 'submit',
-      '#value' => t('Use selected'),
+      '#value' => $this->t($this->configuration['select_text']),
       '#name' => 'use_selected',
-    );
+      '#access' => empty($selected_entities) ? FALSE : TRUE,
+    ];
 
     return $form;
   }
@@ -243,6 +244,12 @@ class MultiStepDisplay extends SelectionDisplayBase {
 
       $form['display_settings'] += $display_plugin->settingsForm($form, $form_state);
     }
+    $form['select_text'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Select button text'),
+      '#default_value' => $this->configuration['select_text'],
+      '#description' => $this->t('Text to display on the entity browser select button.'),
+    ];
 
     return $form;
   }

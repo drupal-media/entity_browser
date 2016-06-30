@@ -108,6 +108,23 @@ entity_browser.browser.widget.view:
         type: integer
         label: 'View display arguments'
 
+entity_browser.browser.selection_display.multi_step_display:
+  type: mapping
+  label: 'Multistep display configuration'
+  mapping:
+    entity_type:
+      type: string
+      label: 'Entity type'
+    display:
+      type: string
+      label: 'Display'
+    display_settings:
+      type: mapping
+      label: 'Display settings'
+    select_text:
+      type: string
+      label: 'Select text'
+
 field.widget.settings.entity_browser_entity_reference:
   type: mapping
   label: 'Entity browser entity reference widget'
