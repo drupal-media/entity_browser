@@ -201,7 +201,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
         'height' => $this->configuration['height'] - 90,
         'frameborder' => 0,
         'style' => 'padding:0',
-        'name' => 'entity-browser-iframe-' . Html::cleanCssIdentifier($element_name)
+        'name' => 'entity_browser_iframe_' . Html::cleanCssIdentifier($element_name)
       ],
     ];
     $html = drupal_render($content);

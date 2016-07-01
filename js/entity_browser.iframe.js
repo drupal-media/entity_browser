@@ -38,7 +38,7 @@
         'height': drupalSettings['entity_browser']['iframe'][uuid]['height'],
         'data-uuid': uuid,
         'data-original-path': original_path,
-        'name': 'entity-browser-iframe-' + drupalSettings['entity_browser']['iframe'][uuid]['entity_browser_id'].replace('_', '-')
+        'name': 'entity_browser_iframe_' + drupalSettings['entity_browser']['iframe'][uuid]['entity_browser_id']
       }
     );
 
