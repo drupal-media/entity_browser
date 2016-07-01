@@ -436,6 +436,18 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function errorElement(array $element, \Symfony\Component\Validator\ConstraintViolationInterface $violation, array $form, \Drupal\Core\Form\FormStateInterface $form_state) {
+    if (($trigger = $form_state->getTriggeringElement())) {
+      // Can be triggered by "Remove" button.
+      if (end($trigger['#parents']) === 'remove_button') {
+        return FALSE;
+      }
+    }
+  }
+
+  /**
    * Submit callback for remove buttons.
    */
   public static function removeItemSubmit(&$form, FormStateInterface $form_state) {
