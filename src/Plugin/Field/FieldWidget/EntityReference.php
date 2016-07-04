@@ -445,6 +445,7 @@ class EntityReference extends WidgetBase implements ContainerFactoryPluginInterf
         return FALSE;
       }
     }
+    return parent::errorElement($element, $violation, $form, $form_state);
   }
 
   /**
