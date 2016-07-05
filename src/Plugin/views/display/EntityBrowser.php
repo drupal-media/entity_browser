@@ -133,12 +133,14 @@ class EntityBrowser extends DisplayPluginBase {
    */
   protected function handleForm(&$render) {
     if (!empty($this->view->field['entity_browser_select'])) {
-      $this->view->field['entity_browser_select']->viewsForm($render);
+      /** @var \Drupal\entity_browser\Plugin\views\field\SelectForm $select */
+      $select = $this->view->field['entity_browser_select'];
+      $select->viewsForm($render);
 
       $render['#post_render'][] = [get_class($this), 'postRender'];
       $substitutions = [];
-      foreach ($this->view->result as $row_id => $row) {
-        $form_element_row_id = $row_id;
+      foreach ($this->view->result as $row) {
+        $form_element_row_id = $select->getRowId($row);
 
         $substitutions[] = [
           'placeholder' => '<!--form-item-entity_browser_select--' . $form_element_row_id . '-->',
