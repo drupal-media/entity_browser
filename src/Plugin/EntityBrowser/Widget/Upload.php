@@ -3,7 +3,7 @@
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Widget;
 
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Utility\Token;
@@ -47,15 +47,15 @@ class Upload extends WidgetBase {
    *   The plugin implementation definition.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher service.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager service.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
    * @param \Drupal\Core\Utility\Token $token
    *   The token service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityManagerInterface $entity_manager, ModuleHandlerInterface $module_handler, Token $token) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_manager);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, Token $token) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager);
     $this->moduleHandler = $module_handler;
     $this->token = $token;
   }
@@ -69,7 +69,7 @@ class Upload extends WidgetBase {
       $plugin_id,
       $plugin_definition,
       $container->get('event_dispatcher'),
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('module_handler'),
       $container->get('token')
     );
@@ -147,7 +147,7 @@ class Upload extends WidgetBase {
     $files = [];
     foreach ($form_state->getValue(['upload'], []) as $fid) {
       /** @var \Drupal\file\FileInterface $file */
-      $file = $this->entityManager->getStorage('file')->load($fid);
+      $file = $this->entityTypeManager->getStorage('file')->load($fid);
       $file->setPermanent();
       $file->save();
       $files[] = $file;

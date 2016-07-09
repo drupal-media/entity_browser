@@ -2,7 +2,7 @@
 
 namespace Drupal\entity_browser;
 
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryFactory;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -35,11 +35,15 @@ class RouteSubscriber {
   /**
    * Constructs a \Drupal\views\EventSubscriber\RouteSubscriber instance.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity manager.
+   * @param \Drupal\entity_browser\DisplayManager $display_manager
+   *   The display manager.
+   * @param \Drupal\Core\Entity\Query\QueryFactory $entity_query
+   *   The entity query factory.
    */
-  public function __construct(EntityManagerInterface $entity_manager, DisplayManager $display_manager, QueryFactory $entity_query) {
-    $this->browserStorage = $entity_manager->getStorage('entity_browser');
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, DisplayManager $display_manager, QueryFactory $entity_query) {
+    $this->browserStorage = $entity_type_manager->getStorage('entity_browser');
     $this->displayManager = $display_manager;
     $this->browserQuery = $entity_query->get('entity_browser');
   }

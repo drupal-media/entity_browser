@@ -19,7 +19,7 @@ use Drupal\Component\Utility\NestedArray;
  * Implements hook_inline_entity_form_reference_form_alter().
  */
 function entity_browser_entity_form_inline_entity_form_reference_form_alter(&$reference_form, FormStateInterface &$form_state) {
-  $entity_manager = \Drupal::entityManager();
+  $entity_type_manager = \Drupal::entityTypeManager();
   \Drupal::service('event_dispatcher')
     ->addListener(
       Events::REGISTER_JS_CALLBACKS,
@@ -33,14 +33,14 @@ function entity_browser_entity_form_inline_entity_form_reference_form_alter(&$re
   $entity_form_id = $instance->getTargetEntityTypeId() . '.' . $instance->getTargetBundle() . '.default';
   // TODO - 'default' might become configurable or something else in the future.
   // See https://www.drupal.org/node/2510274
-  $form_display = $entity_manager->getStorage('entity_form_display')->load($entity_form_id);
+  $form_display = $entity_type_manager->getStorage('entity_form_display')->load($entity_form_id);
 
   $widget = $form_display->getRenderer($instance->getName());
 
   if (!empty($widget->getThirdPartySetting('entity_browser_entity_form', 'entity_browser_id')) &&
     $widget->getThirdPartySetting('entity_browser_entity_form', 'entity_browser_id') !== '_none') {
     $entity_browser_id = $widget->getThirdPartySetting('entity_browser_entity_form', 'entity_browser_id');
-    if ($browser = $entity_manager->getStorage('entity_browser')->load($entity_browser_id)) {
+    if ($browser = $entity_type_manager->getStorage('entity_browser')->load($entity_browser_id)) {
       /** @var \Drupal\entity_browser\EntityBrowserInterface $browser */
       $display = $browser->getDisplay();
 

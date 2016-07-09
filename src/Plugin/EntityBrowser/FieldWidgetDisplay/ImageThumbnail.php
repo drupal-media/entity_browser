@@ -3,7 +3,7 @@
 namespace Drupal\entity_browser\Plugin\EntityBrowser\FieldWidgetDisplay;
 
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -23,11 +23,11 @@ use Drupal\entity_browser\FieldWidgetDisplayBase;
 class ImageThumbnail extends FieldWidgetDisplayBase implements ContainerFactoryPluginInterface {
 
   /**
-   * Entity manager service.
+   * Entity type manager service.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * Constructs widget plugin.
@@ -38,12 +38,12 @@ class ImageThumbnail extends FieldWidgetDisplayBase implements ContainerFactoryP
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   Entity manager service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityManagerInterface $entity_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->entityManager = $entity_manager;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -54,7 +54,7 @@ class ImageThumbnail extends FieldWidgetDisplayBase implements ContainerFactoryP
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity.manager')
+      $container->get('entity_type.manager')
     );
   }
 
@@ -76,7 +76,7 @@ class ImageThumbnail extends FieldWidgetDisplayBase implements ContainerFactoryP
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $options = [];
-    foreach ($this->entityManager->getStorage('image_style')->loadMultiple() as $id => $image_style) {
+    foreach ($this->entityTypeManager->getStorage('image_style')->loadMultiple() as $id => $image_style) {
       $options[$id] = $image_style->label();
     }
 

@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Uses a view to provide entity listing in a browser's widget.
@@ -52,7 +52,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
       $plugin_id,
       $plugin_definition,
       $container->get('event_dispatcher'),
-      $container->get('entity.manager'),
+      $container->get('entity_type.manager'),
       $container->get('current_user')
     );
   }
@@ -68,11 +68,13 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
    *   The plugin implementation definition.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityManagerInterface $entity_manager, AccountInterface $current_user) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_manager);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, AccountInterface $current_user) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager);
     $this->currentUser = $current_user;
   }
 
@@ -86,7 +88,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
     $form['#attached']['library'] = ['entity_browser/view'];
 
     /** @var \Drupal\views\ViewExecutable $view */
-    $view = $this->entityManager
+    $view = $this->entityTypeManager
       ->getStorage('view')
       ->load($this->configuration['view'])
       ->getExecutable();
@@ -168,7 +170,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
           // Make sure we have a type and id present.
           if (count($parts) == 2) {
             try {
-              $storage = $this->entityManager->getStorage($parts[0]);
+              $storage = $this->entityTypeManager->getStorage($parts[0]);
               if (!$storage->load($parts[1])) {
                 $message = t('The @type Entity @id does not exist.', [
                   '@type' => $parts[0],
@@ -197,7 +199,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
     $entities = [];
     foreach ($selected_rows as $row) {
       list($type, $id) = explode(':', $row);
-      $storage = $this->entityManager->getStorage($type);
+      $storage = $this->entityTypeManager->getStorage($type);
       if ($entity = $storage->load($id)) {
         $entities[] = $entity;
       }

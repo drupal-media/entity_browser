@@ -2,9 +2,13 @@
 
 namespace Drupal\entity_browser_entity_form\Plugin\EntityBrowser\Widget;
 
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_browser\WidgetBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Uses a view to provide entity listing in a browser's widget.
@@ -16,6 +20,48 @@ use Drupal\entity_browser\WidgetBase;
  * )
  */
 class EntityForm extends WidgetBase {
+
+  /**
+   * The entity type bundle info service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface
+   */
+  protected $entityTypeBundleInfo;
+
+  /**
+   * Constructs widget plugin.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   Event dispatcher service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager service.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
+   *   The entity type bundle info service.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager);
+    $this->entityTypeBundleInfo = $entity_type_bundle_info;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('event_dispatcher'),
+      $container->get('entity_type.manager'),
+      $container->get('entity_type.bundle.info')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -62,7 +108,7 @@ class EntityForm extends WidgetBase {
     $entity_type = $form_state->hasValue(array_merge($parents, ['entity_type'])) ? $form_state->getValue(array_merge($parents, ['entity_type'])) : $this->configuration['entity_type'];
     $bundle = $form_state->hasValue(array_merge($parents, ['bundle', 'select'])) ? $form_state->getValue(array_merge($parents, ['bundle', 'select'])) : $this->configuration['bundle'];
 
-    $definitions = $this->entityManager->getDefinitions();
+    $definitions = $this->entityTypeManager->getDefinitions();
     $entity_types = array_combine(
       array_keys($definitions),
       array_map(function (EntityTypeInterface $item) {
@@ -83,7 +129,7 @@ class EntityForm extends WidgetBase {
 
     $bundles = [];
     if ($entity_type) {
-      $definitions = $this->entityManager->getBundleInfo($entity_type);
+      $definitions = $this->entityTypeBundleInfo->getBundleInfo($entity_type);
       $bundles = array_map(function ($item) {
         return $item['label'];
       }, $definitions);

@@ -26,7 +26,7 @@ class EntityBrowserController extends ControllerBase {
    */
   public function entityBrowserEdit(EntityInterface $entity) {
     // Build the entity edit form.
-    $form_object = $this->entityManager()->getFormObject($entity->getEntityTypeId(), 'edit');
+    $form_object = $this->entityTypeManager()->getFormObject($entity->getEntityTypeId(), 'edit');
     $form_object->setEntity($entity);
     $form_state = (new FormState())
       ->setFormObject($form_object)

@@ -38,7 +38,7 @@ class View extends SelectionDisplayBase {
     // either of those is nonexistent or display not of correct type)?
     $storage = &$form_state->getStorage();
     if (empty($storage['selection_display_view']) || $form_state->isRebuilding()) {
-      $storage['selection_display_view'] = $this->entityManager
+      $storage['selection_display_view'] = $this->entityTypeManager
         ->getStorage('view')
         ->load($this->configuration['view'])
         ->getExecutable();
