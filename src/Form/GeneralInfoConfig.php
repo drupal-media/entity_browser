@@ -8,7 +8,6 @@ use Drupal\entity_browser\DisplayManager;
 use Drupal\entity_browser\SelectionDisplayManager;
 use Drupal\entity_browser\WidgetManager;
 use Drupal\entity_browser\WidgetSelectorManager;
-use Drupal\user\SharedTempStoreFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

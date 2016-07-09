@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_browser\DisplayInterface.
- */
-
 namespace Drupal\entity_browser;
 
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
@@ -55,7 +50,6 @@ interface DisplayInterface extends PluginInspectionInterface, ConfigurablePlugin
    * the initiating code.
    *
    * @param \Drupal\Core\Entity\EntityInterface[] $entities
-   *
    */
   public function selectionCompleted(array $entities);
 

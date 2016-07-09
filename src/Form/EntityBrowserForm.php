@@ -124,7 +124,7 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
       ->getSelectionDisplay()
       ->getForm($form, $form_state);
 
-    if ($this->entity_browser->getDisplay() instanceOf DisplayAjaxInterface) {
+    if ($this->entity_browser->getDisplay() instanceof DisplayAjaxInterface) {
       $this->entity_browser->getDisplay()->addAjax($form);
     }
 

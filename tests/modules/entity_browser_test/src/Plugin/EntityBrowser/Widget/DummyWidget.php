@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Contains \Drupal\entity_browser_test\Plugin\EntityBrowser\Widget\DummyWidget.
- */
-
 namespace Drupal\entity_browser_test\Plugin\EntityBrowser\Widget;
 
 use Drupal\Core\Form\FormStateInterface;

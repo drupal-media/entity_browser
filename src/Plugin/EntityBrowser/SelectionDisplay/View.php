@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Contains \Drupal\entity_browser\Plugin\EntityBrowser\SelectionDisplay\View.
- */
-
 namespace Drupal\entity_browser\Plugin\EntityBrowser\SelectionDisplay;
 
 use Drupal\Core\Entity\EntityInterface;
@@ -52,7 +48,9 @@ class View extends SelectionDisplayBase {
     // them only once. Reason for that is how SQL and Views work and we probably
     // can't do much about it.
     if (!empty($this->selectedEntities)) {
-      $ids = array_map(function(EntityInterface $item) {return $item->id();}, $this->selectedEntities);
+      $ids = array_map(function(EntityInterface $item) {
+        return $item->id();
+      }, $this->selectedEntities);
       $storage['selection_display_view']->setArguments([implode(',', $ids)]);
     }
 
@@ -85,7 +83,7 @@ class View extends SelectionDisplayBase {
     // Get all views displays.
     $views = Views::getAllViews();
     foreach ($views as $view_id => $view) {
-      foreach ($view->get('display') as $display_id => $display)  {
+      foreach ($view->get('display') as $display_id => $display) {
         $options[$view_id . '.' . $display_id] = $this->t('@view : @display', array('@view' => $view->label(), '@display' => $display['display_title']));
       }
     }
@@ -114,4 +112,5 @@ class View extends SelectionDisplayBase {
       $this->configuration['view_display'] = $display_id;
     }
   }
+
 }

@@ -65,7 +65,9 @@ class EntityForm extends WidgetBase {
     $definitions = $this->entityManager->getDefinitions();
     $entity_types = array_combine(
       array_keys($definitions),
-      array_map(function (EntityTypeInterface $item) { return $item->getLabel(); }, $definitions)
+      array_map(function (EntityTypeInterface $item) {
+        return $item->getLabel();
+      }, $definitions)
     );
 
     $form['entity_type'] = [
@@ -82,7 +84,9 @@ class EntityForm extends WidgetBase {
     $bundles = [];
     if ($entity_type) {
       $definitions = $this->entityManager->getBundleInfo($entity_type);
-      $bundles = array_map(function ($item) { return $item['label']; }, $definitions);
+      $bundles = array_map(function ($item) {
+        return $item['label'];
+      }, $definitions);
     }
 
     $form['bundle'] = [

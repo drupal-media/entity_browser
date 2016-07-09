@@ -66,7 +66,7 @@ class EntityBrowserUITest extends WebTestBase {
 
     $file = File::load(1);
     // Test entity browser token that has upload location configured to
-    // public://[current-user:account-name]/
+    // public://[current-user:account-name]/.
     $this->assertEqual($file->getFileUri(), 'public://' . $account->getUsername() . '/' . $file->getFilename(), 'Image has the correct uri.');
   }
 

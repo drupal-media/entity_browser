@@ -158,7 +158,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
                 ],
               ],
             ],
-          ]
+          ],
         ],
       ],
     ];
@@ -182,13 +182,17 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
   public function propagateSelection(FilterResponseEvent $event) {
     $render = [
       'labels' => [
-        '#markup' => 'Labels: ' . implode(', ', array_map(function (EntityInterface $item) {return $item->label();}, $this->entities)),
+        '#markup' => 'Labels: ' . implode(', ', array_map(function (EntityInterface $item) {
+          return $item->label();
+        }, $this->entities)),
         '#attached' => [
           'library' => ['entity_browser/iframe_selection'],
           'drupalSettings' => [
             'entity_browser' => [
               'iframe' => [
-                'entities' => array_map(function (EntityInterface $item) {return [$item->id(), $item->uuid(), $item->getEntityTypeId()];}, $this->entities),
+                'entities' => array_map(function (EntityInterface $item) {
+                  return [$item->id(), $item->uuid(), $item->getEntityTypeId()];
+                }, $this->entities),
                 'uuid' => $this->request->query->get('uuid'),
               ],
             ],

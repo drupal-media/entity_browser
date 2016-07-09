@@ -1,7 +1,7 @@
 /**
  * @file entity_browser.multi_step_display.js
- *
  */
+
 (function ($, Drupal) {
 
   'use strict';

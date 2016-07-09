@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Contains \Drupal\entity_browser\Plugin\EntityBrowser\SelectionDisplay\NoDisplay.
- */
-
 namespace Drupal\entity_browser\Plugin\EntityBrowser\SelectionDisplay;
 
 use Drupal\Core\Form\FormStateInterface;

@@ -3,6 +3,7 @@
  *
  * Provides JS part of entity browser integration with IEF "use existing entity" feature.
  */
+
 (function ($, Drupal, drupalSettings) {
 
   'use strict';
@@ -16,7 +17,6 @@
     }
   };
 
-
   Drupal.entityBrowserEntityForm = {};
 
   /**
@@ -27,5 +27,3 @@
   };
 
 }(jQuery, Drupal, drupalSettings));
-
-

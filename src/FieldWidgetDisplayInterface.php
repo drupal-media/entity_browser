@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_browser\FieldWidgetDisplayInterface.
- */
-
 namespace Drupal\entity_browser;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;

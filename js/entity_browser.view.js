@@ -3,6 +3,7 @@
  *
  * Defines the behavior of the entity browser's view widget.
  */
+
 (function ($, Drupal, drupalSettings) {
 
   'use strict';

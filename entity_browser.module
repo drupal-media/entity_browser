@@ -19,22 +19,22 @@ function entity_browser_theme() {
     'html__entity_browser__iframe' => [
       'template' => 'html--entity-browser--iframe',
       'render element' => 'html',
-      'preprocess functions' => ['template_preprocess_html']
+      'preprocess functions' => ['template_preprocess_html'],
     ],
     'html__entity_browser__modal' => [
       'template' => 'html--entity-browser--iframe',
       'render element' => 'html',
-      'preprocess functions' => ['template_preprocess_html']
+      'preprocess functions' => ['template_preprocess_html'],
     ],
     'page__entity_browser__iframe' => [
       'template' => 'page--entity-browser--iframe',
       'render element' => 'html',
-      'preprocess functions' => ['template_preprocess_page']
+      'preprocess functions' => ['template_preprocess_page'],
     ],
     'page__entity_browser__modal' => [
       'template' => 'page--entity-browser--iframe',
       'render element' => 'html',
-      'preprocess functions' => ['template_preprocess_page']
+      'preprocess functions' => ['template_preprocess_page'],
     ],
   ];
 }
@@ -51,7 +51,7 @@ function entity_browser_form_alter(&$form, FormStateInterface &$form_state) {
     }
     // Use Ajax.
     $form['actions']['submit']['#ajax'] = [
-      'url' => Url::fromRoute('entity_browser.edit_form', ['entity_type' => $form_state->getFormObject()->getEntity()->getEntityTypeId(), 'entity' => $form_state->getFormObject()->getEntity()->id()])
+      'url' => Url::fromRoute('entity_browser.edit_form', ['entity_type' => $form_state->getFormObject()->getEntity()->getEntityTypeId(), 'entity' => $form_state->getFormObject()->getEntity()->id()]),
     ];
   }
 }

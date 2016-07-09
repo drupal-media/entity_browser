@@ -4,6 +4,7 @@
  * Defines the behavior of the entity reference widget that utilizes entity
  * browser.
  */
+
 (function ($, Drupal) {
 
   'use strict';

@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Contains \Drupal\entity_browser\WidgetBase.
- */
-
 namespace Drupal\entity_browser;
 
 use Drupal\Core\Plugin\PluginBase;
@@ -216,4 +212,5 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
         $entities
       ));
   }
+
 }

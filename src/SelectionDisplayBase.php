@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Contains \Drupal\entity_browser\SelectionDisplayBase.
- */
-
 namespace Drupal\entity_browser;
 
 use Drupal\Core\Plugin\PluginBase;

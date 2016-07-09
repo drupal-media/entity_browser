@@ -9,16 +9,17 @@
  */
 
 .entities-list .item-container {
-    display: inline-block;
-    margin: 10px 10px 15px;
-    vertical-align: text-bottom;
+  display: inline-block;
+  margin: 10px 10px 15px;
+  vertical-align: text-bottom;
 }
 
-.entities-list .item-container > img, .entities-list .item-container > input {
-    display: block;
-    margin: 5px auto 0;
+.entities-list .item-container > img,
+.entities-list .item-container > input {
+  display: block;
+  margin: 5px auto 0;
 }
 
 .entities-list .rendered-entity {
-    display: block;
+  display: block;
 }

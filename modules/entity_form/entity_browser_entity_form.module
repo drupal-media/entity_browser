@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * @file
+ * Hook implementations for entity_browser_entity_form.module.
+ *
+ * Provides integration with the Inline entity form module.
+ */
+
+use Drupal\entity_browser\Events\RegisterJSCallbacks;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\WidgetInterface;
 use Drupal\Core\Url;
@@ -10,7 +19,7 @@ use \Drupal\Component\Utility\NestedArray;
 /**
  * Implements hook_inline_entity_form_reference_form_alter().
  */
-function entity_browser_entity_form_inline_entity_form_reference_form_alter(&$reference_form, \Drupal\Core\Form\FormStateInterface &$form_state) {
+function entity_browser_entity_form_inline_entity_form_reference_form_alter(&$reference_form, FormStateInterface &$form_state) {
   $entity_manager = \Drupal::entityManager();
   \Drupal::service('event_dispatcher')
     ->addListener(
@@ -61,7 +70,7 @@ function entity_browser_entity_form_inline_entity_form_reference_form_alter(&$re
  * Registers JS callback that gets entities from entity browser and updates
  * form values accordingly.
  */
-function entity_browser_entity_form_reference_register_js(\Drupal\entity_browser\Events\RegisterJSCallbacks $event) {
+function entity_browser_entity_form_reference_register_js(RegisterJSCallbacks $event) {
   $event->registerCallback('Drupal.entityBrowser.selectionCompleted');
 }
 
@@ -73,7 +82,7 @@ function entity_browser_entity_form_reference_register_js(\Drupal\entity_browser
  * @see inline_entity_form_reference_form_validate()
  *
  * @param $reference_form
- *  The reference entity form.
+ *   The reference entity form.
  * @param $form_state
  *   The form state of the parent form.
  */
@@ -111,7 +120,7 @@ function entity_browser_entity_form_reference_form_validate(&$reference_form, Fo
  * @see inline_entity_form_reference_form_submit()
  *
  * @param $reference_form
- *  The reference entity form.
+ *   The reference entity form.
  * @param $form_state
  *   The form state of the parent form.
  */

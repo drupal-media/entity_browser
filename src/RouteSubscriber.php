@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_browser\RouteSubscriber.
- */
-
 namespace Drupal\entity_browser;
 
 use Drupal\Core\Entity\EntityManagerInterface;
@@ -57,7 +52,7 @@ class RouteSubscriber {
    */
   public function routes() {
     $collection = new RouteCollection();
-    //return $collection;
+    // Return $collection;.
     foreach ($this->getBrowserIDsWithRoute() as $id) {
       /** @var $browser \Drupal\entity_browser\EntityBrowserInterface */
       $browser = $this->browserStorage->load($id);

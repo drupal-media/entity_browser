@@ -3,6 +3,7 @@
  *
  * Defines the behavior of the entity browser's modal display.
  */
+
 (function ($, Drupal, drupalSettings) {
 
   'use strict';
@@ -13,7 +14,7 @@
     var uuid = drupalSettings.entity_browser.modal.uuid;
 
     $('input[data-uuid="' + uuid + '"]').trigger('entities-selected', [uuid, response.entities])
-    .removeClass('entity-browser-processed').unbind('entities-selected');
+      .removeClass('entity-browser-processed').unbind('entities-selected');
   };
 
   /**
@@ -114,6 +115,5 @@
       }
     });
   };
-
 
 }(jQuery, Drupal, drupalSettings));

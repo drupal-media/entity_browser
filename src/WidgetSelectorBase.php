@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_browser\WidgetSelectorBase.
- */
-
 namespace Drupal\entity_browser;
 
 use Drupal\Core\Plugin\PluginBase;

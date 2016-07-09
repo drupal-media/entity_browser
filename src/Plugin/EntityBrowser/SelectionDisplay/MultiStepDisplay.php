@@ -61,6 +61,7 @@ class MultiStepDisplay extends SelectionDisplayBase {
       $container->get('plugin.manager.entity_browser.field_widget_display')
     );
   }
+
   /**
    * {@inheritdoc}
    */
@@ -84,7 +85,7 @@ class MultiStepDisplay extends SelectionDisplayBase {
     $form['selected'] = [
       '#theme_wrappers' => ['container'],
       '#attributes' => ['class' => ['entities-list']],
-      '#tree' => TRUE
+      '#tree' => TRUE,
     ];
     foreach ($selected_entities as $id => $entity) {
       $display_plugin = $this->fieldDisplayManager->createInstance(
@@ -96,11 +97,11 @@ class MultiStepDisplay extends SelectionDisplayBase {
         $display = ['#markup' => $display];
       }
 
-      $form['selected']['items_'. $entity->id()] = [
+      $form['selected']['items_' . $entity->id()] = [
         '#theme_wrappers' => ['container'],
         '#attributes' => [
           'class' => ['item-container'],
-          'data-entity-id' => $entity->id()
+          'data-entity-id' => $entity->id(),
         ],
         'display' => $display,
         'remove_button' => [
@@ -111,13 +112,13 @@ class MultiStepDisplay extends SelectionDisplayBase {
           '#attributes' => [
             'data-row-id' => $id,
             'data-remove-entity' => 'items_' . $entity->id(),
-          ]
+          ],
         ],
         'weight' => [
           '#type' => 'hidden',
           '#default_value' => $id,
-          '#attributes' => ['class' => ['weight']]
-        ]
+          '#attributes' => ['class' => ['weight']],
+        ],
       ];
     }
     $form['use_selected'] = [

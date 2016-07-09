@@ -3,6 +3,7 @@
  *
  * Propagates selected entities from iFrame display.
  */
+
 (function (drupalSettings) {
 
   'use strict';

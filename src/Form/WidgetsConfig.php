@@ -68,7 +68,7 @@ class WidgetsConfig extends FormBase {
       '#ajax' => [
         'callback' => [get_class($this), 'tableUpdatedAjaxCallback'],
         'wrapper' => 'widgets',
-        'event' => 'change'
+        'event' => 'change',
       ],
       '#executes_submit_callback' => TRUE,
       '#submit' => [[get_class($this), 'submitAddWidget']],
@@ -94,7 +94,8 @@ class WidgetsConfig extends FormBase {
         'action' => 'order',
         'relationship' => 'sibling',
         'group' => 'variant-weight',
-      ]],
+      ],
+      ],
     ];
 
     /** @var \Drupal\entity_browser\WidgetInterface $widget */
@@ -118,7 +119,7 @@ class WidgetsConfig extends FormBase {
         '#ajax' => [
           'callback' => [get_class($this), 'tableUpdatedAjaxCallback'],
           'wrapper' => 'widgets',
-          'event' => 'click'
+          'event' => 'click',
         ],
         '#executes_submit_callback' => TRUE,
         '#submit' => [[get_class($this), 'submitDeleteWidget']],

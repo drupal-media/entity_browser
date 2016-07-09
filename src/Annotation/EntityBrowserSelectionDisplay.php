@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_browser\Annotation\EntityBrowserSelectionDisplay.
- */
-
 namespace Drupal\entity_browser\Annotation;
 
 use Drupal\Component\Annotation\Plugin;

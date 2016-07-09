@@ -3,6 +3,7 @@
  *
  * Common helper functions used by various parts of entity browser.
  */
+
 (function ($, Drupal, drupalSettings) {
 
   'use strict';
@@ -20,12 +21,13 @@
    *   Array of selected entities.
    */
   Drupal.entityBrowser.selectionCompleted = function (event, uuid, entities) {
-    var added_entities_array = $.map(entities, function (item) {return item[0];});
+    var added_entities_array = $.map(entities, function (item) {
+      return item[0];
+    });
     // @todo Use uuid here. But for this to work we need to move eb uuid
     // generation from display to eb directly. When we do this, we can change
     // \Drupal\entity_browser\Plugin\Field\FieldWidget\EntityReference::formElement
     // also.
-
     // Checking if cardinality is set - assume unlimited.
     var cardinality = isNaN(parseInt(drupalSettings['entity_browser'][uuid]['cardinality'])) ? -1 : parseInt(drupalSettings['entity_browser'][uuid]['cardinality']);
 
@@ -94,5 +96,3 @@
   };
 
 }(jQuery, Drupal, drupalSettings));
-
-

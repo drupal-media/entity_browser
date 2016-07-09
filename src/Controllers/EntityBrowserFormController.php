@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_browser\Controllers\EntityBrowserFormController.
- */
-
 namespace Drupal\entity_browser\Controllers;
 
 use Drupal\Component\Utility\Xss;

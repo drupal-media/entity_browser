@@ -1,8 +1,9 @@
 /**
- * @file entity_browser.admin.js
+ * @file Entity_browser.admin.js.
  *
  * Defines the behavior of the entity browser's tab display.
  */
+
 (function ($, Drupal, drupalSettings) {
 
   'use strict';

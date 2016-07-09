@@ -3,6 +3,7 @@
  *
  * Propagates selected entities from modal display.
  */
+
 (function (drupalSettings) {
 
   'use strict';

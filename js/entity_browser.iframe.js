@@ -3,6 +3,7 @@
  *
  * Defines the behavior of the entity browser's iFrame display.
  */
+
 (function ($, Drupal, drupalSettings) {
 
   'use strict';
@@ -50,6 +51,5 @@
     $(this).parent().append(iframe).trigger('entityBrowserIFrameAppend');
     $(this).hide();
   };
-
 
 }(jQuery, Drupal, drupalSettings));

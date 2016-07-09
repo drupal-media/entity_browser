@@ -164,24 +164,24 @@ class ConfigUITest extends WebTestBase {
     $this->assertOptionSelected('edit-selection-display', 'no_display', 'Correct selection display selected.');
     $this->assertFieldByName('submit_text', 'Different Select', 'Correct select button text.');
 
-    $this->drupalPostForm(NULL,[], 'Next');
+    $this->drupalPostForm(NULL, [], 'Next');
     $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/display', ['query' => ['js' => 'nojs']]);
     $this->assertFieldById('edit-width', '100', 'Correct value for width found.');
     $this->assertFieldById('edit-height', '100', 'Correct value for height found.');
     $this->assertFieldById('edit-link-text', 'All animals are created equal', 'Correct value for link text found.');
     $this->assertFieldChecked('edit-auto-open', 'Auto open is enabled.');
 
-    $this->drupalPostForm(NULL,[], 'Next');
+    $this->drupalPostForm(NULL, [], 'Next');
     $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/widget_selector', ['query' => ['js' => 'nojs']]);
 
-    $this->drupalPostForm(NULL,[], 'Next');
+    $this->drupalPostForm(NULL, [], 'Next');
     $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/selection_display', ['query' => ['js' => 'nojs']]);
 
-    $this->drupalPostForm(NULL,[], 'Next');
+    $this->drupalPostForm(NULL, [], 'Next');
     $this->assertFieldById('edit-table-' . $uuid . '-label', 'upload', 'Correct value for widget label found.');
     $this->assertFieldById('edit-table-' . $uuid . '-form-upload-location', 'public://', 'Correct value for upload location found.');
 
-    $this->drupalPostForm(NULL,[], 'Finish');
+    $this->drupalPostForm(NULL, [], 'Finish');
 
     $this->drupalLogout();
     $this->drupalGet('/admin/config/content/entity_browser/test_entity_browser');

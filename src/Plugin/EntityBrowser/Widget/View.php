@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Contains \Drupal\entity_browser\Plugin\EntityBrowser\Widget\View.
- */
-
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Widget;
 
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
@@ -75,9 +71,9 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
    */
-   public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityManagerInterface $entity_manager, AccountInterface $current_user) {
-     parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_manager);
-     $this->currentUser = $current_user;
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityManagerInterface $entity_manager, AccountInterface $current_user) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_manager);
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -87,7 +83,6 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
     $form = [];
     // TODO - do we need better error handling for view and view_display (in case
     // either of those is nonexistent or display not of correct type)?
-
     $form['#attached']['library'] = ['entity_browser/view'];
 
     /** @var \Drupal\views\ViewExecutable $view */
@@ -117,7 +112,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
     $form['view'] = $view->executeDisplay($this->configuration['view_display']);
 
     if (empty($view->field['entity_browser_select'])) {
-      $url = Url::fromRoute('entity.view.edit_form',['view'=>$this->configuration['view']])->toString();
+      $url = Url::fromRoute('entity.view.edit_form', ['view' => $this->configuration['view']])->toString();
       if ($this->currentUser->hasPermission('administer views')) {
         return [
           '#markup' => t('Entity browser select form field not found on a view. <a href=":link">Go fix it</a>!', [':link' => $url]),
@@ -177,7 +172,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
               if (!$storage->load($parts[1])) {
                 $message = t('The @type Entity @id does not exist.', [
                   '@type' => $parts[0],
-                  '@id' => $parts[1]
+                  '@id' => $parts[1],
                 ]);
                 $form_state->setError($form['widget']['view']['entity_browser_select'], $message);
               }
@@ -248,6 +243,5 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
       $this->configuration['view_display'] = $display_id;
     }
   }
-
 
 }

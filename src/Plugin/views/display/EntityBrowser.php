@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Definition of Drupal\entity_browser\Plugin\views\display\EntityBrowser.
- */
-
 namespace Drupal\entity_browser\Plugin\views\display;
 
 use Drupal\Core\Form\FormStateInterface;
@@ -193,4 +188,5 @@ class EntityBrowser extends DisplayPluginBase {
 
     return $content;
   }
+
 }

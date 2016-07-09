@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_browser\Plugin\EntityBrowser\WidgetSelector\DropDown.
- */
-
 namespace Drupal\entity_browser\Plugin\EntityBrowser\WidgetSelector;
 
 use Drupal\entity_browser\WidgetSelectorBase;

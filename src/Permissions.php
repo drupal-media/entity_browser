@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_browser\Permissions.
- */
-
 namespace Drupal\entity_browser;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;

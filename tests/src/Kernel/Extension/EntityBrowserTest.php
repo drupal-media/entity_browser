@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\Tests\entity_browser\Kernel\Extension\EntityBrowserTest.
- */
-
 namespace Drupal\Tests\entity_browser\Kernel\Extension;
 
 use Drupal\Component\FileCache\FileCacheFactory;

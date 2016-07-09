@@ -450,7 +450,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
         'widgetSelectorCollection',
         'displayCollection',
         'selectionDisplayCollection',
-        'selectedEntities'
+        'selectedEntities',
       ]
     );
   }

@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Contains \Drupal\entity_browser\Plugin\EntityBrowser\FieldWidgetDisplay\ImageThumbnail.
- */
-
 namespace Drupal\entity_browser\Plugin\EntityBrowser\FieldWidgetDisplay;
 
 use Drupal\Core\Entity\EntityInterface;
@@ -16,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\entity_browser\FieldWidgetDisplayBase;
 
 /**
- * Displays image thumbnail
+ * Displays image thumbnail.
  *
  * @EntityBrowserFieldWidgetDisplay(
  *   id = "thumbnail",

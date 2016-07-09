@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\entity_browser\Controllers\EntityBrowserController.
- */
 
 namespace Drupal\entity_browser\Controllers;
 
