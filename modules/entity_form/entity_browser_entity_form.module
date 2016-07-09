@@ -12,9 +12,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\WidgetInterface;
 use Drupal\Core\Url;
-use \Drupal\entity_browser\Events\Events;
-use \Drupal\Core\Form\FormStateInterface;
-use \Drupal\Component\Utility\NestedArray;
+use Drupal\entity_browser\Events\Events;
+use Drupal\Component\Utility\NestedArray;
 
 /**
  * Implements hook_inline_entity_form_reference_form_alter().
