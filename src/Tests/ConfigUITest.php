@@ -26,7 +26,7 @@ class ConfigUITest extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = ['entity_browser', 'ctools', 'block'];
+  public static $modules = ['entity_browser', 'ctools', 'block', 'views'];
 
   /**
    * {@inheritdoc}
@@ -105,6 +105,18 @@ class ConfigUITest extends WebTestBase {
     $this->drupalPostAjaxForm(NULL, ['widget' => 'upload'], 'widget');
     $this->assertText('You can use tokens in the upload location.');
     $this->assertLink('Browse available tokens.');
+
+    // Make sure that removing of widgets works.
+    $this->drupalPostAjaxForm(NULL, ['widget' => 'view'], 'widget');
+    $this->assertText('View : View display', 'View selection dropdown label found.');
+    $this->assertRaw('- Select a view -', 'Empty option appears in the view selection dropdown.');
+    $delete_buttons = $this->xpath("//input[@value='Delete']");
+    $delete_button_name = (string) $delete_buttons[1]->attributes()['name'];
+    $this->drupalPostAjaxForm(NULL, [], [$delete_button_name => 'Delete']);
+    $this->assertNoText('View : View display', 'View widget was removed.');
+    $this->assertNoRaw('- Select a view -', 'View widget was removed.');
+    $this->assertEqual(count($this->xpath("//input[@value='Delete']")), 1, 'Only one delete button appears on the page.');
+
     $this->drupalPostForm(NULL, [], 'Finish');
 
     // Back on listing page.

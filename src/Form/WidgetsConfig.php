@@ -123,6 +123,7 @@ class WidgetsConfig extends FormBase {
         '#executes_submit_callback' => TRUE,
         '#submit' => [[get_class($this), 'submitDeleteWidget']],
         '#arguments' => $uuid,
+        '#limit_validation_errors' => [],
       ];
       $row['weight'] = [
         '#type' => 'weight',

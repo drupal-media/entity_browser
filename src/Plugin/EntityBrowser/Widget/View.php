@@ -229,6 +229,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
       '#title' => $this->t('View : View display'),
       '#default_value' => $this->configuration['view'] . '.' . $this->configuration['view_display'],
       '#options' => $options,
+      '#empty_option' => $this->t('- Select a view -'),
       '#required' => TRUE,
     ];
 
