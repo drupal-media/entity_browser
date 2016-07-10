@@ -217,7 +217,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
     $displays = Views::getApplicableViews('entity_browser_display');
     foreach ($displays as $display) {
       list($view_id, $display_id) = $display;
-      $view = $this->entityManager->getStorage('view')->load($view_id);
+      $view = $this->entityTypeManager->getStorage('view')->load($view_id);
       $options[$view_id . '.' . $display_id] = $this->t('@view : @display', array('@view' => $view->label(), '@display' => $view->get('display')[$display_id]['display_title']));
     }
 
