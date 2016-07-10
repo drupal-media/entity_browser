@@ -5,6 +5,7 @@ namespace Drupal\entity_browser\Form;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface;
 use Drupal\entity_browser\DisplayAjaxInterface;
 use Drupal\entity_browser\EntityBrowserFormInterface;
 use Drupal\entity_browser\EntityBrowserInterface;
@@ -30,13 +31,21 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
   protected $entity_browser;
 
   /**
+   * The entity browser selection storage.
+   *
+   * @var \Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface
+   */
+  protected $selectionStorage;
+
+  /**
    * Constructs a EntityBrowserForm object.
    *
    * @param \Drupal\Component\Uuid\UuidInterface $uuid_generator
    *   The UUID generator service.
    */
-  public function __construct(UuidInterface $uuid_generator) {
+  public function __construct(UuidInterface $uuid_generator, KeyValueStoreExpirableInterface $selection_storage) {
     $this->uuidGenerator = $uuid_generator;
+    $this->selectionStorage = $selection_storage;
   }
 
   /**
@@ -44,7 +53,8 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('uuid')
+      $container->get('uuid'),
+      $container->get('entity_browser.selection_storage')
     );
   }
 
@@ -79,6 +89,11 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
     }
     $form_state->set(['entity_browser', 'selected_entities'], []);
     $form_state->set(['entity_browser', 'selection_completed'], FALSE);
+
+    // Initialize select from the query parameter.
+    if ($selection = $this->selectionStorage->get($form_state->get(['entity_browser', 'instance_uuid']))) {
+      $form_state->set(['entity_browser', 'selected_entities'], $selection);
+    }
   }
 
   /**

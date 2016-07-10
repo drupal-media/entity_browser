@@ -45,7 +45,8 @@ class Standalone extends DisplayBase implements DisplayRouterInterface {
   /**
    * {@inheritdoc}
    */
-  public function displayEntityBrowser(FormStateInterface $form_state) {
+  public function displayEntityBrowser(FormStateInterface $form_state, array $entities = []) {
+    parent::displayEntityBrowser($form_state, $entities);
     // @TODO Implement it.
   }
 
