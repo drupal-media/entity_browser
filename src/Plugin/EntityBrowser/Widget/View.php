@@ -4,15 +4,18 @@ namespace Drupal\entity_browser\Plugin\EntityBrowser\Widget;
 
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface;
 use Drupal\Core\Render\Element;
 use Drupal\entity_browser\WidgetBase;
 use Drupal\Core\Url;
+use Drupal\entity_browser\WidgetValidationManager;
 use Drupal\views\Views;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Uses a view to provide entity listing in a browser's widget.
@@ -53,6 +56,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
       $plugin_definition,
       $container->get('event_dispatcher'),
       $container->get('entity_type.manager'),
+      $container->get('plugin.manager.entity_browser.widget_validation'),
       $container->get('current_user')
     );
   }
@@ -70,18 +74,20 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
    *   Event dispatcher service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
+   * @param \Drupal\entity_browser\WidgetValidationManager $validation_manager
+   *   The Widget Validation Manager service.
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, AccountInterface $current_user) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, AccountInterface $current_user) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager, $validation_manager);
     $this->currentUser = $current_user;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getForm(array &$original_form, FormStateInterface $form_state, array $aditional_widget_parameters) {
+  public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters) {
     $form = [];
     // TODO - do we need better error handling for view and view_display (in case
     // either of those is nonexistent or display not of correct type)?
@@ -188,13 +194,18 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
           }
         }
       }
+
+      // If there weren't any errors set, run the normal validators.
+      if (empty($form_state->getErrors())) {
+        parent::validate($form, $form_state);
+      }
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function submit(array &$element, array &$form, FormStateInterface $form_state) {
+  protected function prepareEntities(FormStateInterface $form_state) {
     $selected_rows = array_values(array_filter($form_state->getUserInput()['entity_browser_select']));
     $entities = [];
     foreach ($selected_rows as $row) {
@@ -204,7 +215,14 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
         $entities[] = $entity;
       }
     }
+    return $entities;
+  }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function submit(array &$element, array &$form, FormStateInterface $form_state) {
+    $entities = $this->prepareEntities($form_state);
     $this->selectEntities($entities, $form_state);
   }
 

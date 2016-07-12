@@ -72,7 +72,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
    *   Event dispatcher service.
    * @param \Drupal\Component\Uuid\UuidInterface
    *   UUID generator interface.
-   * @parem \Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface $selection_storage
+   * @param \Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface $selection_storage
    *   The selection storage.
    * @param \Drupal\Core\Routing\RouteMatchInterface $current_route_match
    *   The currently active route match object.
@@ -119,8 +119,8 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
   /**
    * {@inheritdoc}
    */
-  public function displayEntityBrowser(FormStateInterface $form_state, array $entities = []) {
-    parent::displayEntityBrowser($form_state, $entities);
+  public function displayEntityBrowser(FormStateInterface $form_state, array $validators = [], array $entities = []) {
+    parent::displayEntityBrowser($form_state, $validators, $entities);
     $js_event_object = new RegisterJSCallbacks($this->configuration['entity_browser_id'], $this->getUuid());
     $js_event_object->registerCallback('Drupal.entityBrowser.selectionCompleted');
     $js_event = $this->eventDispatcher->dispatch(Events::REGISTER_JS_CALLBACKS, $js_event_object);

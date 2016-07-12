@@ -357,7 +357,7 @@ class EntityBrowserTest extends KernelTestBase {
       ->getCurrentRequest()
       ->query
       ->set('uuid', $uuid);
-    $this->container->get('entity_browser.selection_storage')->setWithExpire($uuid, [$user], 21600);
+    $this->container->get('entity_browser.selection_storage')->setWithExpire($uuid, ['entities' => [$user]], 21600);
 
     /** @var \Drupal\entity_browser\EntityBrowserFormInterface $form_object */
     $form_object = $entity->getFormObject();
@@ -371,6 +371,68 @@ class EntityBrowserTest extends KernelTestBase {
     $this->assertEquals($user->id(), $propagated_entities[0]->id(), 'Propagated entity ID is correct.');
     $this->assertEquals($user->getAccountName(), $propagated_entities[0]->getAccountName(), 'Propagated entity name is correct.');
     $this->assertEquals($user->getEmail(), $propagated_entities[0]->getEmail(), 'Propagated entity name is correct.');
+  }
+
+  /**
+   * Tests validators.
+   */
+  public function testValidators() {
+    $this->installConfig(['entity_browser_test']);
+    $this->installEntitySchema('user');
+
+    /** @var $entity \Drupal\entity_browser\EntityBrowserInterface */
+    $entity = $this->controller->load('test');
+
+    /** @var \Drupal\user\UserInterface $user */
+    $user = $this->container->get('entity_type.manager')
+      ->getStorage('user')
+      ->create([
+        'name' => $this->randomString(),
+        'mail' => 'info@example.com',
+      ]);
+    $user->save();
+
+    /** @var \Symfony\Component\HttpFoundation\Request $request */
+    $uuid = $this->container->get('uuid')->generate();
+    $this->container->get('request_stack')
+      ->getCurrentRequest()
+      ->query
+      ->set('uuid', $uuid);
+
+    $storage = [
+      'validators' => [
+        'entity_type' => ['type' => 'user'],
+      ],
+    ];
+    $this->container->get('entity_browser.selection_storage')->setWithExpire($uuid, $storage, 21600);
+
+    /** @var \Drupal\entity_browser\EntityBrowserFormInterface $form_object */
+    $form_object = $entity->getFormObject();
+    $form_object->setEntityBrowser($entity);
+    $form_state = new FormState();
+
+    $form = $form_object->buildForm([], $form_state);
+    $validators = $form_state->get(['entity_browser', 'validators']);
+    $this->assertSame($validators, $storage['validators'], 'Correct validators were passed to form');
+
+    // Set a valid triggering element (see \Drupal\entity_browser\WidgetBase::validate())
+    $element = [
+      '#array_parents' => ['submit'],
+    ];
+    $form_state->setTriggeringElement($element);
+
+    // Use an entity that we know will fail validation.
+    $form_state->setValue('dummy_entities', [$entity]);
+    $form_object->validateForm($form, $form_state);
+
+    $this->assertNotEmpty($form_state->getErrors(), t('Validation failed where expected'));
+
+    // Use an entity that we know will pass validation.
+    $form_state->clearErrors();
+    $form_state->setValue('dummy_entities', [$user]);
+    $form_object->validateForm($form, $form_state);
+
+    $this->assertEmpty($form_state->getErrors(), t('Validation succeeded where expected'));
   }
 
 }

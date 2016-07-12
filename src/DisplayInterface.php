@@ -36,13 +36,15 @@ interface DisplayInterface extends PluginInspectionInterface, ConfigurablePlugin
    *
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state object.
+   * @param array $validators
+   *   (optional) An array of WidgetValidator plugin IDs.
    * @param \Drupal\Core\Entity\EntityInterface[] $entities
    *   (optional) Existing selection that should be passed to the entity browser.
    *
    * @return array
    *   An array suitable for drupal_render().
    */
-  public function displayEntityBrowser(FormStateInterface $form_state, array $entities = []);
+  public function displayEntityBrowser(FormStateInterface $form_state, array $validators = [], array $entities = []);
 
   /**
    * Indicates completed selection.

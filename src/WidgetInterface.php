@@ -79,13 +79,13 @@ interface WidgetInterface extends PluginInspectionInterface, ConfigurablePluginI
    *   unit.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Form state object.
-   * @param array $aditional_widget_parameters
+   * @param array $additional_widget_parameters
    *   Additional parameters that we want to pass to the widget.
    *
    * @return array
    *   Form structure.
    */
-  public function getForm(array &$original_form, FormStateInterface $form_state, array $aditional_widget_parameters);
+  public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters);
 
   /**
    * Validates form.

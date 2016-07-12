@@ -8,6 +8,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\entity_browser\WidgetBase;
+use Drupal\entity_browser\WidgetValidationManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -37,7 +38,7 @@ class Upload extends WidgetBase {
   protected $token;
 
   /**
-   * Constructs upload plugin.
+   * Upload constructor.
    *
    * @param array $configuration
    *   A configuration array containing information about the plugin instance.
@@ -49,13 +50,15 @@ class Upload extends WidgetBase {
    *   Event dispatcher service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager service.
+   * @param \Drupal\entity_browser\WidgetValidationManager $validation_manager
+   *   The Widget Validation Manager service.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
    * @param \Drupal\Core\Utility\Token $token
    *   The token service.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, Token $token) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, ModuleHandlerInterface $module_handler, Token $token) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager, $validation_manager);
     $this->moduleHandler = $module_handler;
     $this->token = $token;
   }
@@ -70,6 +73,7 @@ class Upload extends WidgetBase {
       $plugin_definition,
       $container->get('event_dispatcher'),
       $container->get('entity_type.manager'),
+      $container->get('plugin.manager.entity_browser.widget_validation'),
       $container->get('module_handler'),
       $container->get('token')
     );
@@ -87,7 +91,7 @@ class Upload extends WidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function getForm(array &$original_form, FormStateInterface $form_state, array $aditional_widget_parameters) {
+  public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters) {
     $form = [];
     $form['upload'] = [
       '#type' => 'managed_file',
@@ -103,13 +107,12 @@ class Upload extends WidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function validate(array &$form, FormStateInterface $form_state) {
-    $uploaded_files = $form_state->getValue(['upload'], []);
-    $trigger = $form_state->getTriggeringElement();
-    // Only validate if we are uploading a file.
-    if (empty($uploaded_files)  && $trigger['#value'] == 'Upload') {
-      $form_state->setError($form['widget']['upload'], t('At least one file should be uploaded.'));
+  protected function prepareEntities(FormStateInterface $form_state) {
+    $files = [];
+    foreach ($form_state->getValue(['upload'], []) as $fid) {
+      $files[] = $this->entityTypeManager->getStorage('file')->load($fid);
     }
+    return $files;
   }
 
   /**
