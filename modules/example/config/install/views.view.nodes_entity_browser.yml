@@ -6,6 +6,7 @@ dependencies:
       - entity_browser_example
   module:
     - entity_browser
+    - entity_browser_example
     - node
     - user
 _core:
