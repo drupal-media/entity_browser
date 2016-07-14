@@ -222,7 +222,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
    * {@inheritdoc}
    */
   public function submit(array &$element, array &$form, FormStateInterface $form_state) {
-    $entities = $this->prepareEntities($form_state);
+    $entities = $this->prepareEntities($form, $form_state);
     $this->selectEntities($entities, $form_state);
   }
 
