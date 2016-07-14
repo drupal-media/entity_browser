@@ -71,6 +71,7 @@ class MultiStepDisplay extends SelectionDisplayBase {
       'display' => 'label',
       'display_settings' => [],
       'select_text' => 'Use selected',
+      'selection_hidden' => 0,
     ] + parent::defaultConfiguration();
   }
 
@@ -87,6 +88,9 @@ class MultiStepDisplay extends SelectionDisplayBase {
       '#attributes' => ['class' => ['entities-list']],
       '#tree' => TRUE,
     ];
+    if ($this->configuration['selection_hidden']) {
+      $form['selected']['#attributes']['class'][] = 'hidden';
+    }
     foreach ($selected_entities as $id => $entity) {
       $display_plugin = $this->fieldDisplayManager->createInstance(
         $this->configuration['display'],
@@ -125,6 +129,13 @@ class MultiStepDisplay extends SelectionDisplayBase {
       '#type' => 'submit',
       '#value' => $this->t($this->configuration['select_text']),
       '#name' => 'use_selected',
+      '#access' => empty($selected_entities) ? FALSE : TRUE,
+    ];
+    $form['show_selection'] = [
+      '#type' => 'button',
+      '#value' => $this->t('Show selected'),
+      '#attributes' => [
+        'class' => ['entity-browser-show-selection']],
       '#access' => empty($selected_entities) ? FALSE : TRUE,
     ];
 
@@ -250,6 +261,13 @@ class MultiStepDisplay extends SelectionDisplayBase {
       '#title' => $this->t('Select button text'),
       '#default_value' => $this->configuration['select_text'],
       '#description' => $this->t('Text to display on the entity browser select button.'),
+    ];
+
+    $form['selection_hidden'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Selection hidden by default'),
+      '#default_value' => $this->configuration['selection_hidden'],
+      '#description' => $this->t('Whether or not the selection should be hidden by default.'),
     ];
 
     return $form;

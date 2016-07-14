@@ -11,9 +11,28 @@
    */
   Drupal.behaviors.entityBrowserMultiStepDisplay = {
     attach: function (context) {
-      $(context).find('.entities-list').sortable({
+      var $entities = $(context).find('.entities-list');
+      $entities.sortable({
         stop: Drupal.entityBrowserMultiStepDisplay.entitiesReordered
       });
+
+      // Add a toggle button for the display of selected entities.
+      var $toggle = $('.entity-browser-show-selection');
+
+      function setToggleText() {
+        if($entities.css('display') == 'none') {
+          $toggle.val(Drupal.t('Show selected'));
+        } else {
+          $toggle.val(Drupal.t('Hide selected'));
+        }
+      }
+
+      $toggle.on('click', function (e) {
+        e.preventDefault();
+        $entities.slideToggle('fast', setToggleText);
+      });
+
+      setToggleText();
     }
   };
 

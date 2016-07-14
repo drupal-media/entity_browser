@@ -23,3 +23,7 @@
 .entities-list .rendered-entity {
   display: block;
 }
+
+.entities-list.hidden {
+  display: none;
+}

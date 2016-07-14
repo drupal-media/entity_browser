@@ -124,6 +124,9 @@ entity_browser.browser.selection_display.multi_step_display:
     select_text:
       type: string
       label: 'Select text'
+    selection_hidden:
+      type: boolean
+      label: 'Selection hidden by default'
 
 field.widget.settings.entity_browser_entity_reference:
   type: mapping
