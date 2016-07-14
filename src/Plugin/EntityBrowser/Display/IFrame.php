@@ -255,10 +255,10 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
     if ($form_state->getValue('width') <= 0) {
-      $form_state->setError($form['width'], $this->t('Width must be greather than 0.'));
+      $form_state->setError($form['width'], $this->t('Width must be greater than 0.'));
     }
     if ($form_state->getValue('height') <= 0) {
-      $form_state->setError($form['height'], $this->t('Height must be greather than 0.'));
+      $form_state->setError($form['height'], $this->t('Height must be greater than 0.'));
     }
   }
 
