@@ -2,13 +2,17 @@
 
 namespace Drupal\entity_browser_entity_form\Plugin\EntityBrowser\Widget;
 
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_browser\WidgetBase;
+use Drupal\entity_browser\WidgetValidationManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
 
 /**
  * Uses a view to provide entity listing in a browser's widget.
@@ -29,6 +33,13 @@ class EntityForm extends WidgetBase {
   protected $entityTypeBundleInfo;
 
   /**
+   * The entity display repository.
+   *
+   * @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface
+   */
+  protected $entityDisplayRepository;
+
+  /**
    * Constructs widget plugin.
    *
    * @param array $configuration
@@ -41,12 +52,17 @@ class EntityForm extends WidgetBase {
    *   Event dispatcher service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager service.
+   * @param \Drupal\entity_browser\WidgetValidationManager $validation_manager
+   *   The Widget Validation Manager service.
    * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
    *   The entity type bundle info service.
+   * @param \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entity_display_repository
+   *   The entity display repository.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager, EntityTypeBundleInfoInterface $entity_type_bundle_info, EntityDisplayRepositoryInterface $entity_display_repository) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $event_dispatcher, $entity_type_manager, $validation_manager);
     $this->entityTypeBundleInfo = $entity_type_bundle_info;
+    $this->entityDisplayRepository = $entity_display_repository;
   }
 
   /**
@@ -59,7 +75,9 @@ class EntityForm extends WidgetBase {
       $plugin_definition,
       $container->get('event_dispatcher'),
       $container->get('entity_type.manager'),
-      $container->get('entity_type.bundle.info')
+      $container->get('plugin.manager.entity_browser.widget_validation'),
+      $container->get('entity_type.bundle.info'),
+      $container->get('entity_display.repository')
     );
   }
 
@@ -67,20 +85,19 @@ class EntityForm extends WidgetBase {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return array(
+    return [
       'entity_type' => NULL,
       'bundle' => NULL,
-    ) + parent::defaultConfiguration();
+      'form_mode' => 'default',
+    ] + parent::defaultConfiguration();
   }
 
   /**
    * {@inheritdoc}
    */
   public function getForm(array &$original_form, FormStateInterface $form_state, array $aditional_widget_parameters) {
-    if (empty($this->configuration['entity_type']) || empty($this->configuration['bundle'])) {
-      return [
-        '#markup' => t('Entity type or bundle are no configured correctly.'),
-      ];
+    if (empty($this->configuration['entity_type']) || empty($this->configuration['bundle'])  || empty($this->configuration['form_mode'])) {
+      return ['#markup' => t('The settings for this widget (Entity type, Bundle or Form mode) are not configured correctly.')];
     }
 
     return [
@@ -89,6 +106,7 @@ class EntityForm extends WidgetBase {
         '#op' => 'add',
         '#entity_type' => $this->configuration['entity_type'],
         '#bundle' => $this->configuration['bundle'],
+        '#form_mode' => $this->configuration['form_mode'],
       ],
     ];
   }
@@ -96,8 +114,15 @@ class EntityForm extends WidgetBase {
   /**
    * {@inheritdoc}
    */
+  protected function prepareEntities(array $form, FormStateInterface $form_state) {
+    return [$form[$form['#browser_parts']['widget']]['inline_entity_form']['#entity']];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function submit(array &$element, array &$form, FormStateInterface $form_state) {
-    $this->selectEntities([$element['inline_entity_form']['#entity']], $form_state);
+    $this->selectEntities($this->prepareEntities($form, $form_state), $form_state);
   }
 
   /**
@@ -107,6 +132,7 @@ class EntityForm extends WidgetBase {
     $parents = ['table', $this->uuid(), 'form'];
     $entity_type = $form_state->hasValue(array_merge($parents, ['entity_type'])) ? $form_state->getValue(array_merge($parents, ['entity_type'])) : $this->configuration['entity_type'];
     $bundle = $form_state->hasValue(array_merge($parents, ['bundle', 'select'])) ? $form_state->getValue(array_merge($parents, ['bundle', 'select'])) : $this->configuration['bundle'];
+    $form_mode = $form_state->hasValue(array_merge($parents, ['form_mode', 'form_select'])) ? $form_state->hasValue(array_merge($parents, ['form_mode', 'form_select'])) : $this->configuration['form_mode'];
 
     $definitions = $this->entityTypeManager->getDefinitions();
     $entity_types = array_combine(
@@ -122,8 +148,7 @@ class EntityForm extends WidgetBase {
       '#options' => $entity_types,
       '#default_value' => $entity_type,
       '#ajax' => [
-        'wrapper' => 'bundle-wrapper',
-        'callback' => [$this, 'updateBundle'],
+        'callback' => [$this, 'updateFormElements'],
       ],
     ];
 
@@ -143,7 +168,18 @@ class EntityForm extends WidgetBase {
         '#options' => $bundles,
         '#default_value' => $bundle,
       ],
-      '#attributes' => ['id' => 'bundle-wrapper'],
+      '#attributes' => ['id' => 'bundle-wrapper-' . $this->uuid()],
+    ];
+
+    $form['form_mode'] = [
+      '#type' => 'container',
+      'form_select' => [
+        '#type' => 'select',
+        '#title' => $this->t('Form mode'),
+        '#default_value' => $form_mode,
+        '#options' => $this->entityDisplayRepository->getFormModeOptions($entity_type),
+      ],
+      '#attributes' => ['id' => 'form-mode-wrapper-' . $this->uuid()],
     ];
 
     return $form;
@@ -157,11 +193,29 @@ class EntityForm extends WidgetBase {
   }
 
   /**
+   * AJAX callback for the Form Mode dropdown update.
+   */
+  public function updateFormMode($form, FormStateInterface $form_state) {
+    return $form['widgets']['table'][$this->uuid()]['form']['form_mode'];
+  }
+
+  /**
+   * AJAX callback to update the two form elements: bundle and form_mode.
+   */
+  public function updateFormElements($form, FormStateInterface $form_state) {
+    $response = new AjaxResponse();
+    $response->addCommand(new ReplaceCommand('#bundle-wrapper-' . $this->uuid(), $this->updateBundle($form, $form_state)));
+    $response->addCommand(new ReplaceCommand('#form-mode-wrapper-' . $this->uuid(), $this->updateFormMode($form, $form_state)));
+    return $response;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     parent::submitConfigurationForm($form, $form_state);
     $this->configuration['bundle'] = $this->configuration['bundle']['select'];
+    $this->configuration['form_mode'] = $this->configuration['form_mode']['form_select'];
   }
 
 }

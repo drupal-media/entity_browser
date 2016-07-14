@@ -107,7 +107,7 @@ class Upload extends WidgetBase {
   /**
    * {@inheritdoc}
    */
-  protected function prepareEntities(FormStateInterface $form_state) {
+  protected function prepareEntities(array $form, FormStateInterface $form_state) {
     $files = [];
     foreach ($form_state->getValue(['upload'], []) as $fid) {
       $files[] = $this->entityTypeManager->getStorage('file')->load($fid);

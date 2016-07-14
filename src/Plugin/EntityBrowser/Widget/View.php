@@ -205,7 +205,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
   /**
    * {@inheritdoc}
    */
-  protected function prepareEntities(FormStateInterface $form_state) {
+  protected function prepareEntities(array $form, FormStateInterface $form_state) {
     $selected_rows = array_values(array_filter($form_state->getUserInput()['entity_browser_select']));
     $entities = [];
     foreach ($selected_rows as $row) {

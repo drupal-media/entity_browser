@@ -26,7 +26,7 @@ class ConfigUITest extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = ['entity_browser', 'ctools', 'block', 'views'];
+  public static $modules = ['entity_browser', 'ctools', 'block', 'views', 'entity_browser_entity_form'];
 
   /**
    * {@inheritdoc}
@@ -117,7 +117,49 @@ class ConfigUITest extends WebTestBase {
     $this->assertNoRaw('- Select a view -', 'View widget was removed.');
     $this->assertEqual(count($this->xpath("//input[@value='Delete']")), 1, 'Only one delete button appears on the page.');
 
-    $this->drupalPostForm(NULL, [], 'Finish');
+    // Make sure the "Entity form" widget has all available config elements.
+    $this->drupalPostAjaxForm(NULL, ['widget' => 'entity_form'], 'widget');
+    $this->assertText('Entity type', 'Entity type select found on IEF widget.');
+    $this->assertText('Bundle', 'Bundle select found on IEF widget.');
+    $this->assertText('Form mode', 'Form mode select found on IEF widget.');
+    $entity_type_element = $this->xpath('//*[starts-with(@data-drupal-selector, "edit-table-") and contains(@data-drupal-selector, "-form-entity-type")]');
+    $entity_type_name = (string) $entity_type_element[0]['name'];
+    $edit = [
+      $entity_type_name => 'user',
+    ];
+    $commands = $this->drupalPostAjaxForm(NULL, $edit, $entity_type_name);
+    // WebTestBase::drupalProcessAjaxResponse() won't correctly execute our ajax
+    // commands so we have to do it manually. Code below is based on the logic
+    // in that function.
+    $content = $this->content;
+    $dom = new \DOMDocument();
+    @$dom->loadHTML($content);
+    $xpath = new \DOMXPath($dom);
+    foreach ($commands as $command) {
+      if ($command['command'] == 'insert' && $command['method'] == 'replaceWith') {
+        $wrapperNode = $xpath->query('//*[@id="' . ltrim($command['selector'], '#') . '"]')->item(0);
+        $newDom = new \DOMDocument();
+        @$newDom->loadHTML('<div>' . $command['data'] . '</div>');
+        $newNode = @$dom->importNode($newDom->documentElement->firstChild->firstChild, TRUE);
+        $wrapperNode->parentNode->replaceChild($newNode, $wrapperNode);
+        $content = $dom->saveHTML();
+        $this->setRawContent($content);
+      }
+    }
+    $this->verbose($content);
+    // Assure the form_mode "Register" is one of the available options.
+    $form_mode_element = $this->xpath('//*[starts-with(@data-drupal-selector, "edit-table-") and contains(@data-drupal-selector, "-form-form-mode-form-select")]');
+    $form_mode_id = (string) $form_mode_element[0]['id'];
+    $form_mode_name = (string) $form_mode_element[0]['name'];
+    $this->assertOption($form_mode_id, 'register', 'A non-default form mode is correctly available to be chosen.');
+    $bundle_element = $this->xpath('//*[starts-with(@data-drupal-selector, "edit-table-") and contains(@data-drupal-selector, "-form-bundle-select")]');
+    $bundle_name = (string) $bundle_element[0]['name'];
+    $edit = [
+      $entity_type_name => 'user',
+      $bundle_name => 'user',
+      $form_mode_name => 'register',
+    ];
+    $this->drupalPostForm(NULL, $edit, 'Finish');
 
     // Back on listing page.
     $this->assertUrl('/admin/config/content/entity_browser');
@@ -145,14 +187,22 @@ class ConfigUITest extends WebTestBase {
     $this->assertEqual([], $loaded_entity_browser->getWidgetSelector()->getConfiguration(), 'Entity browser widget selector configuration was correctly saved.');
 
     $widgets = $loaded_entity_browser->getWidgets();
-    $uuid = current($widgets->getInstanceIds());
+    $instance_ids = $widgets->getInstanceIds();
+    $first_uuid = current($instance_ids);
+    $second_uuid = next($instance_ids);
     /** @var \Drupal\entity_browser\WidgetInterface $widget */
-    $widget = $widgets->get($uuid);
+    $widget = $widgets->get($first_uuid);
     $this->assertEqual('upload', $widget->id(), 'Entity browser widget was correctly saved.');
-    $this->assertEqual($uuid, $widget->uuid(), 'Entity browser widget uuid was correctly saved.');
+    $this->assertEqual($first_uuid, $widget->uuid(), 'Entity browser widget uuid was correctly saved.');
     $configuration = $widget->getConfiguration()['settings'];
     $this->assertEqual(['upload_location' => 'public://'], $configuration, 'Entity browser widget configuration was correctly saved.');
     $this->assertEqual(1, $widget->getWeight(), 'Entity browser widget weight was correctly saved.');
+    $widget = $widgets->get($second_uuid);
+    $this->assertEqual('entity_form', $widget->id(), 'Entity browser widget was correctly saved.');
+    $this->assertEqual($second_uuid, $widget->uuid(), 'Entity browser widget uuid was correctly saved.');
+    $configuration = $widget->getConfiguration()['settings'];
+    $this->assertEqual(['entity_type' => 'user', 'bundle' => 'user', 'form_mode' => 'register'], $configuration, 'Entity browser widget configuration was correctly saved.');
+    $this->assertEqual(2, $widget->getWeight(), 'Entity browser widget weight was correctly saved.');
 
     // Navigate to edit.
     $this->clickLink('Edit');
@@ -178,8 +228,12 @@ class ConfigUITest extends WebTestBase {
     $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/selection_display', ['query' => ['js' => 'nojs']]);
 
     $this->drupalPostForm(NULL, [], 'Next');
-    $this->assertFieldById('edit-table-' . $uuid . '-label', 'upload', 'Correct value for widget label found.');
-    $this->assertFieldById('edit-table-' . $uuid . '-form-upload-location', 'public://', 'Correct value for upload location found.');
+    $this->assertFieldById('edit-table-' . $first_uuid . '-label', 'upload', 'Correct value for widget label found.');
+    $this->assertFieldById('edit-table-' . $first_uuid . '-form-upload-location', 'public://', 'Correct value for upload location found.');
+    $this->assertFieldById('edit-table-' . $second_uuid . '-label', 'entity_form', 'Correct value for widget label found.');
+    $this->assertOptionSelectedWithDrupalSelector('edit-table-' . $second_uuid . '-form-entity-type', 'user', 'Correct value for entity type found.');
+    $this->assertOptionSelectedWithDrupalSelector('edit-table-' . $second_uuid . '-form-bundle-select', 'user', 'Correct value for bundle found.');
+    $this->assertOptionSelectedWithDrupalSelector('edit-table-' . $second_uuid . '-form-form-mode-form-select', 'register', 'Correct value for form modes found.');
 
     $this->drupalPostForm(NULL, [], 'Finish');
 

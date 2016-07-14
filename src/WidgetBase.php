@@ -82,8 +82,6 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    *   The entity type manager service.
    * @param \Drupal\entity_browser\WidgetValidationManager $validation_manager
    *   The Widget Validation Manager service.
-   * @parem \Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface $selection_storage
-   *   The selection storage.
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager, WidgetValidationManager $validation_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -206,19 +204,21 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    * We need this method when we want to validate or perform other operations
    * before submit.
    *
+   * @param array $form
+   *   Complete form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state object.
    *
    * @return \Drupal\Core\Entity\EntityInterface[]
    *   Array of entities.
    */
-  abstract protected function prepareEntities(FormStateInterface $form_state);
+  abstract protected function prepareEntities(array $form, FormStateInterface $form_state);
 
   /**
    * {@inheritdoc}
    */
   public function validate(array &$form, FormStateInterface $form_state) {
-    $entities = $this->prepareEntities($form_state);
+    $entities = $this->prepareEntities($form, $form_state);
     $validators = $form_state->get(['entity_browser', 'validators']);
     if ($validators) {
       $violations = $this->runWidgetValidators($entities, $validators);

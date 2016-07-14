@@ -50,7 +50,7 @@ class DummyWidget extends WidgetBase {
   /**
    * {@inheritdoc}
    */
-  protected function prepareEntities(FormStateInterface $form_state) {
+  protected function prepareEntities(array $form, FormStateInterface $form_state) {
     return $form_state->getValue('dummy_entities', []);
   }
 
