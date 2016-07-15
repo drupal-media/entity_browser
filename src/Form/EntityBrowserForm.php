@@ -91,14 +91,11 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
     $form_state->set(['entity_browser', 'validators'], []);
     $form_state->set(['entity_browser', 'selection_completed'], FALSE);
 
-    // Initialize select from the form state.
+    // Initialize form state with persistent data, if present.
     if ($storage = $this->selectionStorage->get($form_state->get(['entity_browser', 'instance_uuid']))) {
-      $storage += [
-        'entities' => [],
-        'validators' => [],
-      ];
-      $form_state->set(['entity_browser', 'selected_entities'], $storage['entities']);
-      $form_state->set(['entity_browser', 'validators'], $storage['validators']);
+      foreach ($storage as $key => $value) {
+        $form_state->set(['entity_browser', $key], $value);
+      }
     }
   }
 

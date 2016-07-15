@@ -357,7 +357,7 @@ class EntityBrowserTest extends KernelTestBase {
       ->getCurrentRequest()
       ->query
       ->set('uuid', $uuid);
-    $this->container->get('entity_browser.selection_storage')->setWithExpire($uuid, ['entities' => [$user]], 21600);
+    $this->container->get('entity_browser.selection_storage')->setWithExpire($uuid, ['selected_entities' => [$user]], 21600);
 
     /** @var \Drupal\entity_browser\EntityBrowserFormInterface $form_object */
     $form_object = $entity->getFormObject();

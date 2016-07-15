@@ -119,8 +119,8 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
   /**
    * {@inheritdoc}
    */
-  public function displayEntityBrowser(FormStateInterface $form_state, array $validators = [], array $entities = []) {
-    parent::displayEntityBrowser($form_state, $validators, $entities);
+  public function displayEntityBrowser(FormStateInterface $form_state, array $persistent_data = []) {
+    parent::displayEntityBrowser($form_state, $persistent_data);
     $js_event_object = new RegisterJSCallbacks($this->configuration['entity_browser_id'], $this->getUuid());
     $js_event_object->registerCallback('Drupal.entityBrowser.selectionCompleted');
     $js_event = $this->eventDispatcher->dispatch(Events::REGISTER_JS_CALLBACKS, $js_event_object);

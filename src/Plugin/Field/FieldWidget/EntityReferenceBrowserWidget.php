@@ -23,7 +23,8 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 
 /**
  * Plugin implementation of the 'entity_reference' widget for entity browser.
- *  * @FieldWidget(
+ *
+ * @FieldWidget(
  *   id = "entity_browser_entity_reference",
  *   label = @Translation("Entity browser"),
  *   description = @Translation("Uses entity browser to select entities."),
@@ -281,7 +282,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
   /**
    * {@inheritdoc}
    */
-  function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
+  public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $entity_type = $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type');
     $entity_storage = $this->entityTypeManager->getStorage($entity_type);
 
@@ -298,7 +299,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
         // In case there are more instances of this widget on the same page we
         // need to check if submit came from this instance.
         $field_name_key = end($trigger['#parents']) === 'target_id' ? 2 : static::$deleteDepth + 1;
-        $field_name_key = sizeof($trigger['#parents']) - $field_name_key;
+        $field_name_key = count($trigger['#parents']) - $field_name_key;
         $is_relevant_submit &= ($trigger['#parents'][$field_name_key] === $this->fieldDefinition->getName()) &&
           (array_slice($trigger['#parents'], 0, count($element['#field_parents'])) == $element['#field_parents']);
       }
@@ -342,11 +343,11 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
     }
     $ids = array_filter($ids);
     // We store current entity IDs as we might need them in future requests. If
-    // some other part of the form triggers an AJAX request with #limit_validation_errors
-    // we won't have access to the value of the target_id element and won't be
-    // able to build the form as a result of that. This will cause missing
-    // submit (Remove, Edit, ...) elements, which might result in unpredictable
-    // results.
+    // some other part of the form triggers an AJAX request with
+    // #limit_validation_errors we won't have access to the value of the
+    // target_id element and won't be able to build the form as a result of
+    // that. This will cause missing submit (Remove, Edit, ...) elements, which
+    // might result in unpredictable results.
     $form_state->set(['entity_browser_widget', $this->getFormStateKey($items)], $ids);
 
     $hidden_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName() . '-target-id');
@@ -381,13 +382,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       $entity_browser_display = $entity_browser->getDisplay();
       $entity_browser_display->setUuid($entity_browser_uuid);
 
-      // Gather and set validators.
-      $validators = [
-        'entity_type' => ['type' => $entity_type],
-        'cardinality' => ['cardinality' => $cardinality],
-      ];
-
-      $element['entity_browser'] = $entity_browser_display->displayEntityBrowser($form_state, $validators, []);
+      $element['entity_browser'] = $entity_browser_display->displayEntityBrowser($form_state, $this->getPersistentData());
       $element['#attached']['library'][] = 'entity_browser/entity_reference';
       $element['#attached']['drupalSettings']['entity_browser'] = [
         $entity_browser->getDisplay()->getUuid() => [
@@ -422,10 +417,10 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    */
   public static function updateWidgetCallback(array &$form, FormStateInterface $form_state) {
     $trigger = $form_state->getTriggeringElement();
-    // AJAX requests can be triggered by hidden "target_id" element when entities
-    // are added or by one of the "Remove" buttons. Depending on that we need to
-    // figure out where root of the widget is in the form structure and use this
-    // information to return correct part of the form.
+    // AJAX requests can be triggered by hidden "target_id" element when
+    // entities are added or by one of the "Remove" buttons. Depending on that
+    // we need to figure out where root of the widget is in the form structure
+    // and use this information to return correct part of the form.
     if (!empty($trigger['#ajax']['event']) && $trigger['#ajax']['event'] == 'entity_browser_value_updated') {
       $parents = array_slice($trigger['#array_parents'], 0, -1);
     }
@@ -487,6 +482,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    * @param string[] $field_parents
    *   Field parents.
    * @param \Drupal\Core\Entity\ContentEntityInterface[] $entities
+   *   Array of referenced entities.
    *
    * @return array
    *   The render array for the current selection.
@@ -546,4 +542,20 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       ),
     ];
   }
+
+  /**
+   * Gets data that should persist across Entity Browser renders.
+   *
+   * @return array
+   *   Data that should persist after the Entity Browser is rendered.
+   */
+  protected function getPersistentData() {
+    return [
+      'validators' => [
+        'entity_type' => ['type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')],
+        'cardinality' => ['cardinality' => $this->fieldDefinition->getFieldStorageDefinition()->getCardinality()],
+      ],
+    ];
+  }
+
 }

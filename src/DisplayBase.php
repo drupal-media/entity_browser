@@ -156,15 +156,12 @@ abstract class DisplayBase extends PluginBase implements DisplayInterface, Conta
   /**
    * {@inheritdoc}
    */
-  public function displayEntityBrowser(FormStateInterface $form_state, array $validators = [], array $entities = []) {
-    // Store our validators and currently selected entities so that after being
-    // rendered they can be accessed.
+  public function displayEntityBrowser(FormStateInterface $form_state, array $persistent_data = []) {
+    // Store persistent data so that after being rendered widgets can still
+    // have access to contextual information.
     $this->selectionStorage->setWithExpire(
       $this->getUuid(),
-      [
-        'entities' => $entities,
-        'validators' => $validators
-      ],
+      $persistent_data,
       Settings::get('entity_browser_expire', 21600)
     );
   }

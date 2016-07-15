@@ -199,6 +199,24 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters) {
+    // Allow configuration overrides at runtime based on form state to enable
+    // use cases where the instance of a widget may have contextual
+    // configuration like field settings. "widget_context" doesn't have to be
+    // used in this way, if a widget doesn't want its default configuration
+    // overwritten it can not call this method and implement its own logic.
+    foreach ($this->defaultConfiguration() as $key => $value) {
+      if ($form_state->has(['entity_browser', 'widget_context', $key]) && isset($this->configuration[$key])) {
+        $this->configuration[$key] = $form_state->get(['entity_browser', 'widget_context', $key]);
+      }
+    }
+    // Do not make assumptions about how the widget is rendered.
+    return [];
+  }
+
+  /**
    * Prepares the entities without saving them.
    *
    * We need this method when we want to validate or perform other operations
