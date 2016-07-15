@@ -26,7 +26,7 @@
     });
     // @todo Use uuid here. But for this to work we need to move eb uuid
     // generation from display to eb directly. When we do this, we can change
-    // \Drupal\entity_browser\Plugin\Field\FieldWidget\EntityReference::formElement
+    // \Drupal\entity_browser\Plugin\Field\FieldWidget\EntityReferenceBrowserWidget::formElement
     // also.
     // Checking if cardinality is set - assume unlimited.
     var cardinality = isNaN(parseInt(drupalSettings['entity_browser'][uuid]['cardinality'])) ? -1 : parseInt(drupalSettings['entity_browser'][uuid]['cardinality']);

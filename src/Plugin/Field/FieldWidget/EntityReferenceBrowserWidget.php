@@ -33,7 +33,7 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
  *   }
  * )
  */
-class EntityReference extends WidgetBase implements ContainerFactoryPluginInterface {
+class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactoryPluginInterface {
 
   /**
    * Entity type manager service.
