@@ -115,8 +115,8 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
   /**
    * {@inheritdoc}
    */
-  public function displayEntityBrowser(FormStateInterface $form_state, array $persistent_data = []) {
-    parent::displayEntityBrowser($form_state, $persistent_data);
+  public function displayEntityBrowser(array $element, FormStateInterface $form_state, array &$complete_form, array $persistent_data = []) {
+    parent::displayEntityBrowser($element, $form_state, $complete_form, $persistent_data);
     /** @var \Drupal\entity_browser\Events\RegisterJSCallbacks $event */
     $js_event_object = new RegisterJSCallbacks($this->configuration['entity_browser_id'], $this->getUuid());
     $js_event_object->registerCallback('Drupal.entityBrowser.selectionCompleted');

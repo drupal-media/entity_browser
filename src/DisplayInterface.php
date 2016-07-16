@@ -34,8 +34,14 @@ interface DisplayInterface extends PluginInspectionInterface, ConfigurablePlugin
    * with it. It will take care about displaying entity browser in one way or
    * another.
    *
+   * @param array $element
+   *   A form element array containing basic properties for the entity browser
+   *   element:
+   *   - #eb_parents: The 'parents' space for the field in the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state object.
+   * @param array $complete_form
+   *   The form structure where entity browser is being attached to.
    * @param array $persistent_data
    *   (optional) Extra information to send to the Entity Browser Widget. This
    *   is needed as the widget may display after a new bootstrap, which would
@@ -51,7 +57,7 @@ interface DisplayInterface extends PluginInspectionInterface, ConfigurablePlugin
    * @return array
    *   An array suitable for drupal_render().
    */
-  public function displayEntityBrowser(FormStateInterface $form_state, array $persistent_data = []);
+  public function displayEntityBrowser(array $element, FormStateInterface $form_state, array &$complete_form, array $persistent_data = []);
 
   /**
    * Indicates completed selection.
@@ -61,6 +67,7 @@ interface DisplayInterface extends PluginInspectionInterface, ConfigurablePlugin
    * the initiating code.
    *
    * @param \Drupal\Core\Entity\EntityInterface[] $entities
+   *   Array of selected entities.
    */
   public function selectionCompleted(array $entities);
 

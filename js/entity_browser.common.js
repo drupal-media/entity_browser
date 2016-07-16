@@ -22,7 +22,7 @@
    */
   Drupal.entityBrowser.selectionCompleted = function (event, uuid, entities) {
     var added_entities_array = $.map(entities, function (item) {
-      return item[0];
+      return item[2] + ':' + item[0];
     });
     // @todo Use uuid here. But for this to work we need to move eb uuid
     // generation from display to eb directly. When we do this, we can change

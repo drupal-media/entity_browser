@@ -304,7 +304,7 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
       $current[$entity_id] = [
         '#attributes' => [
           'class' => ['draggable'],
-          'data-entity-id' => $entity_id,
+          'data-entity-id' => $entity->getEntityTypeId() . ':' . $entity_id,
         ],
         'display' => $display,
         'filename' => ['#markup' => $entity->label()],
@@ -363,7 +363,7 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
           '#submit' => [[get_class($this), 'removeItemSubmit']],
           '#name' => $field_machine_name . '_remove_' . $entity_id,
           '#limit_validation_errors' => [array_merge($field_parents, [$field_machine_name, 'target_id'])],
-          '#attributes' => ['data-entity-id' => $entity_id],
+          '#attributes' => ['data-entity-id' => $entity->getEntityTypeId() . ':' . $entity_id],
           '#access' => (bool) $widget_settings['field_widget_remove'],
         ],
         '_weight' => [
@@ -390,6 +390,7 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
     $ids = empty($values['target_id']) ? [] : explode(' ', trim($values['target_id']));
     $return = [];
     foreach ($ids as $id) {
+      $id = explode(':', $id)[1];
       if (is_array($values['current']) && isset($values['current'][$id])) {
         $item_values = [
           'target_id' => $id,

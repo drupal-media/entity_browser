@@ -156,7 +156,7 @@ abstract class DisplayBase extends PluginBase implements DisplayInterface, Conta
   /**
    * {@inheritdoc}
    */
-  public function displayEntityBrowser(FormStateInterface $form_state, array $persistent_data = []) {
+  public function displayEntityBrowser(array $element, FormStateInterface $form_state, array &$complete_form, array $persistent_data = []) {
     // Store persistent data so that after being rendered widgets can still
     // have access to contextual information.
     $this->selectionStorage->setWithExpire(

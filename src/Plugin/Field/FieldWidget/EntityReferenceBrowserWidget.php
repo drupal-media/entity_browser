@@ -2,6 +2,8 @@
 
 namespace Drupal\entity_browser\Plugin\Field\FieldWidget;
 
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\entity_browser\Element\EntityBrowserElement;
 use Symfony\Component\Validator\ConstraintViolationInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
@@ -318,8 +320,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       }
 
       if (isset($parents) && $value = $form_state->getValue($parents)) {
-        $ids = explode(' ', $value);
-        $entities = $entity_storage->loadMultiple($ids);
+        $entities = EntityBrowserElement::processEntityIds($value);
       }
     }
     // IDs from a previous request might be saved in the form state.
@@ -352,20 +353,23 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
 
     $hidden_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName() . '-target-id');
     $details_id = Html::getUniqueId('edit-' . $this->fieldDefinition->getName());
-    /** @var \Drupal\entity_browser\EntityBrowserInterface $entity_browser */
-    $entity_browser = $this->entityTypeManager->getStorage('entity_browser')->load($this->getSetting('entity_browser'));
 
     $element += [
       '#id' => $details_id,
       '#type' => 'details',
-      '#open' => !empty($ids) || $this->getSetting('open'),
+      '#open' => !empty($entities) || $this->getSetting('open'),
       '#required' => $this->fieldDefinition->isRequired(),
+      // We are not using Entity browser's hidden element since we maintain
+      // selected entities in it during entire process.
       'target_id' => [
         '#type' => 'hidden',
         '#id' => $hidden_id,
         // We need to repeat ID here as it is otherwise skipped when rendering.
         '#attributes' => ['id' => $hidden_id],
-        '#default_value' => $ids,
+        '#default_value' => array_map(
+          function (EntityInterface $item) { return $item->getEntityTypeId() . ':' . $item->id(); },
+          $entities
+        ),
         // #ajax is officially not supported for hidden elements but if we
         // specify event manually it works.
         '#ajax' => [
@@ -378,18 +382,19 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
 
     $cardinality = $this->fieldDefinition->getFieldStorageDefinition()->getCardinality();
     if ($cardinality == FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED || count($ids) < $cardinality) {
-      $entity_browser_uuid = sha1(implode('-', array_merge($form['#parents'], [$this->fieldDefinition->getName(), $delta])));
-      $entity_browser_display = $entity_browser->getDisplay();
-      $entity_browser_display->setUuid($entity_browser_uuid);
-
-      $element['entity_browser'] = $entity_browser_display->displayEntityBrowser($form_state, $this->getPersistentData());
-      $element['#attached']['library'][] = 'entity_browser/entity_reference';
-      $element['#attached']['drupalSettings']['entity_browser'] = [
-        $entity_browser->getDisplay()->getUuid() => [
-          'cardinality' => $cardinality,
-          'selector' => '#' . $element['target_id']['#attributes']['id'],
+      $element['entity_browser'] = [
+        '#type' => 'entity_browser',
+        '#entity_browser' => $this->getSetting('entity_browser'),
+        '#cardinality' => $cardinality,
+        '#entity_browser_validators' => ['entity_type' => ['type' => $entity_type]],
+        '#custom_hidden_id' => $hidden_id,
+        '#process' => [
+          ['\Drupal\entity_browser\Element\EntityBrowserElement', 'processEntityBrowser'],
+          [get_called_class(), 'processEntityBrowser'],
         ],
       ];
+
+      $element['#attached']['library'][] = 'entity_browser/entity_reference';
     }
 
     $field_parents = $element['#field_parents'];
@@ -400,13 +405,22 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
   }
 
   /**
+   * Render API callback: Processes the entity browser element.
+   */
+  public static function processEntityBrowser(&$element, FormStateInterface $form_state, &$complete_form) {
+    $uuid = key($element['#attached']['drupalSettings']['entity_browser']);
+    $element['#attached']['drupalSettings']['entity_browser'][$uuid]['selector'] = '#' . $element['#custom_hidden_id'];
+    return $element;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
-    $ids = empty($values['target_id']) ? [] : explode(' ', trim($values['target_id']));
+    $entities = empty($values['target_id']) ? [] : explode(' ', trim($values['target_id']));
     $return = [];
-    foreach ($ids as $id) {
-      $return[]['target_id'] = $id;
+    foreach ($entities as $entity) {
+      $return[]['target_id'] = explode(':', $entity)[1];
     }
 
     return $return;
@@ -507,7 +521,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
             '#theme_wrappers' => ['container'],
             '#attributes' => [
               'class' => ['item-container', Html::getClass($field_widget_display->getPluginId())],
-              'data-entity-id' => $entity->id(),
+              'data-entity-id' => $entity->getEntityTypeId() . ':' . $entity->id(),
             ],
             'display' => $display,
             'remove_button' => [
@@ -520,7 +534,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
               '#submit' => [[get_class($this), 'removeItemSubmit']],
               '#name' => $this->fieldDefinition->getName() . '_remove_' . $entity->id(),
               '#limit_validation_errors' => [array_merge($field_parents, [$this->fieldDefinition->getName()])],
-              '#attributes' => ['data-entity-id' => $entity->id()],
+              '#attributes' => ['data-entity-id' => $entity->getEntityTypeId() . ':' . $entity->id()],
               '#access' => (bool) $this->getSetting('field_widget_remove'),
             ],
             'edit_button' => [
@@ -553,7 +567,6 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
     return [
       'validators' => [
         'entity_type' => ['type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')],
-        'cardinality' => ['cardinality' => $this->fieldDefinition->getFieldStorageDefinition()->getCardinality()],
       ],
     ];
   }
