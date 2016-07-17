@@ -85,6 +85,7 @@ class Upload extends WidgetBase {
   public function defaultConfiguration() {
     return [
       'upload_location' => 'public://',
+      'submit_text' => $this->t('Select files'),
     ] + parent::defaultConfiguration();
   }
 
@@ -119,9 +120,11 @@ class Upload extends WidgetBase {
    * {@inheritdoc}
    */
   public function submit(array &$element, array &$form, FormStateInterface $form_state) {
-    $files = $this->extractFiles($form_state);
-    $this->selectEntities($files, $form_state);
-    $this->clearFormValues($element, $form_state);
+    if (!empty($form_state->getTriggeringElement()['#eb_widget_main_submit'])) {
+      $files = $this->extractFiles($form_state);
+      $this->selectEntities($files, $form_state);
+      $this->clearFormValues($element, $form_state);
+    }
   }
 
   /**
@@ -167,6 +170,12 @@ class Upload extends WidgetBase {
       '#type' => 'textfield',
       '#title' => $this->t('Upload location'),
       '#default_value' => $this->configuration['upload_location'],
+    ];
+
+    $form['submit_text'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Submit button text'),
+      '#default_value' => $this->configuration['submit_text'],
     ];
 
     if ($this->moduleHandler->moduleExists('token')) {

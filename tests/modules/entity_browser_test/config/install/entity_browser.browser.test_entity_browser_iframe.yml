@@ -21,4 +21,3 @@ widgets:
     weight: 1
     label: upload
     id: upload
-submit_text: Select

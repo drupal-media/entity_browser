@@ -2,6 +2,9 @@ entity_browser.browser.widget.dummy:
   type: mapping
   label: 'Dummy widget configuration'
   mapping:
+    submit_text:
+      type: string
+      label: 'Submit button text'
     text:
       type: string
       label: 'Text'

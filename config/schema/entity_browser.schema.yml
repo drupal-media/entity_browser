@@ -20,9 +20,6 @@ entity_browser.browser.*:
       label: 'Selection display plugin ID'
     selection_display_configuration:
       type: entity_browser.browser.selection_display.[%parent.selection_display]
-    submit_text:
-      type: string
-      label: 'Main submit button'
     widget_selector:
       type: string
       label: 'Widget selector plugin ID'
@@ -88,6 +85,9 @@ entity_browser.browser.widget.upload:
   type: mapping
   label: 'Upload widget configuration'
   mapping:
+    submit_text:
+      type: string
+      label: 'Submit button text'
     upload_location:
       type: string
       label: 'Upload location'
@@ -96,6 +96,9 @@ entity_browser.browser.widget.view:
   type: mapping
   label: 'View widget configuration'
   mapping:
+    submit_text:
+      type: string
+      label: 'Submit button text'
     view:
       type: string
       label: 'View ID'

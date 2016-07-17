@@ -228,6 +228,8 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    $form = parent::buildConfigurationForm($form, $form_state);
+
     $options = [];
     // Get only those enabled Views that have entity_browser displays.
     $displays = Views::getApplicableViews('entity_browser_display');
@@ -254,7 +256,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues()['table'][$this->uuid()]['form'];
-
+    $this->configuration['submit_text'] = $values['submit_text'];
     if (!empty($values['view'])) {
       list($view_id, $display_id) = explode('.', $values['view']);
       $this->configuration['view'] = $view_id;

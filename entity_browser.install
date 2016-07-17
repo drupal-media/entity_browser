@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * @file
+ * Update hooks for the Entity browser module.
+ */
+
+/**
+ * Updates submit text for existing Entity browsers.
+ */
+function entity_browser_update_8001() {
+  /** @var \Drupal\Core\Config\ConfigFactoryInterface $config_factory */
+  $config_factory = \Drupal::service('config.factory');
+
+  foreach ($config_factory->listAll('entity_browser.browser') as $name) {
+    $entity_browser = $config_factory->getEditable($name);
+    if ($text = $entity_browser->get('submit_text')) {
+      $entity_browser->clear('submit_text');
+      foreach ($entity_browser->get('widgets') as $widget_uuid => $widget) {
+        $entity_browser->set("widgets.$widget_uuid.settings.submit_text", $text);
+        $entity_browser->save();
+      }
+    }
+  }
+}

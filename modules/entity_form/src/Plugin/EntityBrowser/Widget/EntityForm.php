@@ -89,6 +89,7 @@ class EntityForm extends WidgetBase {
       'entity_type' => NULL,
       'bundle' => NULL,
       'form_mode' => 'default',
+      'submit_text' => $this->t('Save entity'),
     ] + parent::defaultConfiguration();
   }
 
@@ -129,6 +130,8 @@ class EntityForm extends WidgetBase {
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    $form = parent::buildConfigurationForm($form, $form_state);
+
     $parents = ['table', $this->uuid(), 'form'];
     $entity_type = $form_state->hasValue(array_merge($parents, ['entity_type'])) ? $form_state->getValue(array_merge($parents, ['entity_type'])) : $this->configuration['entity_type'];
     $bundle = $form_state->hasValue(array_merge($parents, ['bundle', 'select'])) ? $form_state->getValue(array_merge($parents, ['bundle', 'select'])) : $this->configuration['bundle'];
