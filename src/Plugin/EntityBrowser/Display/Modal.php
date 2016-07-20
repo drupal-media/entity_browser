@@ -156,6 +156,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
           'callback' => [$this, 'openModal'],
           'event' => 'click',
         ],
+        '#executes_submit_callback' => FALSE,
         '#attributes' => $data['attributes'],
         '#attached' => [
           'library' => ['core/drupal.dialog.ajax', 'entity_browser/modal'],
