@@ -24,7 +24,7 @@ class SelectForm extends FieldPluginBase {
    *   The row ID, in the form ENTITY_TYPE:ENTITY_ID.
    */
   public function getRowId(ResultRow $row) {
-    $entity = $row->_entity;
+    $entity = $this->getEntity($row);
     return $entity->getEntityTypeId() . ':' . $entity->id();
   }
 
