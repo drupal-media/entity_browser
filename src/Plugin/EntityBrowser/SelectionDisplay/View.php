@@ -47,10 +47,11 @@ class View extends SelectionDisplayBase {
     // TODO - if there are entities that are selected multiple times this displays
     // them only once. Reason for that is how SQL and Views work and we probably
     // can't do much about it.
-    if (!empty($this->selectedEntities)) {
+    $selected_entities = $form_state->get(['entity_browser', 'selected_entities']);
+    if (!empty($selected_entities)) {
       $ids = array_map(function(EntityInterface $item) {
         return $item->id();
-      }, $this->selectedEntities);
+      }, $selected_entities);
       $storage['selection_display_view']->setArguments([implode(',', $ids)]);
     }
 
