@@ -25,6 +25,12 @@ class EntityBrowserController extends ControllerBase {
    *   containing the edit form.
    */
   public function entityBrowserEdit(EntityInterface $entity) {
+    // Load the right translation for referenced entity if it's exists
+    // or create new translation if it does not exists.
+    if ($entity->isTranslatable()) {
+      $language = $this->languageManager()->getCurrentLanguage()->getId();
+      $entity = $entity->hasTranslation($language) ? $entity->getTranslation($language) : $entity->addTranslation($language, $entity->toArray());
+    }
     // Build the entity edit form.
     $form_object = $this->entityTypeManager()->getFormObject($entity->getEntityTypeId(), 'edit');
     $form_object->setEntity($entity);
