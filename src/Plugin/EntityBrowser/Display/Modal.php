@@ -20,7 +20,6 @@ use Drupal\Core\Path\CurrentPathStack;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\entity_browser\Ajax\SelectEntitiesCommand;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -224,14 +223,6 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
       'resizable' => 0,
     ]));
     return $response;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function selectionCompleted(array $entities) {
-    $this->entities = $entities;
-    $this->eventDispatcher->addListener(KernelEvents::RESPONSE, [$this, 'propagateSelection']);
   }
 
   /**

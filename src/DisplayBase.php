@@ -10,6 +10,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Site\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Base implementation for display plugins.
@@ -164,6 +165,14 @@ abstract class DisplayBase extends PluginBase implements DisplayInterface, Conta
       $persistent_data,
       Settings::get('entity_browser_expire', 21600)
     );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function selectionCompleted(array $entities) {
+    $this->entities = $entities;
+    $this->eventDispatcher->addListener(KernelEvents::RESPONSE, [$this, 'propagateSelection']);
   }
 
 }

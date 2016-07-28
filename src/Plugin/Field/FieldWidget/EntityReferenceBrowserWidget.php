@@ -114,6 +114,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       'field_widget_edit' => TRUE,
       'field_widget_remove' => TRUE,
       'field_widget_display_settings' => [],
+      'selection_mode' => 'append',
     ) + parent::defaultSettings();
   }
 
@@ -176,6 +177,14 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       '#default_value' => $this->getSetting('open'),
     ];
 
+    $element['selection_mode'] = [
+      '#title' => t('Selection mode'),
+      '#description' => t('Determines whether newly added entities are prepended on top of the list or appended to the end of it after they were selected.'),
+      '#type' => 'select',
+      '#options' => $this->selectionModeOptions(),
+      '#default_value' => $this->getSetting('selection_mode'),
+    ];
+
     $element['field_widget_display_settings'] = [
       '#type' => 'fieldset',
       '#title' => t('Entity display plugin configuration'),
@@ -213,28 +222,13 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    * {@inheritdoc}
    */
   public function settingsSummary() {
-    $summary = [];
-    $entity_browser_id = $this->getSetting('entity_browser');
+    $summary = $this->summaryBase();
     $field_widget_display = $this->getSetting('field_widget_display');
-
-    if (empty($entity_browser_id)) {
-      return [t('No entity browser selected.')];
-    }
-    else {
-      if ($browser = $this->entityTypeManager->getStorage('entity_browser')->load($entity_browser_id)) {
-        $summary[] = t('Entity browser: @browser', ['@browser' => $browser->label()]);
-      }
-      else {
-        drupal_set_message(t('Missing entity browser!'), 'error');
-        return [t('Missing entity browser!')];
-      }
-    }
 
     if (!empty($field_widget_display)) {
       $plugin = $this->fieldDisplayManager->getDefinition($field_widget_display);
       $summary[] = t('Entity display: @name', ['@name' => $plugin['label']]);
     }
-
     return $summary;
   }
 
@@ -388,6 +382,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
         '#cardinality' => $cardinality,
         '#entity_browser_validators' => ['entity_type' => ['type' => $entity_type]],
         '#custom_hidden_id' => $hidden_id,
+        '#selection_mode' => $this->getSetting('selection_mode'),
         '#process' => [
           ['\Drupal\entity_browser\Element\EntityBrowserElement', 'processEntityBrowser'],
           [get_called_class(), 'processEntityBrowser'],
@@ -569,6 +564,45 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
         'entity_type' => ['type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')],
       ],
     ];
+  }
+
+  /**
+   * Gets options that define where newly added entities are inserted.
+   *
+   * @return array
+   *   Mode labels indexed by key.
+   */
+  protected function selectionModeOptions() {
+    return ['append' => t('Append'), 'prepend' => t('Prepend')];
+  }
+
+  /**
+   * Provides base for settings summary shared by all EB widgets.
+   *
+   * @return array
+   *   A short summary of the widget settings.
+   */
+  protected function summaryBase() {
+    $summary = [];
+    $entity_browser_id = $this->getSetting('entity_browser');
+    if (empty($entity_browser_id)) {
+      return [t('No entity browser selected.')];
+    }
+    else {
+      if ($browser = $this->entityTypeManager->getStorage('entity_browser')->load($entity_browser_id)) {
+        $summary[] = t('Entity browser: @browser', ['@browser' => $browser->label()]);
+      }
+      else {
+        drupal_set_message(t('Missing entity browser!'), 'error');
+        return [t('Missing entity browser!')];
+      }
+    }
+
+    $summary[] = t(
+      'Selection mode: @mode',
+      ['@mode' => $this->selectionModeOptions()[$this->getSetting('selection_mode')]]
+    );
+    return $summary;
   }
 
 }

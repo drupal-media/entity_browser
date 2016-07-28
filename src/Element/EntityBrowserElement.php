@@ -21,6 +21,9 @@ use Drupal\Core\Entity\EntityInterface;
  *     passed to the entity browser. Array keys are plugin IDs and array values
  *     are plugin configuration values. Cardinality validator will be set
  *     automatically.
+ * - #selection_mode: (optional) Determines whether newly added entities get
+ *     prepended on top or are appended to the bottom of the list. Defaults to
+ *     append.
  *
  * Return value will be an array of selected entities, which will appear under
  * 'entities' key on the root level of the element's values in the form state.
@@ -47,6 +50,7 @@ class EntityBrowserElement extends FormElement {
       '#default_value' => [],
       '#entity_browser_validators' => [],
       '#attached' => ['library' => ['entity_browser/common']],
+      '#selection_mode' => 'append',
     ];
   }
 
@@ -98,6 +102,7 @@ class EntityBrowserElement extends FormElement {
       $entity_browser->getDisplay()->getUuid() => [
         'cardinality' => $element['#cardinality'],
         'selector' => '#' . $hidden_id,
+        'selectionMode' => $element['#selection_mode'],
       ],
     ];
 

@@ -170,23 +170,9 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
    * {@inheritdoc}
    */
   public function settingsSummary() {
-    $summary = [];
-    $entity_browser_id = $this->getSetting('entity_browser');
+    $summary = $this->summaryBase();
     $view_mode = $this->getSetting('view_mode');
     $image_style_setting = $this->getSetting('preview_image_style');
-
-    if (empty($entity_browser_id)) {
-      return [$this->t('No entity browser selected.')];
-    }
-    else {
-      $browser = $this->entityTypeManager->getStorage('entity_browser')
-        ->load($entity_browser_id);
-      $summary[] = $this->t('Entity browser: @browser', ['@browser' => $browser->label()]);
-    }
-
-    if (!empty($view_mode)) {
-      $summary[] = $this->t('View mode: @name', ['@name' => $view_mode]);
-    }
 
     if ($this->fieldDefinition->getType() == 'image' && $view_mode == 'default') {
       $image_styles = image_style_options(FALSE);
@@ -199,7 +185,6 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
         $preview_image_style = $this->t('No preview image');
       }
     }
-
     array_unshift($summary, $preview_image_style);
 
     return $summary;

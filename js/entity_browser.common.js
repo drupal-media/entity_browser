@@ -42,23 +42,12 @@
     var selector = drupalSettings['entity_browser'][uuid]['selector'] ? $(drupalSettings['entity_browser'][uuid]['selector']) : $(this).parent().parent().find('input[type*=hidden]');
     var entity_ids = selector.val();
     if (entity_ids.length !== 0) {
-      var existing_entities_array = entity_ids.split(' ');
-
-      // We always trim the oldest elements and add the new ones.
-      if (cardinality === -1 || existing_entities_array.length + added_entities_array.length <= cardinality) {
-        existing_entities_array = _.union(existing_entities_array, added_entities_array);
-      }
-      else {
-        if (added_entities_array.length >= cardinality) {
-          existing_entities_array = added_entities_array;
-        }
-        else {
-          existing_entities_array.splice(0, added_entities_array.length);
-          existing_entities_array = _.union(existing_entities_array, added_entities_array);
-        }
-      }
-
-      entity_ids = existing_entities_array.join(' ');
+      entity_ids = Drupal.entityBrowser.updateEntityIds(
+        entity_ids,
+        cardinality,
+        added_entities_array,
+        drupalSettings['entity_browser'][uuid]['selectionMode'] === 'prepend'
+      );
     }
     else {
       entity_ids = added_entities_array.join(' ');
@@ -66,6 +55,55 @@
 
     selector.val(entity_ids);
     selector.trigger('entity_browser_value_updated');
+  };
+
+  /**
+   * Updates the list of entities based on existing and added entities.
+   *
+   * Also considers cardinality.
+   *
+   * @param {string} entity_ids
+   *   List of existing entities as a string, separated by space.
+   * @param {int} cardinality
+   *   The maximal amount of items the field can store.
+   * @param {Array} added_entities_array
+   *   The entities that are about to be added to the field.
+   * @param {bool} reverse
+   *   If true, fresh added elements will appear at the beginning of the list.
+   *
+   * @returns string
+   *   List of entities as a string, separated by space.
+   */
+  Drupal.entityBrowser.updateEntityIds = function (entity_ids, cardinality, added_entities_array, reverse) {
+    var existing_entities_array = entity_ids.split(' ');
+    var new_entities = _.difference(added_entities_array, existing_entities_array);
+
+    // We always trim the oldest elements and add the new ones.
+    if (cardinality === -1 || existing_entities_array.length + added_entities_array.length <= cardinality) {
+      if (reverse) {
+        existing_entities_array = new_entities.concat(existing_entities_array);
+      }
+      else {
+        existing_entities_array = _.union(existing_entities_array, added_entities_array);
+      }
+    }
+    else {
+      $.each(new_entities, function (index, entity_id) {
+        // If maximum amount of references is yet reached, stop here.
+        if (cardinality >= existing_entities_array.length) {
+          return;
+        }
+
+        if (reverse) {
+          existing_entities_array.unshift(entity_id);
+        }
+        else {
+          existing_entities_array.push(entity_id);
+        }
+      });
+    }
+
+    return existing_entities_array.join(' ');
   };
 
   /**
