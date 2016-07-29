@@ -11,6 +11,24 @@
   Drupal.entityBrowser = {};
 
   /**
+   * Command to refresh an entity_browser_entity_reference field widget.
+   *
+   * @param {Drupal.Ajax} [ajax]
+   *   The ajax object.
+   * @param {object} response
+   *   Object holding the server response.
+   * @param {string} response.details_id
+   *   The ID for the details element.
+   * @param {number} [status]
+   *   The HTTP status code.
+   */
+  Drupal.AjaxCommands.prototype.entity_browser_value_updated = function (ajax, response, status) {
+    $('#' + response.details_id)
+      .find('input[type="hidden"][name$="[target_id]"]')
+      .trigger('entity_browser_value_updated');
+  };
+
+  /**
    * Reacts on "entities selected" event.
    *
    * @param {object} event

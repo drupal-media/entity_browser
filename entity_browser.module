@@ -53,6 +53,11 @@ function entity_browser_form_alter(&$form, FormStateInterface &$form_state) {
     // Use Ajax.
     $form['actions']['submit']['#ajax'] = [
       'url' => Url::fromRoute('entity_browser.edit_form', ['entity_type' => $form_state->getFormObject()->getEntity()->getEntityTypeId(), 'entity' => $form_state->getFormObject()->getEntity()->id()]),
+      'options' => [
+        'query' => [
+          'details_id' => \Drupal::request()->query->get('details_id'),
+        ],
+      ],
     ];
   }
 }

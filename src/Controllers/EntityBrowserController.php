@@ -8,6 +8,8 @@ use Drupal\Core\Ajax\OpenDialogCommand;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\entity_browser\Ajax\ValueUpdatedCommand;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Returns responses for entity browser routes.
@@ -19,12 +21,14 @@ class EntityBrowserController extends ControllerBase {
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   An entity being edited.
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The currently processing request.
    *
    * @return \Drupal\Core\Ajax\AjaxResponse
    *   An Ajax response with a command for opening or closing the dialog
    *   containing the edit form.
    */
-  public function entityBrowserEdit(EntityInterface $entity) {
+  public function entityBrowserEdit(EntityInterface $entity, Request $request) {
     // Build the entity edit form.
     $form_object = $this->entityTypeManager()->getFormObject($entity->getEntityTypeId(), 'edit');
     $form_object->setEntity($entity);
@@ -44,7 +48,13 @@ class EntityBrowserController extends ControllerBase {
     }
     else {
       // Return command for closing the modal.
-      return AjaxResponse::create()->addCommand(new CloseDialogCommand('#' . $entity->getEntityTypeId() . '-' . $entity->id() . '-edit-dialog'));
+      $response = AjaxResponse::create()->addCommand(new CloseDialogCommand('#' . $entity->getEntityTypeId() . '-' . $entity->id() . '-edit-dialog'));
+      // Also refresh the widget if "details_id" is provided.
+      $details_id = $request->query->get('details_id');
+      if (!empty($details_id)) {
+        $response ->addCommand(new ValueUpdatedCommand($details_id));
+      }
+      return $response;
     }
   }
 

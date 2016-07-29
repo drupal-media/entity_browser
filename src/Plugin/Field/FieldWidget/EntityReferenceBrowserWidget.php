@@ -542,6 +542,11 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
                     'entity' => $entity->id(),
                   ]
                 ),
+                'options' => [
+                  'query' => [
+                    'details_id' => $details_id,
+                  ],
+                ],
               ],
               '#access' => (bool) $this->getSetting('field_widget_edit'),
             ],
