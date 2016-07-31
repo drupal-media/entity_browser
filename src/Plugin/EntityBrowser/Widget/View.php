@@ -100,7 +100,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
     // Check if the current user has access to this view.
     if (!$view->access($this->configuration['view_display'])) {
       return [
-        '#markup' => t('You do not have access to this View.'),
+        '#markup' => $this->t('You do not have access to this View.'),
       ];
     }
 
@@ -121,12 +121,12 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
       $url = Url::fromRoute('entity.view.edit_form', ['view' => $this->configuration['view']])->toString();
       if ($this->currentUser->hasPermission('administer views')) {
         return [
-          '#markup' => t('Entity browser select form field not found on a view. <a href=":link">Go fix it</a>!', [':link' => $url]),
+          '#markup' => $this->t('Entity browser select form field not found on a view. <a href=":link">Go fix it</a>!', [':link' => $url]),
         ];
       }
       else {
         return [
-          '#markup' => t('Entity browser select form field not found on a view. Go fix it!'),
+          '#markup' => $this->t('Entity browser select form field not found on a view. Go fix it!'),
         ];
       }
     }
@@ -176,7 +176,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
             try {
               $storage = $this->entityTypeManager->getStorage($parts[0]);
               if (!$storage->load($parts[1])) {
-                $message = t('The @type Entity @id does not exist.', [
+                $message = $this->t('The @type Entity @id does not exist.', [
                   '@type' => $parts[0],
                   '@id' => $parts[1],
                 ]);
@@ -184,7 +184,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
               }
             }
             catch (PluginNotFoundException $e) {
-              $message = t('The Entity Type @type does not exist.', [
+              $message = $this->t('The Entity Type @type does not exist.', [
                 '@type' => $parts[0],
               ]);
               $form_state->setError($form['widget']['view']['entity_browser_select'], $message);

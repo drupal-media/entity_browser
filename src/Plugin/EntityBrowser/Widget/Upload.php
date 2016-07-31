@@ -97,7 +97,7 @@ class Upload extends WidgetBase {
     $form = parent::getForm($original_form, $form_state, $additional_widget_parameters);
     $form['upload'] = [
       '#type' => 'managed_file',
-      '#title' => t('Choose a file'),
+      '#title' => $this->t('Choose a file'),
       '#title_display' => 'invisible',
       '#upload_location' => $this->token->replace($this->configuration['upload_location']),
       '#multiple' => TRUE,

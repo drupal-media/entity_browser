@@ -87,8 +87,8 @@ class RenderedEntity extends FieldWidgetDisplayBase implements ContainerFactoryP
     return [
       'view_mode' => [
         '#type' => 'select',
-        '#title' => t('View mode'),
-        '#description' => t('Select view mode to be used when rendering entities.'),
+        '#title' => $this->t('View mode'),
+        '#description' => $this->t('Select view mode to be used when rendering entities.'),
         '#default_value' => !empty($this->configuration['view_mode']) ? $this->configuration['view_mode'] : NULL,
         '#options' => $options,
       ],

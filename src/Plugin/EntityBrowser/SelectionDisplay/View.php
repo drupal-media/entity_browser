@@ -59,7 +59,7 @@ class View extends SelectionDisplayBase {
 
     $form['use_selected'] = array(
       '#type' => 'submit',
-      '#value' => t('Use selection'),
+      '#value' => $this->t('Use selection'),
       '#name' => 'use_selected',
     );
 

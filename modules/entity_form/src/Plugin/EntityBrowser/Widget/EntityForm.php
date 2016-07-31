@@ -98,7 +98,7 @@ class EntityForm extends WidgetBase {
    */
   public function getForm(array &$original_form, FormStateInterface $form_state, array $aditional_widget_parameters) {
     if (empty($this->configuration['entity_type']) || empty($this->configuration['bundle'])  || empty($this->configuration['form_mode'])) {
-      return ['#markup' => t('The settings for this widget (Entity type, Bundle or Form mode) are not configured correctly.')];
+      return ['#markup' => $this->t('The settings for this widget (Entity type, Bundle or Form mode) are not configured correctly.')];
     }
 
     return [

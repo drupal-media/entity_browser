@@ -131,7 +131,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
     }
 
     $element['entity_browser'] = [
-      '#title' => t('Entity browser'),
+      '#title' => $this->t('Entity browser'),
       '#type' => 'select',
       '#default_value' => $this->getSetting('entity_browser'),
       '#options' => $browsers,
@@ -149,7 +149,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
 
     $id = Html::getUniqueId('field-' . $this->fieldDefinition->getName() . '-display-settings-wrapper');
     $element['field_widget_display'] = [
-      '#title' => t('Entity display plugin'),
+      '#title' => $this->t('Entity display plugin'),
       '#type' => 'select',
       '#default_value' => $this->getSetting('field_widget_display'),
       '#options' => $displays,
@@ -160,26 +160,26 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
     ];
 
     $element['field_widget_edit'] = [
-      '#title' => t('Display Edit button'),
+      '#title' => $this->t('Display Edit button'),
       '#type' => 'checkbox',
       '#default_value' => $this->getSetting('field_widget_edit'),
     ];
 
     $element['field_widget_remove'] = [
-      '#title' => t('Display Remove button'),
+      '#title' => $this->t('Display Remove button'),
       '#type' => 'checkbox',
       '#default_value' => $this->getSetting('field_widget_remove'),
     ];
 
     $element['open'] = [
-      '#title' => t('Show widget details as open by default'),
+      '#title' => $this->t('Show widget details as open by default'),
       '#type' => 'checkbox',
       '#default_value' => $this->getSetting('open'),
     ];
 
     $element['selection_mode'] = [
-      '#title' => t('Selection mode'),
-      '#description' => t('Determines whether newly added entities are prepended on top of the list or appended to the end of it after they were selected.'),
+      '#title' => $this->t('Selection mode'),
+      '#description' => $this->t('Determines whether newly added entities are prepended on top of the list or appended to the end of it after they were selected.'),
       '#type' => 'select',
       '#options' => $this->selectionModeOptions(),
       '#default_value' => $this->getSetting('selection_mode'),
@@ -187,7 +187,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
 
     $element['field_widget_display_settings'] = [
       '#type' => 'fieldset',
-      '#title' => t('Entity display plugin configuration'),
+      '#title' => $this->t('Entity display plugin configuration'),
       '#tree' => TRUE,
       '#prefix' => '<div id="' . $id . '">',
       '#suffix' => '</div>',
@@ -227,7 +227,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
 
     if (!empty($field_widget_display)) {
       $plugin = $this->fieldDisplayManager->getDefinition($field_widget_display);
-      $summary[] = t('Entity display: @name', ['@name' => $plugin['label']]);
+      $summary[] = $this->t('Entity display: @name', ['@name' => $plugin['label']]);
     }
     return $summary;
   }
@@ -578,7 +578,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    *   Mode labels indexed by key.
    */
   protected function selectionModeOptions() {
-    return ['append' => t('Append'), 'prepend' => t('Prepend')];
+    return ['append' => $this->t('Append'), 'prepend' => $this->t('Prepend')];
   }
 
   /**
@@ -595,7 +595,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
     }
     else {
       if ($browser = $this->entityTypeManager->getStorage('entity_browser')->load($entity_browser_id)) {
-        $summary[] = t('Entity browser: @browser', ['@browser' => $browser->label()]);
+        $summary[] = $this->t('Entity browser: @browser', ['@browser' => $browser->label()]);
       }
       else {
         drupal_set_message(t('Missing entity browser!'), 'error');

@@ -41,7 +41,7 @@ class DropDown extends WidgetSelectorBase {
     $element['change'] = array(
       '#type' => 'submit',
       '#name' => 'change',
-      '#value' => t('Change'),
+      '#value' => $this->t('Change'),
       '#attributes' => array('class' => array('js-hide')),
     );
 

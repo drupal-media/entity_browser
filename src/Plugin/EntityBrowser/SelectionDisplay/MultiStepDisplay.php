@@ -235,7 +235,7 @@ class MultiStepDisplay extends SelectionDisplayBase {
       }
     }
     $form['display'] = [
-      '#title' => t('Entity display plugin'),
+      '#title' => $this->t('Entity display plugin'),
       '#type' => 'select',
       '#default_value' => $default_display,
       '#options' => $displays,
@@ -247,7 +247,7 @@ class MultiStepDisplay extends SelectionDisplayBase {
 
     $form['display_settings'] = [
       '#type' => 'container',
-      '#title' => t('Entity display plugin configuration'),
+      '#title' => $this->t('Entity display plugin configuration'),
       '#tree' => TRUE,
     ];
     if ($default_display_settings) {
