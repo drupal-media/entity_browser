@@ -4,6 +4,7 @@ common:
     js/entity_browser.common.js: {}
   dependencies:
     - core/underscore
+    - core/drupal.dialog.ajax
 
 entity_list:
   version: VERSION
