@@ -40,4 +40,14 @@ class EntityBrowserSelectionDisplay extends Plugin {
    */
   public $description = '';
 
+  /**
+   * Preselection support.
+   *
+   * This will be used by entity browser form element to check, if selection
+   * display accepts preselection of entities.
+   *
+   * @var bool
+   */
+  public $acceptPreselection = FALSE;
+
 }

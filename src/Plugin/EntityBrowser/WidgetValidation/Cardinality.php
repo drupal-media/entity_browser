@@ -2,7 +2,7 @@
 
 namespace Drupal\entity_browser\Plugin\EntityBrowser\WidgetValidation;
 
-use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\entity_browser\Element\EntityBrowserElement;
 use Drupal\entity_browser\WidgetValidationBase;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationList;
@@ -27,7 +27,7 @@ class Cardinality extends WidgetValidationBase {
     // we implement logic without using Constraint Plugins.
     $count = count($entities);
     $max = $options['cardinality'];
-    if ($max !== FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED && $count > $max) {
+    if ($max !== EntityBrowserElement::CARDINALITY_UNLIMITED && $count > $max) {
       $message = 'You can not select more than %max entities.';
       $parameters = ['%max' => $max];
       $violation = new ConstraintViolation($this->t($message, $parameters), $message, $parameters, $count, '', $count);

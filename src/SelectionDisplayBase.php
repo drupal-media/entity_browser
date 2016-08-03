@@ -2,6 +2,7 @@
 
 namespace Drupal\entity_browser;
 
+use Drupal\Core\Config\ConfigException;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -120,6 +121,15 @@ abstract class SelectionDisplayBase extends PluginBase implements SelectionDispl
    * {@inheritdoc}
    */
   public function submit(array &$form, FormStateInterface $form_state) {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function checkPreselectionSupport() {
+    if (!$this->getPluginDefinition()['acceptPreselection']) {
+      throw new ConfigException('Used entity browser selection display does not support preselection.');
+    }
+  }
 
   /**
    * Marks selection as done - sets value in form state and dispatches event.

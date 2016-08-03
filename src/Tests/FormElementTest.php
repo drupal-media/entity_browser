@@ -2,6 +2,7 @@
 
 namespace Drupal\entity_browser\Tests;
 
+use Drupal\entity_browser\Element\EntityBrowserElement;
 use Drupal\simpletest\WebTestBase;
 
 /**
@@ -58,7 +59,7 @@ class FormElementTest extends WebTestBase {
     $this->assertText($expected, 'Selected entities detected.');
 
     $default_entity = $this->nodes[0]->getEntityTypeId() . ':' . $this->nodes[0]->id();
-    $this->drupalGet('/test-element', ['query' => ['default_entity' => $default_entity]]);
+    $this->drupalGet('/test-element', ['query' => ['default_entity' => $default_entity, 'selection_mode' => EntityBrowserElement::SELECTION_MODE_EDIT]]);
     $this->assertLink('Select entities', 0, 'Trigger link found.');
     $this->assertFieldByXPath("//input[@type='hidden' and @id='edit-fancy-entity-browser-target']", $default_entity, "Entity browser's hidden element found.");
 

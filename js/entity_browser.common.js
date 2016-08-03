@@ -39,7 +39,7 @@
    *   Array of selected entities.
    */
   Drupal.entityBrowser.selectionCompleted = function (event, uuid, entities) {
-    var added_entities_array = $.map(entities, function (item) {
+    var selected_entities = $.map(entities, function (item) {
       return item[2] + ':' + item[0];
     });
     // @todo Use uuid here. But for this to work we need to move eb uuid
@@ -49,79 +49,71 @@
     // Checking if cardinality is set - assume unlimited.
     var cardinality = isNaN(parseInt(drupalSettings['entity_browser'][uuid]['cardinality'])) ? -1 : parseInt(drupalSettings['entity_browser'][uuid]['cardinality']);
 
-    // Having more elements than cardinality should never happen, because
-    // server side authentication should prevent it, but we handle it here
-    // anyway.
-    if (cardinality !== -1 && added_entities_array.length > cardinality) {
-      added_entities_array.splice(0, added_entities_array.length - cardinality);
-    }
+    // Get field widget selection mode.
+    var selection_mode = drupalSettings['entity_browser'][uuid]['selection_mode'];
 
     // Update value form element with new entity IDs.
     var selector = drupalSettings['entity_browser'][uuid]['selector'] ? $(drupalSettings['entity_browser'][uuid]['selector']) : $(this).parent().parent().find('input[type*=hidden]');
     var entity_ids = selector.val();
-    if (entity_ids.length !== 0) {
-      entity_ids = Drupal.entityBrowser.updateEntityIds(
-        entity_ids,
-        cardinality,
-        added_entities_array,
-        drupalSettings['entity_browser'][uuid]['selectionMode'] === 'prepend'
-      );
-    }
-    else {
-      entity_ids = added_entities_array.join(' ');
-    }
+    var existing_entities = (entity_ids.length !== 0) ? entity_ids.split(' ') : [];
+
+    entity_ids = Drupal.entityBrowser.updateEntityIds(
+      existing_entities,
+      selected_entities,
+      selection_mode,
+      cardinality
+    );
 
     selector.val(entity_ids);
     selector.trigger('entity_browser_value_updated');
   };
 
   /**
-   * Updates the list of entities based on existing and added entities.
+   * Updates the list of selected entities.
    *
-   * Also considers cardinality.
+   * It uses existing selection and selected entities in entity browser. Also
+   * considers cardinality and used selection mode.
    *
-   * @param {string} entity_ids
-   *   List of existing entities as a string, separated by space.
+   * Note: Selection modes are defined in EntityBrowserElement class and same
+   * options should be used here to determine what action will be performed.
+   * Default action is append ('selection_append').
+   *
+   * @param {Array} existing_entities
+   *   List of existing entity IDs.
+   * @param {Array} selected_entities
+   *   The entities that are selected and entity browser.
+   * @param {string} selection_mode
+   *   Selection mode defined by entity browser field widget.
    * @param {int} cardinality
    *   The maximal amount of items the field can store.
-   * @param {Array} added_entities_array
-   *   The entities that are about to be added to the field.
-   * @param {bool} reverse
-   *   If true, fresh added elements will appear at the beginning of the list.
    *
-   * @returns string
+   * @return {string}
    *   List of entities as a string, separated by space.
    */
-  Drupal.entityBrowser.updateEntityIds = function (entity_ids, cardinality, added_entities_array, reverse) {
-    var existing_entities_array = entity_ids.split(' ');
-    var new_entities = _.difference(added_entities_array, existing_entities_array);
+  Drupal.entityBrowser.updateEntityIds = function (existing_entities, selected_entities, selection_mode, cardinality) {
+    var combined_entities;
 
-    // We always trim the oldest elements and add the new ones.
-    if (cardinality === -1 || existing_entities_array.length + added_entities_array.length <= cardinality) {
-      if (reverse) {
-        existing_entities_array = new_entities.concat(existing_entities_array);
-      }
-      else {
-        existing_entities_array = _.union(existing_entities_array, added_entities_array);
-      }
+    if (selection_mode === 'selection_edit') {
+      // Propagate new selected entities.
+      combined_entities = selected_entities;
+    }
+    else if (selection_mode === 'selection_prepend') {
+      // Prepend selected entities to existing list of entities.
+      combined_entities = selected_entities.concat(existing_entities);
     }
     else {
-      $.each(new_entities, function (index, entity_id) {
-        // If maximum amount of references is yet reached, stop here.
-        if (cardinality >= existing_entities_array.length) {
-          return;
-        }
-
-        if (reverse) {
-          existing_entities_array.unshift(entity_id);
-        }
-        else {
-          existing_entities_array.push(entity_id);
-        }
-      });
+      // Append selected entities to existing list of entities.
+      combined_entities = existing_entities.concat(selected_entities);
     }
 
-    return existing_entities_array.join(' ');
+    // Having more elements than cardinality should never happen, because
+    // server side authentication should prevent it, but we handle it here
+    // anyway.
+    if (cardinality > 0 && combined_entities.length > cardinality) {
+      combined_entities = combined_entities.slice(0, cardinality);
+    }
+
+    return combined_entities.join(' ');
   };
 
   /**

@@ -34,6 +34,10 @@ class FormElementTest extends FormBase {
       $form['fancy_entity_browser']['#default_value'] = [EntityBrowserElement::processEntityId($default)];
     }
 
+    if ($selection_mode = \Drupal::request()->get('selection_mode')) {
+      $form['fancy_entity_browser']['#selection_mode'] = $selection_mode;
+    }
+
     $form['main_submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Submit'),

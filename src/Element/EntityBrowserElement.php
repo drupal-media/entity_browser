@@ -16,14 +16,14 @@ use Drupal\Core\Entity\EntityInterface;
  * - #cardinality: (optional) Maximum number of items that are expected from
  *     the entity browser. Unlimited by default.
  * - #default_value: (optional) Array of entities that Entity browser should be
- *     initialized with.
+ *     initialized with. It's only applicable when edit selection mode is used.
  * - #entity_browser_validators: (optional) Array of validators that are to be
  *     passed to the entity browser. Array keys are plugin IDs and array values
  *     are plugin configuration values. Cardinality validator will be set
  *     automatically.
- * - #selection_mode: (optional) Determines whether newly added entities get
- *     prepended on top or are appended to the bottom of the list. Defaults to
- *     append.
+ * - #selection_mode: (optional) Determines how selection in entity browser will
+ *     be handled. Will selection be appended/prepended or it will be replaced
+ *     in case of editing. Defaults to append.
  *
  * Return value will be an array of selected entities, which will appear under
  * 'entities' key on the root level of the element's values in the form state.
@@ -34,8 +34,44 @@ class EntityBrowserElement extends FormElement {
 
   /**
    * Indicating an entity browser can return an unlimited number of values.
+   *
+   * Note: When entity browser is used in Fields, cardinality is directly
+   * propagated from Field settings, that's why this constant should be equal to
+   * FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED.
    */
   const CARDINALITY_UNLIMITED = -1;
+
+  /**
+   * Selection from entity browser will be appended to existing list.
+   *
+   * When this selection mode is used, then entity browser will not be
+   * populated with existing selection. Preselected list will be empty.
+   *
+   * Note: This option is also used by "js/entity_browser.common.js".
+   */
+  const SELECTION_MODE_APPEND = 'selection_append';
+
+  /**
+   * Selection from entity browser will be prepended to existing list.
+   *
+   * When this selection mode is used, then entity browser will not be
+   * populated with existing selection. Preselected list will be empty.
+   *
+   * Note: This option is also used by "js/entity_browser.common.js".
+   */
+  const SELECTION_MODE_PREPEND = 'selection_prepend';
+
+  /**
+   * Selection from entity browser will replace existing.
+   *
+   * When this selection mode is used, then entity browser will be populated
+   * with existing selection and returned selected list will replace existing
+   * selection. This option requires entity browser selection display with
+   * preselection support.
+   *
+   * Note: This option is also used by "js/entity_browser.common.js".
+   */
+  const SELECTION_MODE_EDIT = 'selection_edit';
 
   /**
    * {@inheritdoc}
@@ -45,13 +81,52 @@ class EntityBrowserElement extends FormElement {
     return [
       '#input' => TRUE,
       '#tree' => TRUE,
-      '#cardinality' => $this::CARDINALITY_UNLIMITED,
+      '#cardinality' => static::CARDINALITY_UNLIMITED,
+      '#selection_mode' => static::SELECTION_MODE_APPEND,
       '#process' => [[$class, 'processEntityBrowser']],
       '#default_value' => [],
       '#entity_browser_validators' => [],
       '#attached' => ['library' => ['entity_browser/common']],
-      '#selection_mode' => 'append',
     ];
+  }
+
+  /**
+   * Get selection mode options.
+   *
+   * @return array
+   *   Selection mode options.
+   */
+  public static function getSelectionModeOptions() {
+    return [
+      static::SELECTION_MODE_APPEND => t('Append to selection'),
+      static::SELECTION_MODE_PREPEND => t('Prepend selection'),
+      static::SELECTION_MODE_EDIT => t('Edit selection'),
+    ];
+  }
+
+  /**
+   * Check whether entity browser should be available for selection of entities.
+   *
+   * @param string $selection_mode
+   *   Used selection mode.
+   * @param int $cardinality
+   *   Used cardinality.
+   * @param int $preselection_size
+   *   Preseletion size, if it's available.
+   *
+   * @return bool
+   *   Returns positive if entity browser can be used.
+   */
+  public static function isEntityBrowserAvailable($selection_mode, $cardinality, $preselection_size) {
+    if ($selection_mode == static::SELECTION_MODE_EDIT) {
+      return TRUE;
+    }
+
+    $cardinality_exceeded =
+      $cardinality != static::CARDINALITY_UNLIMITED
+      && $preselection_size >= $cardinality;
+
+    return !$cardinality_exceeded;
   }
 
   /**
@@ -66,11 +141,19 @@ class EntityBrowserElement extends FormElement {
       $entity_browser = $element['#entity_browser'];
     }
 
+    // Propagate selection if edit selection mode is used.
+    $entity_browser_preselected_entities = [];
+    if ($element['#selection_mode'] === static::SELECTION_MODE_EDIT) {
+      $entity_browser->getSelectionDisplay()->checkPreselectionSupport();
+
+      $entity_browser_preselected_entities = $element['#default_value'];
+    }
+
     $default_value = implode(' ', array_map(
       function (EntityInterface $item) {
         return $item->getEntityTypeId() . ':' . $item->id();
       },
-      $element['#default_value']
+      $entity_browser_preselected_entities
     ));
     $validators = array_merge(
       $element['#entity_browser_validators'],
@@ -86,7 +169,10 @@ class EntityBrowserElement extends FormElement {
       $element['entity_browser'],
       $form_state,
       $complete_form,
-      ['validators' => $validators, 'selected_entities' => $element['#default_value']]
+      [
+        'validators' => $validators,
+        'selected_entities' => $entity_browser_preselected_entities,
+      ]
     );
 
     $hidden_id = Html::getUniqueId($element['#id'] . '-target');
@@ -101,8 +187,8 @@ class EntityBrowserElement extends FormElement {
     $element['#attached']['drupalSettings']['entity_browser'] = [
       $entity_browser->getDisplay()->getUuid() => [
         'cardinality' => $element['#cardinality'],
+        'selection_mode' => $element['#selection_mode'],
         'selector' => '#' . $hidden_id,
-        'selectionMode' => $element['#selection_mode'],
       ],
     ];
 

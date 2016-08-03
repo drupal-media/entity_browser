@@ -15,7 +15,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @EntityBrowserSelectionDisplay(
  *   id = "multi_step_display",
  *   label = @Translation("Multi step selection display"),
- *   description = @Translation("Show current selection display and delivers selected entities.")
+ *   description = @Translation("Show current selection display and delivers selected entities."),
+ *   acceptPreselection = TRUE
  * )
  */
 class MultiStepDisplay extends SelectionDisplayBase {
@@ -38,7 +39,7 @@ class MultiStepDisplay extends SelectionDisplayBase {
    *   The plugin implementation definition.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   Event dispatcher service.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager service.
    * @param \Drupal\entity_browser\FieldWidgetDisplayManager $field_display_manager
    *   Field widget display plugin manager.
@@ -101,7 +102,7 @@ class MultiStepDisplay extends SelectionDisplayBase {
         $display = ['#markup' => $display];
       }
 
-      $form['selected']['items_' . $entity->id()] = [
+      $form['selected']['items_' . $entity->id() . '_' . $id] = [
         '#theme_wrappers' => ['container'],
         '#attributes' => [
           'class' => ['item-container'],
@@ -112,7 +113,7 @@ class MultiStepDisplay extends SelectionDisplayBase {
           '#type' => 'submit',
           '#value' => $this->t('Remove'),
           '#submit' => [[get_class($this), 'removeItemSubmit']],
-          '#name' => 'remove_' . $entity->id(),
+          '#name' => 'remove_' . $entity->id() . '_' . $id,
           '#attributes' => [
             'data-row-id' => $id,
             'data-remove-entity' => 'items_' . $entity->id(),
@@ -135,7 +136,8 @@ class MultiStepDisplay extends SelectionDisplayBase {
       '#type' => 'button',
       '#value' => $this->t('Show selected'),
       '#attributes' => [
-        'class' => ['entity-browser-show-selection']],
+        'class' => ['entity-browser-show-selection'],
+      ],
       '#access' => empty($selected_entities) ? FALSE : TRUE,
     ];
 
@@ -146,13 +148,18 @@ class MultiStepDisplay extends SelectionDisplayBase {
    * Submit callback for remove buttons.
    *
    * @param array $form
+   *   Form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Form state.
    */
   public static function removeItemSubmit(array &$form, FormStateInterface $form_state) {
     $triggering_element = $form_state->getTriggeringElement();
 
     // Remove weight of entity being removed.
-    $form_state->unsetValue(['selected', $triggering_element['#attributes']['data-remove-entity']]);
+    $form_state->unsetValue([
+      'selected',
+      $triggering_element['#attributes']['data-remove-entity'] . '_' . $triggering_element['#attributes']['data-row-id'],
+    ]);
 
     // Remove entity itself.
     $selected_entities = &$form_state->get(['entity_browser', 'selected_entities']);
@@ -186,9 +193,11 @@ class MultiStepDisplay extends SelectionDisplayBase {
 
       // If we added new entities to the selection at this step we won't have
       // weights for them so we have to fake them.
-      if (sizeof($weights) < sizeof($selected_entities)) {
-        for ($new_weigth = (max($weights) + 1); $new_weigth < sizeof($selected_entities); $new_weigth++) {
-          $weights[] = $new_weigth;
+      $diff_selected_size = count($selected_entities) - count($weights);
+      if ($diff_selected_size > 0) {
+        $max_weight = (max($weights) + 1);
+        for ($new_weight = $max_weight; $new_weight < ($max_weight + $diff_selected_size); $new_weight++) {
+          $weights[] = $new_weight;
         }
       }
 

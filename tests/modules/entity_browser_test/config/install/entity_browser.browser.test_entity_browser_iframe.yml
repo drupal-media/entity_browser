@@ -9,8 +9,13 @@ display_configuration:
   height: '500'
   link_text: 'Select entities'
   auto_open: false
-selection_display: no_display
-selection_display_configuration: {  }
+selection_display: multi_step_display
+selection_display_configuration:
+  entity_type: file
+  display: label
+  display_settings: {  }
+  select_text: 'Use selected'
+  selection_hidden: false
 widget_selector: tabs
 widget_selector_configuration: {  }
 widgets:

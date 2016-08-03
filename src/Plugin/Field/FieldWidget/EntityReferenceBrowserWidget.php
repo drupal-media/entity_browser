@@ -11,7 +11,6 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -114,7 +113,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       'field_widget_edit' => TRUE,
       'field_widget_remove' => TRUE,
       'field_widget_display_settings' => [],
-      'selection_mode' => 'append',
+      'selection_mode' => EntityBrowserElement::SELECTION_MODE_APPEND,
     ) + parent::defaultSettings();
   }
 
@@ -179,9 +178,9 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
 
     $element['selection_mode'] = [
       '#title' => $this->t('Selection mode'),
-      '#description' => $this->t('Determines whether newly added entities are prepended on top of the list or appended to the end of it after they were selected.'),
+      '#description' => $this->t('Determines how selection in entity browser will be handled. Will selection be appended/prepended or it will be replaced in case of editing.'),
       '#type' => 'select',
-      '#options' => $this->selectionModeOptions(),
+      '#options' => EntityBrowserElement::getSelectionModeOptions(),
       '#default_value' => $this->getSetting('selection_mode'),
     ];
 
@@ -282,7 +281,6 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
     $entity_type = $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type');
     $entity_storage = $this->entityTypeManager->getStorage($entity_type);
 
-    $ids = [];
     $entities = [];
 
     // Determine if we're submitting and if submit came from this widget.
@@ -319,8 +317,17 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
     }
     // IDs from a previous request might be saved in the form state.
     elseif ($form_state->has(['entity_browser_widget', $this->getFormStateKey($items)])) {
-      $ids = $form_state->get(['entity_browser_widget', $this->getFormStateKey($items)]);
-      $entities = $entity_storage->loadMultiple($ids);
+      $stored_ids = $form_state->get(['entity_browser_widget', $this->getFormStateKey($items)]);
+      $indexed_entities = $entity_storage->loadMultiple($stored_ids);
+
+      // Selection can contain same entity multiple times. Since loadMultiple()
+      // returns unique list of entities, it's necessary to recreate list of
+      // entities in order to preserve selection of duplicated entities.
+      foreach ($stored_ids as $entity_id) {
+        if (isset($indexed_entities[$entity_id])) {
+          $entities[] = $indexed_entities[$entity_id];
+        }
+      }
     }
     // We are loading for for the first time so we need to load any existing
     // values that might already exist on the entity. Also, remove any leftover
@@ -330,13 +337,20 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
         if (isset($item->target_id)) {
           $entity = $entity_storage->load($item->target_id);
           if (!empty($entity)) {
-            $entities[$item->target_id] = $entity;
+            $entities[] = $entity;
           }
         }
       }
-      $ids = array_keys($entities);
     }
-    $ids = array_filter($ids);
+
+    // Get correct ordered list of entity IDs.
+    $ids = array_map(
+      function (EntityInterface $entity) {
+        return $entity->id();
+      },
+      $entities
+    );
+
     // We store current entity IDs as we might need them in future requests. If
     // some other part of the form triggers an AJAX request with
     // #limit_validation_errors we won't have access to the value of the
@@ -360,10 +374,12 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
         '#id' => $hidden_id,
         // We need to repeat ID here as it is otherwise skipped when rendering.
         '#attributes' => ['id' => $hidden_id],
-        '#default_value' => array_map(
-          function (EntityInterface $item) { return $item->getEntityTypeId() . ':' . $item->id(); },
-          $entities
-        ),
+        '#default_value' => implode(' ', array_map(
+            function (EntityInterface $item) {
+              return $item->getEntityTypeId() . ':' . $item->id();
+            },
+            $entities
+        )),
         // #ajax is officially not supported for hidden elements but if we
         // specify event manually it works.
         '#ajax' => [
@@ -374,15 +390,20 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       ],
     ];
 
+    // Get configuration required to check entity browser availability.
     $cardinality = $this->fieldDefinition->getFieldStorageDefinition()->getCardinality();
-    if ($cardinality == FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED || count($ids) < $cardinality) {
+    $selection_mode = $this->getSetting('selection_mode');
+
+    // Enable entity browser if requirements for that are fulfilled.
+    if (EntityBrowserElement::isEntityBrowserAvailable($selection_mode, $cardinality, count($ids))) {
       $element['entity_browser'] = [
         '#type' => 'entity_browser',
         '#entity_browser' => $this->getSetting('entity_browser'),
         '#cardinality' => $cardinality,
+        '#selection_mode' => $selection_mode,
+        '#default_value' => $entities,
         '#entity_browser_validators' => ['entity_type' => ['type' => $entity_type]],
         '#custom_hidden_id' => $hidden_id,
-        '#selection_mode' => $this->getSetting('selection_mode'),
         '#process' => [
           ['\Drupal\entity_browser\Element\EntityBrowserElement', 'processEntityBrowser'],
           [get_called_class(), 'processEntityBrowser'],
@@ -458,25 +479,27 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    */
   public static function removeItemSubmit(&$form, FormStateInterface $form_state) {
     $triggering_element = $form_state->getTriggeringElement();
-    if (!empty($triggering_element['#attributes']['data-entity-id'])) {
+    if (!empty($triggering_element['#attributes']['data-entity-id']) && isset($triggering_element['#attributes']['data-row-id'])) {
       $id = $triggering_element['#attributes']['data-entity-id'];
+      $row_id = $triggering_element['#attributes']['data-row-id'];
       $parents = array_slice($triggering_element['#parents'], 0, -static::$deleteDepth);
       $array_parents = array_slice($triggering_element['#array_parents'], 0, -static::$deleteDepth);
 
       // Find and remove correct entity.
       $values = explode(' ', $form_state->getValue(array_merge($parents, ['target_id'])));
-      $values = array_filter(
-        $values,
-        function($item) use ($id) {
-          return $item != $id;
+      foreach ($values as $index => $item) {
+        if ($item == $id && $index == $row_id) {
+          array_splice($values, $index, 1);
+
+          break;
         }
-      );
-      $values = implode(' ', $values);
+      }
+      $target_id_value = implode(' ', $values);
 
       // Set new value for this widget.
       $target_id_element = &NestedArray::getValue($form, array_merge($array_parents, ['target_id']));
-      $form_state->setValueForElement($target_id_element, $values);
-      NestedArray::setValue($form_state->getUserInput(), $target_id_element['#parents'], $values);
+      $form_state->setValueForElement($target_id_element, $target_id_value);
+      NestedArray::setValue($form_state->getUserInput(), $target_id_element['#parents'], $target_id_value);
 
       // Rebuild form.
       $form_state->setRebuild();
@@ -507,7 +530,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       '#theme_wrappers' => ['container'],
       '#attributes' => ['class' => ['entities-list']],
       'items' => array_map(
-        function (ContentEntityInterface $entity) use ($field_widget_display, $details_id, $field_parents) {
+        function (ContentEntityInterface $entity, $row_id) use ($field_widget_display, $details_id, $field_parents) {
           $display = $field_widget_display->view($entity);
           if (is_string($display)) {
             $display = ['#markup' => $display];
@@ -517,6 +540,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
             '#attributes' => [
               'class' => ['item-container', Html::getClass($field_widget_display->getPluginId())],
               'data-entity-id' => $entity->getEntityTypeId() . ':' . $entity->id(),
+              'data-row-id' => $row_id,
             ],
             'display' => $display,
             'remove_button' => [
@@ -527,9 +551,12 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
                 'wrapper' => $details_id,
               ],
               '#submit' => [[get_class($this), 'removeItemSubmit']],
-              '#name' => $this->fieldDefinition->getName() . '_remove_' . $entity->id(),
+              '#name' => $this->fieldDefinition->getName() . '_remove_' . $entity->id() . '_' . $row_id,
               '#limit_validation_errors' => [array_merge($field_parents, [$this->fieldDefinition->getName()])],
-              '#attributes' => ['data-entity-id' => $entity->getEntityTypeId() . ':' . $entity->id()],
+              '#attributes' => [
+                'data-entity-id' => $entity->getEntityTypeId() . ':' . $entity->id(),
+                'data-row-id' => $row_id,
+              ],
               '#access' => (bool) $this->getSetting('field_widget_remove'),
             ],
             'edit_button' => [
@@ -552,7 +579,8 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
             ],
           ];
         },
-        $entities
+        $entities,
+        empty($entities) ? [] : range(0, count($entities) - 1)
       ),
     ];
   }
@@ -589,24 +617,30 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    */
   protected function summaryBase() {
     $summary = [];
+
     $entity_browser_id = $this->getSetting('entity_browser');
     if (empty($entity_browser_id)) {
-      return [t('No entity browser selected.')];
+      return [$this->t('No entity browser selected.')];
     }
     else {
       if ($browser = $this->entityTypeManager->getStorage('entity_browser')->load($entity_browser_id)) {
         $summary[] = $this->t('Entity browser: @browser', ['@browser' => $browser->label()]);
       }
       else {
-        drupal_set_message(t('Missing entity browser!'), 'error');
-        return [t('Missing entity browser!')];
+        drupal_set_message($this->t('Missing entity browser!'), 'error');
+        return [$this->t('Missing entity browser!')];
       }
     }
 
-    $summary[] = t(
-      'Selection mode: @mode',
-      ['@mode' => $this->selectionModeOptions()[$this->getSetting('selection_mode')]]
-    );
+    $selection_mode = $this->getSetting('selection_mode');
+    $selection_mode_options = EntityBrowserElement::getSelectionModeOptions();
+    if (isset($selection_mode_options[$selection_mode])) {
+      $summary[] = $this->t('Selection mode: @selection_mode', ['@selection_mode' => $selection_mode_options[$selection_mode]]);
+    }
+    else {
+      $summary[] = $this->t('Undefined selection mode.');
+    }
+
     return $summary;
   }
 
