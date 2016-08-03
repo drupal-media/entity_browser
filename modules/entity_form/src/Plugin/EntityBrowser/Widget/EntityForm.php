@@ -4,6 +4,7 @@ namespace Drupal\entity_browser_entity_form\Plugin\EntityBrowser\Widget;
 
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\ReplaceCommand;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -101,15 +102,22 @@ class EntityForm extends WidgetBase {
       return ['#markup' => $this->t('The settings for this widget (Entity type, Bundle or Form mode) are not configured correctly.')];
     }
 
-    return [
-      'inline_entity_form' => [
-        '#type' => 'inline_entity_form',
-        '#op' => 'add',
-        '#entity_type' => $this->configuration['entity_type'],
-        '#bundle' => $this->configuration['bundle'],
-        '#form_mode' => $this->configuration['form_mode'],
-      ],
+    $form = parent::getForm($original_form, $form_state, $aditional_widget_parameters);
+
+    // Pretend to be IEFs submit button.
+    $form['#submit'] = [['Drupal\inline_entity_form\ElementSubmit', 'trigger']];
+    $form['actions']['submit']['#ief_submit_trigger']  = TRUE;
+    $form['actions']['submit']['#ief_submit_trigger_all'] = TRUE;
+
+    $form['inline_entity_form'] = [
+      '#type' => 'inline_entity_form',
+      '#op' => 'add',
+      '#entity_type' => $this->configuration['entity_type'],
+      '#bundle' => $this->configuration['bundle'],
+      '#form_mode' => $this->configuration['form_mode'],
     ];
+
+    return $form;
   }
 
   /**
@@ -123,7 +131,14 @@ class EntityForm extends WidgetBase {
    * {@inheritdoc}
    */
   public function submit(array &$element, array &$form, FormStateInterface $form_state) {
-    $this->selectEntities($this->prepareEntities($form, $form_state), $form_state);
+    $entities = $this->prepareEntities($form, $form_state);
+    array_walk(
+      $entities,
+      function (EntityInterface $entity) {
+        $entity->save();
+      }
+    );
+    $this->selectEntities($entities, $form_state);
   }
 
   /**
