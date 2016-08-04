@@ -180,7 +180,7 @@ class EntityBrowserElement extends FormElement {
       '#type' => 'hidden',
       '#id' => $hidden_id,
       // We need to repeat ID here as it is otherwise skipped when rendering.
-      '#attributes' => ['id' => $hidden_id, 'class' => ['ed-target']],
+      '#attributes' => ['id' => $hidden_id, 'class' => ['eb-target']],
       '#default_value' => $default_value,
     ];
 

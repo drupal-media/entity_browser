@@ -13,7 +13,7 @@
    */
   Drupal.behaviors.entityBrowserEntityForm = {
     attach: function (context) {
-      $(context).find('.ief-entity-browser-value').once('ief-entity-browser-value').on('entity_browser_value_updated', Drupal.entityBrowserEntityForm.valuesUpdated);
+      $(context).find('.eb-target').once('ief-entity-browser-value').on('entity_browser_value_updated', Drupal.entityBrowserEntityForm.valuesUpdated);
     }
   };
 
