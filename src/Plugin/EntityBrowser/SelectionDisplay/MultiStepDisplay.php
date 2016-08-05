@@ -216,7 +216,11 @@ class MultiStepDisplay extends SelectionDisplayBase {
     $default_display_settings = $form_state->getValue('display_settings', $this->configuration['display_settings']);
     $default_display_settings += ['entity_type' => $default_entity_type];
 
-    $form['#prefix'] = '<div id="multi-step-form-wrapper">';
+    if ($form_state->isRebuilding()) {
+      $form['#prefix'] = '<div id="multi-step-form-wrapper">';
+    } else {
+      $form['#prefix'] .= '<div id="multi-step-form-wrapper">';
+    }
     $form['#suffix'] = '</div>';
 
     $entity_types = [];

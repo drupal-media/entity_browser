@@ -47,6 +47,7 @@ class MultistepDisplayTest extends WebTestBase {
     $this->drupalPostForm(NULL, [], 'Next');
     $this->drupalPostForm(NULL, [], 'Next');
 
+    $this->assertText('Selection display', 'Trail is shown.');
     $this->assertText('Select button text', 'Title is correct.');
     $this->assertText('Text to display on the entity browser select button.', 'Description is correct.');
     $this->assertRaw('Use selected', 'Default text is correct.');
