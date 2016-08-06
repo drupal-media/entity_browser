@@ -31,15 +31,17 @@
   Drupal.entityBrowserIFrame.linkClick = function () {
     var uuid = $(this).attr('data-uuid');
     var original_path = $(this).attr('data-original-path');
+    var iframeSettings = drupalSettings['entity_browser']['iframe'][uuid];
     var iframe = $(
       '<iframe />',
       {
-        'src': drupalSettings['entity_browser']['iframe'][uuid]['src'],
-        'width': drupalSettings['entity_browser']['iframe'][uuid]['width'],
-        'height': drupalSettings['entity_browser']['iframe'][uuid]['height'],
+        'src': iframeSettings['src'],
+        'width': iframeSettings['width'],
+        'height': iframeSettings['height'],
         'data-uuid': uuid,
         'data-original-path': original_path,
-        'name': 'entity_browser_iframe_' + drupalSettings['entity_browser']['iframe'][uuid]['entity_browser_id']
+        'name': 'entity_browser_iframe_' + iframeSettings['entity_browser_id'],
+        'id': 'entity_browser_iframe_' + iframeSettings['entity_browser_id']
       }
     );
 

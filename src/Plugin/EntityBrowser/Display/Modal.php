@@ -196,6 +196,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
 
     $field_name = $triggering_element['#parents'][0];
     $element_name = $this->configuration['entity_browser_id'];
+    $name = 'entity_browser_iframe_' . $element_name;
     $content = [
       '#type' => 'html_tag',
       '#tag' => 'iframe',
@@ -206,7 +207,8 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
         'height' => $this->configuration['height'] - 90,
         'frameborder' => 0,
         'style' => 'padding:0',
-        'name' => 'entity_browser_iframe_' . $element_name,
+        'name' => $name,
+        'id' => $name,
       ],
     ];
     $html = drupal_render($content);
