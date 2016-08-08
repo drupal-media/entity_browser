@@ -123,11 +123,11 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
 
     $this->getSession()->getPage()->checkField('entity_browser_select[file:' . $image->id() . ']');
     $this->getSession()->getPage()->pressButton('Select entities');
+    $this->getSession()->switchToIFrame();
+
+    $this->waitForAjaxToFinish();
 
     $this->assertSession()->pageTextContains('llama.jpg');
-    // Return from iframe to the node add page.
-    $this->getSession()->switchToIFrame();
-    $this->waitForAjaxToFinish();
 
     $this->getSession()->getPage()->clickLink('Select entities');
 
