@@ -46,6 +46,18 @@ entity_browser.browser.display.standalone:
   type: mapping
   label: 'Standalone display configuration'
   mapping:
+    width:
+      type: string
+      lable: 'Standalone width'
+    height:
+      type: string
+      label: 'Standalone height'
+    link_text:
+      type: string
+      label: 'Link text'
+    auto_open:
+      type: boolean
+      label: 'Auto open'
     path:
       type: string
       label: 'Page path'
@@ -66,6 +78,9 @@ entity_browser.browser.display.iframe:
     auto_open:
       type: boolean
       label: 'Auto open'
+    path:
+      type: string
+      label: 'Path'
 
 entity_browser.browser.display.modal:
   type: mapping
@@ -131,6 +146,17 @@ entity_browser.browser.selection_display.multi_step_display:
       type: boolean
       label: 'Selection hidden by default'
 
+entity_browser.browser.selection_display.view:
+  type: mapping
+  label: 'View display configuration'
+  mapping:
+    view:
+      type: string
+      label: 'View ID'
+    view_display:
+      type: string
+      label: 'View display ID'
+
 field.widget.settings.entity_browser_entity_reference:
   type: mapping
   label: 'Entity browser entity reference widget'
@@ -157,6 +183,9 @@ field.widget.settings.entity_browser_entity_reference:
         view_mode:
           type: string
           label: 'View mode'
+    selection_mode:
+      type: string
+      label: 'Selection mode'
 
 views.display.entity_browser:
   type: views_display

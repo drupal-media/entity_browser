@@ -6,3 +6,4 @@ package: Testing
 version: VERSION
 dependencies:
   - entity_browser
+  - file
