@@ -80,7 +80,7 @@ function entity_browser_entity_form_reference_form_validate(array &$reference_fo
     foreach ($attach_entities as $attach_entity) {
       foreach ($form_state->get(['inline_entity_form', $ief_id, 'entities']) as $key => $value) {
         if ($value['entity'] == $attach_entity) {
-          $form_state->setError($reference_form['entity_id'], t('The selected @label has already been added.', ['@label' => $labels['singular']]));
+          $form_state->setError($reference_form, t('The selected @label has already been added.', ['@label' => $labels['singular']]));
         }
       }
     }
