@@ -33,6 +33,20 @@
             return ajax.beforeSubmit(form_values, element_settings, options);
           };
         }
+
+        // Handle Enter key press in the views exposed form text fields: ensure
+        // that the correct button is used for the views exposed form submit.
+        // The default browser behavior for the Enter key press is to click the
+        // first found button. But there can be other buttons in the form, for
+        // example, ones added by the Tabs widget selector plugin.
+        views_instance.$exposed_form.once('submit-by-enter-key').find('input[type="text"]').each(function () {
+          $(this).on('keypress', function (event) {
+            if (event.keyCode == 13) {
+              event.preventDefault();
+              views_instance.$exposed_form.find('input[type="submit"]').first().click();
+            }
+          });
+        });
       }
     }
   };
