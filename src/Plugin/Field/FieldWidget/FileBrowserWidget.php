@@ -290,6 +290,7 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
         '#attributes' => [
           'class' => ['draggable'],
           'data-entity-id' => $entity->getEntityTypeId() . ':' . $entity_id,
+          'data-row-id' => $delta,
         ],
         'display' => $display,
         'filename' => ['#markup' => $entity->label()],
@@ -336,6 +337,10 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
           '#ajax' => [
             'url' => Url::fromRoute('entity_browser.edit_form', ['entity_type' => $entity->getEntityTypeId(), 'entity' => $entity_id]),
           ],
+          '#attributes' => [
+            'data-entity-id' => $entity->getEntityTypeId() . ':' . $entity->id(),
+            'data-row-id' => $delta,
+          ],
           '#access' => $can_edit,
         ],
         'remove_button' => [
@@ -349,8 +354,8 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
           '#name' => $field_machine_name . '_remove_' . $entity_id,
           '#limit_validation_errors' => [array_merge($field_parents, [$field_machine_name, 'target_id'])],
           '#attributes' => [
-              'data-entity-id' => $entity->getEntityTypeId() . ':' . $entity_id,
-              'data-row-id' => $weight
+            'data-entity-id' => $entity->getEntityTypeId() . ':' . $entity->id(),
+            'data-row-id' => $delta,
           ],
           '#access' => (bool) $widget_settings['field_widget_remove'],
         ],
