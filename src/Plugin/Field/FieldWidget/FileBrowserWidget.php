@@ -348,7 +348,10 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
           '#submit' => [[get_class($this), 'removeItemSubmit']],
           '#name' => $field_machine_name . '_remove_' . $entity_id,
           '#limit_validation_errors' => [array_merge($field_parents, [$field_machine_name, 'target_id'])],
-          '#attributes' => ['data-entity-id' => $entity->getEntityTypeId() . ':' . $entity_id],
+          '#attributes' => [
+              'data-entity-id' => $entity->getEntityTypeId() . ':' . $entity_id,
+              'data-row-id' => $weight
+          ],
           '#access' => (bool) $widget_settings['field_widget_remove'],
         ],
         '_weight' => [
