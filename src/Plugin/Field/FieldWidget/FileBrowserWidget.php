@@ -10,9 +10,9 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Image\ImageFactory;
 use Drupal\Core\Url;
 use Drupal\entity_browser\FieldWidgetDisplayManager;
+use Drupal\image\Entity\ImageStyle;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -54,13 +54,6 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
   protected $configFactory;
 
   /**
-   * The image factory service.
-   *
-   * @var \Drupal\Core\Image\ImageFactory
-   */
-  protected $imageFactory;
-
-  /**
    * The display repository service.
    *
    * @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface
@@ -93,12 +86,11 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
    * @param \Drupal\Core\Entity\EntityDisplayRepositoryInterface $display_repository
    *   The entity display repository service.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityTypeManagerInterface $entity_type_manager, EventDispatcherInterface $event_dispatcher, FieldWidgetDisplayManager $field_display_manager, ConfigFactoryInterface $config_factory, ImageFactory $image_factory, EntityDisplayRepositoryInterface $display_repository) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityTypeManagerInterface $entity_type_manager, EventDispatcherInterface $event_dispatcher, FieldWidgetDisplayManager $field_display_manager, ConfigFactoryInterface $config_factory, EntityDisplayRepositoryInterface $display_repository) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings, $entity_type_manager, $event_dispatcher, $field_display_manager);
     $this->entityTypeManager = $entity_type_manager;
     $this->fieldDisplayManager = $field_display_manager;
     $this->configFactory = $config_factory;
-    $this->imageFactory = $image_factory;
     $this->displayRepository = $display_repository;
   }
 
@@ -116,7 +108,6 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
       $container->get('event_dispatcher'),
       $container->get('plugin.manager.entity_browser.field_widget_display'),
       $container->get('config.factory'),
-      $container->get('image.factory'),
       $container->get('entity_display.repository')
     );
   }
@@ -143,6 +134,8 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $element = parent::settingsForm($form, $form_state);
 
+    $has_view_builder = $this->entityTypeManager->getDefinition('file')->hasViewBuilderClass();
+
     $element['field_widget_display']['#access'] = FALSE;
     $element['field_widget_display_settings']['#access'] = FALSE;
 
@@ -151,6 +144,7 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
       '#type' => 'select',
       '#default_value' => $this->getSetting('view_mode'),
       '#options' => $this->displayRepository->getViewModeOptions('file'),
+      '#access' => $has_view_builder,
     ];
 
     $element['preview_image_style'] = [
@@ -160,7 +154,7 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
       '#default_value' => $this->getSetting('preview_image_style'),
       '#description' => $this->t('The preview image will be shown while editing the content. Only relevant if using the default file view mode.'),
       '#weight' => 15,
-      '#access' => $this->fieldDefinition->getType() == 'image',
+      '#access' => !$has_view_builder && $this->fieldDefinition->getType() == 'image',
     ];
 
     return $element;
@@ -174,16 +168,16 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
     $view_mode = $this->getSetting('view_mode');
     $image_style_setting = $this->getSetting('preview_image_style');
 
-    if ($this->fieldDefinition->getType() == 'image' && $view_mode == 'default') {
-      $image_styles = image_style_options(FALSE);
-      // Styles could be lost because of enabled/disabled modules that defines
-      // their styles in code.
-      if (isset($image_styles[$image_style_setting])) {
-        $preview_image_style = $this->t('Preview image style: @style', ['@style' => $image_styles[$image_style_setting]]);
-      }
-      else {
-        $preview_image_style = $this->t('No preview image');
-      }
+    if ($this->entityTypeManager->getDefinition('file')->hasViewBuilderClass()) {
+      $preview_image_style = $this->t('Preview with @view_mode', ['@view_mode' => $view_mode]);
+    }
+    // Styles could be lost because of enabled/disabled modules that defines
+    // their styles in code.
+    elseif ($this->fieldDefinition->getType() == 'image' && $image_style = ImageStyle::load($image_style_setting)) {
+      $preview_image_style = $this->t('Preview image style: @style', ['@style' => $image_style->label()]);
+    }
+    else {
+      $preview_image_style = $this->t('No preview image');
     }
     array_unshift($summary, $preview_image_style);
 
@@ -209,6 +203,7 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
     $widget_settings = $this->getSettings();
     $view_mode = $widget_settings['view_mode'];
     $can_edit = (bool) $widget_settings['field_widget_edit'];
+    $has_view_builder = $this->entityTypeManager->getDefinition('file')->hasViewBuilderClass();
 
     $delta = 0;
 
@@ -216,13 +211,6 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
 
     $current = [
       '#type' => 'table',
-      '#header' => [
-        $this->t('Preview'),
-        $this->t('Filename'),
-        $this->t('Metadata'),
-        ['data' => $this->t('Operations'), 'colspan' => 2],
-        $this->t('Order', [], ['context' => 'Sort order']),
-      ],
       '#empty' => $this->t('No files yet'),
       '#attributes' => ['class' => ['entities-list']],
       '#tabledrag' => [
@@ -233,6 +221,22 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
         ],
       ],
     ];
+
+    if ($has_view_builder || $field_type == 'image' && !empty($widget_settings['preview_image_style'])) {
+      // Had the preview column if we have one.
+      $current['#header'][] = $this->t('Preview');
+    }
+
+    // Add the filename if there is no view builder.
+    if (!$has_view_builder) {
+      $current['#header'][] = $this->t('Filename');
+    }
+
+    // Add the remaining columns.
+    $current['#header'][] = $this->t('Metadata');
+    $current['#header'][] = ['data' => $this->t('Operations'), 'colspan' => 2];
+    $current['#header'][] = $this->t('Order', [], ['context' => 'Sort order']);
+
     /** @var \Drupal\file\FileInterface[] $entities */
     foreach ($entities as $entity) {
       // Check to see if this entity has an edit form. If not, the edit button
@@ -242,29 +246,6 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
       }
 
       $entity_id = $entity->id();
-      $uri = $entity->getFileUri();
-      if ($field_type == 'image' && $view_mode == 'default') {
-        $image = $this->imageFactory->get($uri);
-        if ($image->isValid()) {
-          $width = $image->getWidth();
-          $height = $image->getHeight();
-        }
-        else {
-          $width = $height = NULL;
-        }
-
-        $display = [
-          '#weight' => -10,
-          '#theme' => 'image_style',
-          '#width' => $width,
-          '#height' => $height,
-          '#style_name' => $widget_settings['preview_image_style'],
-          '#uri' => $uri,
-        ];
-      }
-      else {
-        $display = $this->entityTypeManager->getViewBuilder('file')->view($entity, $view_mode);
-      }
 
       // Find the default description.
       $description = '';
@@ -272,6 +253,8 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
       $alt = '';
       $title = '';
       $weight = $delta;
+      $width = 0;
+      $height = 0;
       foreach ($this->items as $item) {
         if ($item->target_id == $entity_id) {
           if ($field_type == 'file') {
@@ -281,6 +264,8 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
           elseif ($field_type == 'image') {
             $alt = $item->alt;
             $title = $item->title;
+            $width = $item->width;
+            $height = $item->height;
           }
           $weight = $item->_weight ?: $delta;
         }
@@ -292,8 +277,30 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
           'data-entity-id' => $entity->getEntityTypeId() . ':' . $entity_id,
           'data-row-id' => $delta,
         ],
-        'display' => $display,
-        'filename' => ['#markup' => $entity->label()],
+      ];
+
+      // Provide a rendered entity if a view builder is available.
+      if ($has_view_builder) {
+        $current[$entity_id]['display'] = $this->entityTypeManager->getViewBuilder('file')->view($entity, $view_mode);
+      }
+      // For images, support a preview image style as an alternative.
+      elseif ($field_type == 'image' && !empty($widget_settings['preview_image_style'])) {
+        $uri = $entity->getFileUri();
+        $current[$entity_id]['display'] = [
+          '#weight' => -10,
+          '#theme' => 'image_style',
+          '#width' => $width,
+          '#height' => $height,
+          '#style_name' => $widget_settings['preview_image_style'],
+          '#uri' => $uri,
+        ];
+      }
+      // Assume that the file name is part of the preview output if
+      // file entity is installed, do not show this column in that case.
+      if (!$has_view_builder) {
+        $current[$entity_id]['filename'] = ['#markup' => $entity->label()];
+      }
+      $current[$entity_id] += [
         'meta' => [
           'display_field' => [
             '#type' => 'checkbox',
