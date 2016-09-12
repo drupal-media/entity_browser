@@ -52,7 +52,7 @@ class EntityBrowserController extends ControllerBase {
       // Also refresh the widget if "details_id" is provided.
       $details_id = $request->query->get('details_id');
       if (!empty($details_id)) {
-        $response ->addCommand(new ValueUpdatedCommand($details_id));
+        $response->addCommand(new ValueUpdatedCommand($details_id));
       }
       return $response;
     }

@@ -336,6 +336,7 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
           '#value' => $this->t('Edit'),
           '#ajax' => [
             'url' => Url::fromRoute('entity_browser.edit_form', ['entity_type' => $entity->getEntityTypeId(), 'entity' => $entity_id]),
+            'options' => ['query' => ['details_id' => $details_id]],
           ],
           '#attributes' => [
             'data-entity-id' => $entity->getEntityTypeId() . ':' . $entity->id(),
