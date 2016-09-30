@@ -223,7 +223,7 @@ class ConfigUITest extends WebTestBase {
     $this->assertFieldById('edit-width', '100', 'Correct value for width found.');
     $this->assertFieldById('edit-height', '100', 'Correct value for height found.');
     $this->assertFieldById('edit-link-text', 'All animals are created equal', 'Correct value for link text found.');
-    $this->assertFieldChecked('edit-auto-open', 'Auto open is enabled.');
+    $this->assertFieldChecked('edit-auto-open-1', 'Auto open is enabled.');
 
     $this->drupalPostForm(NULL, [], 'Next');
     $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/widget_selector', ['query' => ['js' => 'nojs']]);
