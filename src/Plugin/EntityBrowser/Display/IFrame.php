@@ -228,26 +228,16 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
       '#default_value' => $configuration['height'],
     ];
 
-    $form['auto_open'] = [
-      '#type' => 'radios',
-      '#title' => $this->t('Initial state of the entity browser'),
-      '#options' => [
-        1 => $this->t('Show the entity browser immediately'),
-        0 => $this->t('The user must click a link to show the entity browser'),
-      ],
-      '#default_value' => $configuration['auto_open'],
-    ];
-
     $form['link_text'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Link text'),
       '#default_value' => $configuration['link_text'],
-      '#states' => [
-        // Only show this field when the 'auto_open' radios is set to 0.
-        'visible' => [
-          ':input[name="auto_open"]' => ['value' => 0],
-        ],
-      ],
+    ];
+
+    $form['auto_open'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Auto open entity browser'),
+      '#default_value' => $configuration['auto_open'],
     ];
 
     return $form;

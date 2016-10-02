@@ -4,7 +4,6 @@ type: module
 package: Media
 core: 8.x
 test_dependencies:
-  - ctools:ctools
-  - token:ctools
-  - inline_entity_form:inline_entity_form
+  - ctools
+  - token
 configure: entity.entity_browser.collection
