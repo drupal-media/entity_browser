@@ -36,7 +36,7 @@ abstract class EntityBrowserJavascriptTestBase extends JavascriptTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  protected function setUp() {
     parent::setUp();
 
     $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);

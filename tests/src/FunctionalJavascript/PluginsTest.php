@@ -78,6 +78,15 @@ class PluginsTest extends EntityBrowserJavascriptTestBase {
     // Tests view widget with drop down widget selector.
     $this->getEntityBrowser('test_entity_browser_file', 'iframe', 'drop_down', 'no_display');
 
+    // DropDown widget selector does not work with exposed view filter. This is
+    // a known bug and we need to remove exposed filters from the view until
+    // that is fixed.
+    /** @var \Drupal\views\Entity\View $view */
+    $view = $this->container->get('entity_type.manager')->getStorage('view')->load('files_entity_browser');
+    $display = &$view->getDisplay('default');
+    $display['display_options']['filters'] = [];
+    $view->save();
+
     $this->drupalGet('node/add/article');
     $this->getSession()->getPage()->clickLink('Select entities');
     $this->getSession()->switchToIFrame('entity_browser_iframe_test_entity_browser_file');

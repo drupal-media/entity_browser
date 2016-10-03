@@ -27,6 +27,7 @@ iframe_selection:
     js/entity_browser.iframe_selection.js: {}
   dependencies:
     - core/drupalSettings
+    - core/jquery
 
 entity_reference:
   version: VERSION
