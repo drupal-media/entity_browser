@@ -378,6 +378,8 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
         ],
       ];
 
+      $current['#attached']['library'][] = 'entity_browser/file_browser';
+
       $delta++;
     }
 

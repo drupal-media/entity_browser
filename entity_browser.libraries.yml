@@ -38,6 +38,12 @@ entity_reference:
     - entity_browser/entity_list
     - core/jquery.ui.sortable
 
+file_browser:
+  version: VERSION
+  css:
+    component:
+      css/entity_browser.file_browser.css: {}
+
 modal:
   version: VERSION
   js:
