@@ -187,6 +187,42 @@ field.widget.settings.entity_browser_entity_reference:
       type: string
       label: 'Selection mode'
 
+field.widget.settings.entity_browser_file:
+  type: mapping
+  label: 'Entity browser file widget'
+  mapping:
+    entity_browser:
+      type: string
+      label: 'Entity Browser'
+    field_widget_display:
+      type: string
+      label: 'Field widget display'
+    field_widget_edit:
+      type: boolean
+      label: 'Field widget edit'
+    field_widget_remove:
+      type: boolean
+      label: 'Field widget remove'
+    open:
+      type: boolean
+      label: 'Open'
+    field_widget_display_settings:
+      type: mapping
+      label: 'Field widget display settings'
+      mapping:
+        view_mode:
+          type: string
+          label: 'View mode'
+    selection_mode:
+      type: string
+      label: 'Selection mode'
+    view_mode:
+      type: string
+      label: 'View mode'
+    preview_image_style:
+      type: string
+      label: 'Preview image style'
+
 views.display.entity_browser:
   type: views_display
   label: 'Entity browser display options'
