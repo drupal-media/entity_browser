@@ -4,5 +4,5 @@ type: module
 package: Media
 core: 8.x
 dependencies:
-  - entity_browser
-  - inline_entity_form
+  - entity_browser:entity_browser
+  - inline_entity_form:inline_entity_form
