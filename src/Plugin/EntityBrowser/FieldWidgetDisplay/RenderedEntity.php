@@ -80,8 +80,8 @@ class RenderedEntity extends FieldWidgetDisplayBase implements ContainerFactoryP
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
     $options = [];
-    foreach ($this->entityDisplayRepository->getViewModes($this->configuration['entity_type']) as $id => $view_mode) {
-      $options[$id] = $view_mode['label'];
+    foreach ($this->entityDisplayRepository->getViewModeOptions($this->configuration['entity_type']) as $id => $view_mode_label) {
+      $options[$id] = $view_mode_label;
     }
 
     return [
