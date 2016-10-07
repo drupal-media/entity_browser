@@ -1,0 +1,10 @@
+/**
+ * @file
+ * Styles for the iFrame Display Plugin.
+ */
+
+/* Remove the border on our iframe element. */
+
+.entity-browser-iframe-container iframe {
+  border: none;
+}

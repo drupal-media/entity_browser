@@ -134,6 +134,8 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
       $this->entity_browser->getDisplay()->addAjax($form);
     }
 
+    $form['#attached']['library'][] = 'entity_browser/entity_browser';
+
     return $form;
   }
 

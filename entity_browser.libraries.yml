@@ -6,6 +6,12 @@ common:
     - core/underscore
     - core/drupal.dialog.ajax
 
+entity_browser:
+  version: VERSION
+  css:
+    theme:
+      css/entity_browser.entity_browser.css: {}
+
 entity_list:
   version: VERSION
   css:
@@ -14,6 +20,9 @@ entity_list:
 
 iframe:
   version: VERSION
+  css:
+    theme:
+      css/entity_browser.iframe.css: {}
   js:
     js/entity_browser.iframe.js: {}
   dependencies:
