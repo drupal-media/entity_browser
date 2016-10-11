@@ -54,6 +54,20 @@ $connection->insert('config')
   ])
   ->execute();
 
+$config = Yaml::decode(file_get_contents(__DIR__ . '/../../modules/entity_browser_test/config/install/views.view.test_deprecated_field.yml'));
+$connection->insert('config')
+  ->fields([
+    'collection',
+    'name',
+    'data',
+  ])
+  ->values([
+    'collection' => '',
+    'name' => 'views.view.test_deprecated_field',
+    'data' => serialize($config),
+  ])
+  ->execute();
+
 // Update core.extension.
 $extensions = $connection->select('config')
   ->fields('config', ['data'])
