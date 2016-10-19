@@ -172,6 +172,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
 
     $element['open'] = [
       '#title' => $this->t('Show widget details as open by default'),
+      '#description' => $this->t('If marked, the fieldset container that wraps the browser on the entity form will be loaded initially expanded.'),
       '#type' => 'checkbox',
       '#default_value' => $this->getSetting('open'),
     ];
