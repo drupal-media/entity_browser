@@ -673,4 +673,19 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function calculateDependencies() {
+    $dependencies = parent::calculateDependencies();
+
+    // If an entity browser is being used in this widget, add it as a config
+    // dependency.
+    if ($browser_name = $this->getSetting('entity_browser')) {
+      $dependencies['config'][] = 'entity_browser.browser.' . $browser_name;
+    }
+
+    return $dependencies;
+  }
+
 }
