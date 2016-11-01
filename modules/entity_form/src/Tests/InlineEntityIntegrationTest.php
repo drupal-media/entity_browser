@@ -35,6 +35,7 @@ class InlineEntityIntegrationTest extends WebTestBase {
     $this->drupalLogin($account);
     $this->drupalGet('admin/structure/types/manage/article/form-display');
     $edit = [
+      'fields[field_content_reference][region]' => 'content',
       'fields[field_content_reference][type]' => 'inline_entity_form_complex',
     ];
     $this->drupalPostForm(NULL, $edit, t('Save'));
