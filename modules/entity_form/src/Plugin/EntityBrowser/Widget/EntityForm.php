@@ -97,12 +97,12 @@ class EntityForm extends WidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function getForm(array &$original_form, FormStateInterface $form_state, array $aditional_widget_parameters) {
+  public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters) {
     if (empty($this->configuration['entity_type']) || empty($this->configuration['bundle'])  || empty($this->configuration['form_mode'])) {
       return ['#markup' => $this->t('The settings for this widget (Entity type, Bundle or Form mode) are not configured correctly.')];
     }
 
-    $form = parent::getForm($original_form, $form_state, $aditional_widget_parameters);
+    $form = parent::getForm($original_form, $form_state, $additional_widget_parameters);
 
     // Pretend to be IEFs submit button.
     $form['#submit'] = [['Drupal\inline_entity_form\ElementSubmit', 'trigger']];

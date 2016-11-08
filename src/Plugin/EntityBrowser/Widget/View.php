@@ -105,11 +105,11 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
     }
 
     if (!empty($this->configuration['arguments'])) {
-      if (!empty($aditional_widget_parameters['path_parts'])) {
+      if (!empty($additional_widget_parameters['path_parts'])) {
         $arguments = [];
         // Map configuration arguments with original path parts.
         foreach ($this->configuration['arguments'] as $argument) {
-          $arguments[] = isset($aditional_widget_parameters['path_parts'][$argument]) ? $aditional_widget_parameters['path_parts'][$argument] : '';
+          $arguments[] = isset($additional_widget_parameters['path_parts'][$argument]) ? $additional_widget_parameters['path_parts'][$argument] : '';
         }
         $view->setArguments(array_values($arguments));
       }

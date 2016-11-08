@@ -33,7 +33,7 @@ class DummyWidget extends WidgetBase {
   /**
    * {@inheritdoc}
    */
-  public function getForm(array &$original_form, FormStateInterface $form_state, array $aditional_widget_parameters) {
+  public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters) {
     return [
       '#markup' => $this->configuration['text'],
       '#parents' => [],
