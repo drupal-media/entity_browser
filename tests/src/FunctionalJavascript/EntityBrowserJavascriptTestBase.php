@@ -37,6 +37,17 @@ abstract class EntityBrowserJavascriptTestBase extends JavascriptTestBase {
   ];
 
   /**
+   * Permissions for user that will be logged-in for test.
+   *
+   * @var array
+   */
+  protected static $userPermissions = [
+    'access test_entity_browser_file entity browser pages',
+    'create article content',
+    'access content',
+  ];
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp() {
@@ -76,11 +87,7 @@ abstract class EntityBrowserJavascriptTestBase extends JavascriptTestBase {
       ],
     ])->save();
 
-    $account = $this->drupalCreateUser([
-      'access test_entity_browser_file entity browser pages',
-      'create article content',
-      'access content',
-    ]);
+    $account = $this->drupalCreateUser(static::$userPermissions);
     $this->drupalLogin($account);
   }
 
@@ -142,17 +149,20 @@ abstract class EntityBrowserJavascriptTestBase extends JavascriptTestBase {
    *
    * @param string $name
    *   The name of the image.
+   * @param string $extension
+   *   File extension.
    *
    * @return \Drupal\file\FileInterface
    *   Returns an image.
    */
-  protected function createFile($name) {
-    file_put_contents('public://' . $name . '.jpg', $this->randomMachineName());
+  protected function createFile($name, $extension = 'jpg') {
+    file_put_contents('public://' . $name . '.' . $extension, $this->randomMachineName());
 
     $image = File::create([
-      'filename' => $name . '.jpg',
-      'uri' => 'public://' . $name . '.jpg',
+      'filename' => $name . '.' . $extension,
+      'uri' => 'public://' . $name . '.' . $extension,
     ]);
+    $image->setPermanent();
     $image->save();
 
     return $image;

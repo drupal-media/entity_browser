@@ -601,6 +601,12 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
     $entity_type = $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type');
     $entity_storage = $this->entityTypeManager->getStorage($entity_type);
 
+    // Find IDs from target_id element (it stores selected entities in form).
+    // This was added to help solve a really edge casey bug in IEF.
+    if (($target_id_entities = $this->getEntitiesByTargetId($element, $form_state)) !== FALSE) {
+      return $target_id_entities;
+    }
+
     // Determine if we're submitting and if submit came from this widget.
     $is_relevant_submit = FALSE;
     if (($trigger = $form_state->getTriggeringElement())) {
@@ -638,12 +644,12 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
     // IDs from a previous request might be saved in the form state.
     elseif ($form_state->has([
       'entity_browser_widget',
-      $this->getFormStateKey($items)
+      $this->getFormStateKey($items),
     ])
     ) {
       $stored_ids = $form_state->get([
         'entity_browser_widget',
-        $this->getFormStateKey($items)
+        $this->getFormStateKey($items),
       ]);
       $indexed_entities = $entity_storage->loadMultiple($stored_ids);
 
@@ -686,6 +692,37 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
     }
 
     return $dependencies;
+  }
+
+  /**
+   * Get selected elements from target_id element on form.
+   *
+   * @param array $element
+   *   The form element.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
+   *
+   * @return \Drupal\Core\Entity\EntityInterface[]|false
+   *   Return list of entities if they are available or false.
+   */
+  protected function getEntitiesByTargetId(array $element, FormStateInterface $form_state) {
+    $target_id_element_path = array_merge(
+      $element['#field_parents'],
+      [$this->fieldDefinition->getName(), 'target_id']
+    );
+
+    if (!NestedArray::keyExists($form_state->getUserInput(), $target_id_element_path)) {
+      return FALSE;
+    }
+
+    // TODO Figure out how to avoid using raw user input.
+    $current_user_input = NestedArray::getValue($form_state->getUserInput(), $target_id_element_path);
+    if (!is_array($current_user_input)) {
+      $entities = EntityBrowserElement::processEntityIds($current_user_input);
+      return $entities;
+    }
+
+    return FALSE;
   }
 
 }
