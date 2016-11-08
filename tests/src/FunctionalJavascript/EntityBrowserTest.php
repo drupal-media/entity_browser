@@ -36,6 +36,18 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     $this->getSession()->getPage()->pressButton('Select entities');
 
     $this->assertSession()->pageTextContains('llama.jpg');
+    // Switch back to the main page.
+    $this->getSession()->switchToIFrame();
+    $this->waitForAjaxToFinish();
+    // Test the Edit functionality.
+    $this->assertSession()->buttonExists('Edit');
+    // @TODO Test the edit button.
+    // Test the Delete functionality.
+    $this->assertSession()->buttonExists('Remove');
+    $this->getSession()->getPage()->pressButton('Remove');
+    $this->waitForAjaxToFinish();
+    $this->assertSession()->pageTextNotContains('llama.jpg');
+    $this->assertSession()->linkExists('Select entities');
   }
 
   /**

@@ -90,6 +90,7 @@ class ImageFieldTest extends EntityBrowserJavascriptTestBase {
     $account = $this->drupalCreateUser([
       'access test_entity_browser_iframe_view entity browser pages',
       'create article content',
+      'edit own article content',
       'access content',
     ]);
     $this->drupalLogin($account);
@@ -128,6 +129,14 @@ class ImageFieldTest extends EntityBrowserJavascriptTestBase {
     $this->assertEquals($saved_alt, $alt_text);
     $saved_title = $node->get('field_image')[0]->title;
     $this->assertEquals($saved_title, $title_text);
+    // Test the Delete functionality.
+    $this->drupalGet('node/1/edit');
+    $this->assertSession()->buttonExists('Remove');
+    $this->getSession()->getPage()->pressButton('Remove');
+    $this->waitForAjaxToFinish();
+    // Image filename should not be present.
+    $this->assertSession()->pageTextNotContains('example.jpg');
+    $this->assertSession()->linkExists('Select entities');
   }
 
 }
