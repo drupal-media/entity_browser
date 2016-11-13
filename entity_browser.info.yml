@@ -8,4 +8,5 @@ test_dependencies:
   - token:token
   - inline_entity_form:inline_entity_form
   - media_entity:media_entity
+  - paragraphs:paragraphs
 configure: entity.entity_browser.collection
