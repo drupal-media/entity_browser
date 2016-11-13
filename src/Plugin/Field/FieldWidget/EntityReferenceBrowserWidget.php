@@ -490,7 +490,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
                 'wrapper' => $details_id,
               ],
               '#submit' => [[get_class($this), 'removeItemSubmit']],
-              '#name' => $this->fieldDefinition->getName() . '_remove_' . $entity->id() . '_' . $row_id,
+              '#name' => $this->fieldDefinition->getName() . '_remove_' . $entity->id() . '_' . $row_id . '_' . md5(json_encode($field_parents)),
               '#limit_validation_errors' => [array_merge($field_parents, [$this->fieldDefinition->getName()])],
               '#attributes' => [
                 'data-entity-id' => $entity->getEntityTypeId() . ':' . $entity->id(),

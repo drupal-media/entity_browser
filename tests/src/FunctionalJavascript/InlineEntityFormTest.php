@@ -139,7 +139,7 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
     $this->assertSame('file:1', $secondElement->getAttribute('data-entity-id'));
 
     // Test remove of element.
-    $page->pressButton('ief_media_bundle_file_field_remove_1_1');
+    $this->click('input[name*="ief_media_bundle_file_field_remove_1_1"]');
     $this->assertSession()->assertWaitOnAjaxRequest();
 
     $page->pressButton('Update Test File Media');
@@ -150,7 +150,7 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
 
     // Check that remote button does not exist for already removed entity.
     $this->assertSession()
-      ->elementNotExists('css', '[name="ief_media_bundle_file_field_remove_1_1"]');
+      ->elementNotExists('css', '[name*="ief_media_bundle_file_field_remove_1_1"]');
 
     // Test add inside Entity Browser.
     $page->clickLink('Select entities');

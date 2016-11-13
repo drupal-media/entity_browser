@@ -1,0 +1,15 @@
+name: 'Entity browser test paragraphs'
+type: module
+description: 'Test Paragraphs Integration.'
+core: 8.x
+package: Testing
+version: VERSION
+dependencies:
+  - entity_reference_revisions
+  - entity_browser
+  - menu_ui
+  - node
+  - paragraphs
+  - path
+  - views
+  - user
