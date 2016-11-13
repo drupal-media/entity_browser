@@ -38,7 +38,7 @@
 
         // Add a click event handler that submits the hidden input buttons.
         $tab.find('a').on('click', function (event) {
-          var buttonID = event.currentTarget.dataset.buttonId;
+          var buttonID = $(event.currentTarget).data().buttonId;
           $form.find('#' + buttonID).trigger('click');
           event.preventDefault();
         });
