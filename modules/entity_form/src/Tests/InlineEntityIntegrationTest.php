@@ -24,6 +24,16 @@ class InlineEntityIntegrationTest extends WebTestBase {
   ];
 
   /**
+   * {@inheritdoc}
+   */
+  protected function setUp() {
+    parent::setUp();
+    // Delete unnecessary entity browser.
+    $browser = $this->container->get('entity_type.manager')->getStorage('entity_browser')->load('entity_browser_test_entity_form');
+    $this->container->get('entity_type.manager')->getStorage('entity_browser')->delete([$browser]);
+  }
+
+  /**
    * Tests integration with Inline entity form.
    */
   public function testInlineEntityIntegration() {
