@@ -46,18 +46,6 @@ entity_browser.browser.display.standalone:
   type: mapping
   label: 'Standalone display configuration'
   mapping:
-    width:
-      type: string
-      lable: 'Standalone width'
-    height:
-      type: string
-      label: 'Standalone height'
-    link_text:
-      type: string
-      label: 'Link text'
-    auto_open:
-      type: boolean
-      label: 'Auto open'
     path:
       type: string
       label: 'Page path'
@@ -78,9 +66,6 @@ entity_browser.browser.display.iframe:
     auto_open:
       type: boolean
       label: 'Auto open'
-    path:
-      type: string
-      label: 'Path'
 
 entity_browser.browser.display.modal:
   type: mapping
@@ -137,8 +122,7 @@ entity_browser.browser.selection_display.multi_step_display:
       type: string
       label: 'Display'
     display_settings:
-      type: mapping
-      label: 'Display settings'
+      type: entity_browser.field_widget_display.[%parent.display]
     select_text:
       type: string
       label: 'Select text'
@@ -177,15 +161,22 @@ field.widget.settings.entity_browser_entity_reference:
       type: boolean
       label: 'Open'
     field_widget_display_settings:
-      type: mapping
-      label: 'Field widget display settings'
-      mapping:
-        view_mode:
-          type: string
-          label: 'View mode'
+      type: entity_browser.field_widget_display.[%parent.field_widget_display]
     selection_mode:
       type: string
       label: 'Selection mode'
+
+entity_browser.field_widget_display.label:
+  type: mapping
+  label: 'Entity label display config'
+
+entity_browser.field_widget_display.rendered_entity:
+  type: mapping
+  label: 'Rendered entity display config'
+  mapping:
+    view_mode:
+      type: string
+      label: 'View mode'
 
 field.widget.settings.entity_browser_file:
   type: mapping
@@ -194,9 +185,6 @@ field.widget.settings.entity_browser_file:
     entity_browser:
       type: string
       label: 'Entity Browser'
-    field_widget_display:
-      type: string
-      label: 'Field widget display'
     field_widget_edit:
       type: boolean
       label: 'Field widget edit'
@@ -206,13 +194,6 @@ field.widget.settings.entity_browser_file:
     open:
       type: boolean
       label: 'Open'
-    field_widget_display_settings:
-      type: mapping
-      label: 'Field widget display settings'
-      mapping:
-        view_mode:
-          type: string
-          label: 'View mode'
     selection_mode:
       type: string
       label: 'Selection mode'

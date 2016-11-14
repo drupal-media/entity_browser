@@ -52,6 +52,9 @@ class MultistepDisplayTest extends WebTestBase {
     $this->assertText('Text to display on the entity browser select button.', 'Description is correct.');
     $this->assertRaw('Use selected', 'Default text is correct.');
     $edit = [
+      'entity_type' => 'file',
+      'display' => 'label',
+      'selection_hidden' => 0,
       'select_text' => 'Use blah selected',
     ];
     $this->drupalPostForm(NULL, $edit, 'Next');

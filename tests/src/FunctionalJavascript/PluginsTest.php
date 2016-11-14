@@ -201,9 +201,6 @@ class PluginsTest extends EntityBrowserJavascriptTestBase {
   public function testStandaloneDisplay() {
     $image = $this->createFile('lama');
     $standalone_configuration = [
-      'width' => '650',
-      'height' => '500',
-      'link_text' => 'Select entities',
       'entity_browser_id' => 'test_entity_browser_file',
       'path' => 'test',
     ];

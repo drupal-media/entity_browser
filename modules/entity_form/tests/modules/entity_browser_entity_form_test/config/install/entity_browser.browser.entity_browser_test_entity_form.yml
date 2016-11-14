@@ -7,7 +7,6 @@ name: entity_browser_test_entity_form
 label: 'Entity Browser Test'
 display: iframe
 display_configuration:
-  path: /test_entity_browser
   width: '650'
   height: '500'
   link_text: 'Select entities'
