@@ -11,7 +11,7 @@
   // We need to access parent window, get it's jquery and find correct modal
   // element to trigger event on.
   parent.jQuery(parent.document)
-    .find('input[data-uuid*=' + drupalSettings.entity_browser.modal.uuid + ']')
+    .find(':input[data-uuid*=' + drupalSettings.entity_browser.modal.uuid + ']')
     .trigger('entities-selected', [drupalSettings.entity_browser.modal.uuid, drupalSettings.entity_browser.modal.entities])
     .unbind('entities-selected').show();
 
