@@ -85,8 +85,7 @@
       if (dialog.options.fluid) {
         var wWidth = $(window).width();
         // Check window width against dialog width.
-        if (wWidth < (dialog.options.maxWidth + 50)) {
-          // If there is a maxWidth, don't allow a bigger size.
+        if (wWidth > (dialog.options.maxWidth + 50)) {
           dialog.option('width', dialog.options.maxWidth);
         }
         else {
@@ -96,8 +95,7 @@
 
         var vHeight = $(window).height();
         // Check window width against dialog width.
-        if (vHeight < (dialog.options.maxHeight + 50)) {
-          // If there is a maxHeight, don't allow a bigger size.
+        if (vHeight > (dialog.options.maxHeight + 50)) {
           dialog.option('height', dialog.options.maxHeight);
         }
         else {
