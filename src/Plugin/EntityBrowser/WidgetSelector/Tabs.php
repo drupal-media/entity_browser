@@ -11,7 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @EntityBrowserWidgetSelector(
  *   id = "tabs",
  *   label = @Translation("Tabs"),
- *   description = @Translation("Displays entity browser widgets as tabs.")
+ *   description = @Translation("Creates horizontal tabs on the top of the entity browser, each tab representing one available widget.")
  * )
  */
 class Tabs extends WidgetSelectorBase {

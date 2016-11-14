@@ -13,7 +13,7 @@ use Drupal\views\Views;
  * @EntityBrowserSelectionDisplay(
  *   id = "view",
  *   label = @Translation("View selection display"),
- *   description = @Translation("Displays current selection in a View."),
+ *   description = @Translation("Use a pre-configured view as selection area."),
  *   acceptPreselection = TRUE
  * )
  */

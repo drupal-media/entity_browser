@@ -15,7 +15,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @EntityBrowserSelectionDisplay(
  *   id = "multi_step_display",
  *   label = @Translation("Multi step selection display"),
- *   description = @Translation("Show current selection display and delivers selected entities."),
+ *   description = @Translation("Shows the current selection display, allowing to mix elements selected through different widgets in several steps."),
  *   acceptPreselection = TRUE
  * )
  */

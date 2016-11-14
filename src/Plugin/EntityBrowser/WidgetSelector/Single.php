@@ -11,7 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @EntityBrowserWidgetSelector(
  *   id = "single",
  *   label = @Translation("Single widget"),
- *   description = @Translation("Displays first configured widget.")
+ *   description = @Translation("Displays only the first configured widget. Use this if you plan to have only one widget available.")
  * )
  */
 class Single extends WidgetSelectorBase {

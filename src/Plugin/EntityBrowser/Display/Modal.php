@@ -31,7 +31,7 @@ use Drupal\entity_browser\Events\AlterEntityBrowserDisplayData;
  * @EntityBrowserDisplay(
  *   id = "modal",
  *   label = @Translation("Modal"),
- *   description = @Translation("Displays entity browser in a Modal."),
+ *   description = @Translation("Displays the entity browser in a modal window."),
  *   uses_route = TRUE
  * )
  */

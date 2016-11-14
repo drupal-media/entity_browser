@@ -26,7 +26,7 @@ use Symfony\Component\HttpFoundation\Request;
  * @EntityBrowserDisplay(
  *   id = "iframe",
  *   label = @Translation("iFrame"),
- *   description = @Translation("Displays entity browser in an iFrame."),
+ *   description = @Translation("Displays the entity browser in an iFrame container embedded into the main page."),
  *   uses_route = TRUE
  * )
  */

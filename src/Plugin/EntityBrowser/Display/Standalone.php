@@ -12,7 +12,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @EntityBrowserDisplay(
  *   id = "standalone",
  *   label = @Translation("Standalone form"),
- *   description = @Translation("Displays entity browser as a standalone form."),
+ *   description = @Translation("Displays the entity browser as a standalone form. Only intended for testing or very specific use cases."),
  *   uses_route = TRUE
  * )
  */
