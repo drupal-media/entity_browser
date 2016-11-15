@@ -37,6 +37,9 @@
               .bind('entities-selected', fn).addClass('entity-browser-processed');
           }
         });
+        if (instance.auto_open) {
+          $('input[data-uuid="' + instance.uuid + '"]').click();
+        }
       });
     }
   };

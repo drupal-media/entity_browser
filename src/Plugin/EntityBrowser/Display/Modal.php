@@ -112,6 +112,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
       'width' => '650',
       'height' => '500',
       'link_text' => $this->t('Select entities'),
+      'auto_open' => FALSE,
     ] + parent::defaultConfiguration();
   }
 
@@ -166,6 +167,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
                   'uuid' => $this->getUuid(),
                   'js_callbacks' => $js_event->getCallbacks(),
                   'original_path' => $original_path,
+                  'auto_open' => $this->configuration['auto_open'],
                 ],
               ],
             ],
@@ -361,6 +363,11 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
       '#type' => 'textfield',
       '#title' => $this->t('Link text'),
       '#default_value' => $configuration['link_text'],
+    ];
+    $form['auto_open'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Auto open entity browser'),
+      '#default_value' => $configuration['auto_open'],
     ];
     return $form;
   }
