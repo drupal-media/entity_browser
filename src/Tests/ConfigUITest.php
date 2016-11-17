@@ -101,12 +101,18 @@ class ConfigUITest extends WebTestBase {
 
     // Widgets step.
     $this->assertUrl('/admin/config/content/entity_browser/test_entity_browser/widgets', ['query' => ['js' => 'nojs']]);
+    $this->assertText('The available plugins are:');
+    $this->assertText("Upload: Adds an upload field browser's widget.");
+    $this->assertText("View: Uses a view to provide entity listing in a browser's widget.");
+    $this->assertText("Entity form: Provides entity form widget.");
     $this->drupalPostAjaxForm(NULL, ['widget' => 'upload'], 'widget');
+    $this->assertText('Label (Upload)');
     $this->assertText('You can use tokens in the upload location.');
     $this->assertLink('Browse available tokens.');
 
     // Make sure that removing of widgets works.
     $this->drupalPostAjaxForm(NULL, ['widget' => 'view'], 'widget');
+    $this->assertText('Label (View)');
     $this->assertText('View : View display', 'View selection dropdown label found.');
     $this->assertRaw('- Select a view -', 'Empty option appears in the view selection dropdown.');
     $this->assertText('Submit button text', 'Widget submit button text element found.');
@@ -120,6 +126,7 @@ class ConfigUITest extends WebTestBase {
 
     // Make sure the "Entity form" widget has all available config elements.
     $this->drupalPostAjaxForm(NULL, ['widget' => 'entity_form'], 'widget');
+    $this->assertText('Label (Entity form)');
     $this->assertText('Entity type', 'Entity type select found on IEF widget.');
     $this->assertText('Bundle', 'Bundle select found on IEF widget.');
     $this->assertText('Form mode', 'Form mode select found on IEF widget.');
