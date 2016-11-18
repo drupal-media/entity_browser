@@ -21,6 +21,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Plugin implementation of the 'entity_reference' widget for entity browser.
@@ -61,6 +62,13 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
   protected static $deleteDepth = 4;
 
   /**
+   * The module handler interface.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
    * Constructs widget plugin.
    *
    * @param string $plugin_id
@@ -79,11 +87,14 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    *   Event dispatcher.
    * @param \Drupal\entity_browser\FieldWidgetDisplayManager $field_display_manager
    *   Field widget display plugin manager.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler service.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityTypeManagerInterface $entity_type_manager, EventDispatcherInterface $event_dispatcher, FieldWidgetDisplayManager $field_display_manager) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityTypeManagerInterface $entity_type_manager, EventDispatcherInterface $event_dispatcher, FieldWidgetDisplayManager $field_display_manager, ModuleHandlerInterface $module_handler) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->entityTypeManager = $entity_type_manager;
     $this->fieldDisplayManager = $field_display_manager;
+    $this->moduleHandler = $module_handler;
   }
 
   /**
@@ -98,7 +109,8 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       $configuration['third_party_settings'],
       $container->get('entity_type.manager'),
       $container->get('event_dispatcher'),
-      $container->get('plugin.manager.entity_browser.field_widget_display')
+      $container->get('plugin.manager.entity_browser.field_widget_display'),
+      $container->get('module_handler')
     );
   }
 
@@ -158,10 +170,17 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       ],
     ];
 
+    $edit_button_access = TRUE;
+    if ($entity_type->id() == 'file') {
+      // For entities of type "file", it only makes sense to have the edit
+      // button if the module "file_entity" is present.
+      $edit_button_access = $this->moduleHandler->moduleExists('file_entity');
+    }
     $element['field_widget_edit'] = [
       '#title' => $this->t('Display Edit button'),
       '#type' => 'checkbox',
       '#default_value' => $this->getSetting('field_widget_edit'),
+      '#access' => $edit_button_access,
     ];
 
     $element['field_widget_remove'] = [
@@ -471,6 +490,13 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       'items' => array_map(
         function (ContentEntityInterface $entity, $row_id) use ($field_widget_display, $details_id, $field_parents) {
           $display = $field_widget_display->view($entity);
+          $edit_button_access = $this->getSetting('field_widget_edit');
+          if ($entity->getEntityTypeId() == 'file') {
+            // On file entities, the "edit" button shouldn't be visible unless
+            // the module "file_entity" is present, which will allow them to be
+            // edited on their own form.
+            $edit_button_access &= $this->moduleHandler->moduleExists('file_entity');
+          }
           if (is_string($display)) {
             $display = ['#markup' => $display];
           }
@@ -514,7 +540,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
                   ],
                 ],
               ],
-              '#access' => (bool) $this->getSetting('field_widget_edit'),
+              '#access' => $edit_button_access,
             ],
           ];
         },

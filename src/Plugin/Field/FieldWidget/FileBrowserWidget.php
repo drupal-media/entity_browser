@@ -62,13 +62,6 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
   protected $displayRepository;
 
   /**
-   * The module handler interface.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
-   */
-  protected $moduleHandler;
-
-  /**
    * Constructs widget plugin.
    *
    * @param string $plugin_id
@@ -95,12 +88,11 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
    *   The module handler service.
    */
   public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityTypeManagerInterface $entity_type_manager, EventDispatcherInterface $event_dispatcher, FieldWidgetDisplayManager $field_display_manager, ConfigFactoryInterface $config_factory, EntityDisplayRepositoryInterface $display_repository, ModuleHandlerInterface $module_handler) {
-    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings, $entity_type_manager, $event_dispatcher, $field_display_manager);
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings, $entity_type_manager, $event_dispatcher, $field_display_manager, $module_handler);
     $this->entityTypeManager = $entity_type_manager;
     $this->fieldDisplayManager = $field_display_manager;
     $this->configFactory = $config_factory;
     $this->displayRepository = $display_repository;
-    $this->moduleHandler = $module_handler;
   }
 
   /**
