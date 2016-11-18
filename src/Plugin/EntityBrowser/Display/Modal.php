@@ -368,6 +368,7 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
       '#type' => 'checkbox',
       '#title' => $this->t('Auto open entity browser'),
       '#default_value' => $configuration['auto_open'],
+      '#description' => $this->t('Will open Entity browser modal as soon as page is loaded, which might cause unwanted results. Should be used only in very specific cases such as Inline entity form integration. It is also advised not to use Entity browsers with this option enabled more than once per page.'),
     ];
     return $form;
   }
