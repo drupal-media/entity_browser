@@ -18,7 +18,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Drupal\Core\Path\CurrentPathStack;
 use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\entity_browser\Ajax\SelectEntitiesCommand;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -227,71 +226,6 @@ class Modal extends DisplayBase implements DisplayRouterInterface {
       'resizable' => 0,
     ]));
     return $response;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function addAjax(array &$form) {
-    // Set a wrapper container to replace the form on ajax callback.
-    $form['#prefix'] = '<div id="entity-browser-form">';
-    $form['#suffix'] = '</div>';
-
-    // Add the browser id to use in the FormAjaxController.
-    $form['browser_id'] = [
-      '#type' => 'hidden',
-      '#value' => $this->configuration['entity_browser_id'],
-    ];
-
-    $form['actions']['submit']['#ajax'] = [
-      'callback' => [$this, 'widgetAjaxCallback'],
-      'wrapper' => 'entity-browser-form',
-    ];
-  }
-
-  /**
-   * Ajax callback for entity browser form.
-   *
-   * Allows the entity browser form to submit the form via ajax.
-   *
-   * @param array $form
-   *   The form array.
-   * @param FormStateInterface $form_state
-   *   The form state object.
-   *
-   * @return \Drupal\Core\Ajax\AjaxResponse
-   *   Response.
-   */
-  public function widgetAjaxCallback(array &$form, FormStateInterface $form_state) {
-    // If we've got any validation error, print out the form again.
-    if ($form_state->hasAnyErrors()) {
-      return $form;
-    }
-
-    $commands = $this->getAjaxCommands($form_state);
-    $response = new AjaxResponse();
-    foreach ($commands as $command) {
-      $response->addCommand($command);
-    }
-
-    return $response;
-  }
-
-  /**
-   * Helper function to return commands to return in AjaxResponse.
-   *
-   * @return array
-   *   An array of ajax commands.
-   */
-  public function getAjaxCommands(FormStateInterface $form_state) {
-    $entities = array_map(function(EntityInterface $item) {
-      return [$item->id(), $item->uuid(), $item->getEntityTypeId()];
-    }, $form_state->get(['entity_browser', 'selected_entities']));
-
-    $commands = [];
-    $commands[] = new SelectEntitiesCommand($this->uuid, $entities);
-
-    return $commands;
   }
 
   /**
