@@ -189,10 +189,10 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
           return $item->label();
         }, $this->entities)),
         '#attached' => [
-          'library' => ['entity_browser/iframe_selection'],
+          'library' => ['entity_browser/'. $this->pluginDefinition['id'] . '_selection'],
           'drupalSettings' => [
             'entity_browser' => [
-              'iframe' => [
+              $this->pluginDefinition['id'] => [
                 'entities' => array_map(function (EntityInterface $item) {
                   return [$item->id(), $item->uuid(), $item->getEntityTypeId()];
                 }, $this->entities),
@@ -211,7 +211,7 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
    * {@inheritdoc}
    */
   public function path() {
-    return '/entity-browser/iframe/' . $this->configuration['entity_browser_id'];
+    return '/entity-browser/' . $this->pluginDefinition['id'] . '/' . $this->configuration['entity_browser_id'];
   }
 
   /**
