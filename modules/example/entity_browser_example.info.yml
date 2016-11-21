@@ -9,3 +9,4 @@ dependencies:
   - drupal:field
   - drupal:file
   - drupal:node
+  - drupal:image

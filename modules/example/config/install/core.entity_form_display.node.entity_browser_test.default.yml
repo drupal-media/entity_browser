@@ -59,9 +59,9 @@ content:
     weight: 35
     settings:
       entity_browser: test_files
-      field_widget_edit: '1'
-      field_widget_remove: '1'
-      open: 0
+      field_widget_edit: true
+      field_widget_remove: true
+      open: false
     third_party_settings: {  }
     type: entity_browser_file
   field_nodes:
