@@ -121,7 +121,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
     return array(
       'entity_browser' => NULL,
       'open' => FALSE,
-      'field_widget_display' => NULL,
+      'field_widget_display' => 'label',
       'field_widget_edit' => TRUE,
       'field_widget_remove' => TRUE,
       'field_widget_display_settings' => [],
