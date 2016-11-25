@@ -368,8 +368,8 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
         ],
       ];
 
-      $element['#attached']['library'][] = 'entity_browser/entity_reference';
     }
+    $element['#attached']['library'][] = 'entity_browser/entity_reference';
 
     $field_parents = $element['#field_parents'];
 
