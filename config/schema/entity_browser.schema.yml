@@ -176,6 +176,10 @@ entity_browser.field_widget_display.label:
 entity_browser.field_widget_display.thumbnail:
   type: mapping
   label: 'Image thumbnail display config'
+  mapping:
+    image_style:
+      type: string
+      label: 'Image style'
 
 entity_browser.field_widget_display.rendered_entity:
   type: mapping
