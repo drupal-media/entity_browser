@@ -98,4 +98,24 @@ class ImageThumbnail extends FieldWidgetDisplayBase implements ContainerFactoryP
     return $entity_type->isSubclassOf(FileInterface::class);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function defaultConfiguration() {
+    return [
+      'image_style' => 'thumbnail',
+    ] + parent::defaultConfiguration();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function calculateDependencies() {
+    $dependencies = parent::calculateDependencies();
+    if ($image_style = $this->entityTypeManager->getStorage('image_style')->load($this->configuration['image_style'])) {
+      $dependencies[$image_style->getConfigDependencyKey()][] = $image_style->getConfigDependencyName();
+    }
+    return $dependencies;
+  }
+
 }
