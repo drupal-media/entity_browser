@@ -70,6 +70,22 @@ class EntityBrowserViewsWidgetTest extends EntityBrowserJavascriptTestBase {
       $field => 1,
     ], t('Select entities'));
     $this->assertSession()->pageTextContains($file->getFilename());
+
+    // Create another file to test bulk select form.
+    file_unmanaged_copy(\Drupal::root() . '/core/misc/druplicon.png', 'public://example_1.jpg');
+    /** @var \Drupal\file\FileInterface $file */
+    $new_file = File::create([
+      'uri' => 'public://example_1.jpg',
+    ]);
+    $new_file->save();
+    // Visit entity browser test page again.
+    $this->drupalGet('/entity-browser/iframe/test_entity_browser_file');
+    $new_field = 'entity_browser_select[file:' . $new_file->id() . ']';
+    // Assert both checkbox fields are there.
+    $check_old = $this->assertSession()->fieldExists($field);
+    $check_new = $this->assertSession()->fieldExists($new_field);
+    // Compare value attributes of checkboxes and assert they not equal.
+    $this->assertNotEquals($check_old->getAttribute('value'), $check_new->getAttribute('value'));
   }
 
 }
