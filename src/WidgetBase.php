@@ -127,6 +127,7 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
         '#value' => $this->configuration['submit_text'],
         '#eb_widget_main_submit' => TRUE,
         '#attributes' => ['class' => ['is-entity-browser-submit']],
+        '#button_type' => 'primary',
       ],
     ];
 
