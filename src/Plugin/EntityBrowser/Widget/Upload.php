@@ -86,6 +86,7 @@ class Upload extends WidgetBase {
   public function defaultConfiguration() {
     return [
       'upload_location' => 'public://',
+      'multiple' => TRUE,
       'submit_text' => $this->t('Select files'),
     ] + parent::defaultConfiguration();
   }
@@ -95,12 +96,15 @@ class Upload extends WidgetBase {
    */
   public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters) {
     $form = parent::getForm($original_form, $form_state, $additional_widget_parameters);
+    $field_cardinality = $form_state->get(['entity_browser', 'validators', 'cardinality', 'cardinality']);
     $form['upload'] = [
       '#type' => 'managed_file',
       '#title' => $this->t('Choose a file'),
       '#title_display' => 'invisible',
       '#upload_location' => $this->token->replace($this->configuration['upload_location']),
-      '#multiple' => TRUE,
+      // Multiple uploads will only be accepted if the source field allows
+      // more than one value.
+      '#multiple' => $field_cardinality != 1 && $this->configuration['multiple'],
     ];
 
     return $form;
@@ -158,6 +162,12 @@ class Upload extends WidgetBase {
       '#type' => 'textfield',
       '#title' => $this->t('Upload location'),
       '#default_value' => $this->configuration['upload_location'],
+    ];
+    $form['multiple'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Accept multiple files'),
+      '#default_value' => $this->configuration['multiple'],
+      '#description' => $this->t('Multiple uploads will only be accepted if the source field allows more than one value.'),
     ];
 
     $form['submit_text'] = [

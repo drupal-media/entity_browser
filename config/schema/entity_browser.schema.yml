@@ -94,6 +94,9 @@ entity_browser.browser.widget.upload:
     upload_location:
       type: string
       label: 'Upload location'
+    multiple:
+      type: boolean
+      label: 'Allow multiple uploads'
 
 entity_browser.browser.widget.view:
   type: mapping

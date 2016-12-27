@@ -207,7 +207,7 @@ class ConfigUITest extends WebTestBase {
     $this->assertEqual('upload', $widget->id(), 'Entity browser widget was correctly saved.');
     $this->assertEqual($first_uuid, $widget->uuid(), 'Entity browser widget uuid was correctly saved.');
     $configuration = $widget->getConfiguration()['settings'];
-    $this->assertEqual(['upload_location' => 'public://', 'submit_text' => 'Select files'], $configuration, 'Entity browser widget configuration was correctly saved.');
+    $this->assertEqual(['upload_location' => 'public://', 'multiple' => TRUE, 'submit_text' => 'Select files'], $configuration, 'Entity browser widget configuration was correctly saved.');
     $this->assertEqual(1, $widget->getWeight(), 'Entity browser widget weight was correctly saved.');
     $widget = $widgets->get($second_uuid);
     $this->assertEqual('entity_form', $widget->id(), 'Entity browser widget was correctly saved.');
@@ -240,6 +240,8 @@ class ConfigUITest extends WebTestBase {
 
     $this->drupalPostForm(NULL, [], 'Next');
     $this->assertFieldById('edit-table-' . $first_uuid . '-label', 'upload', 'Correct value for widget label found.');
+    $this->assertFieldChecked('edit-table-' . $first_uuid . '-form-multiple', 'Accept multiple files option is enabled by default.');
+    $this->assertText('Multiple uploads will only be accepted if the source field allows more than one value.');
     $this->assertFieldById('edit-table-' . $first_uuid . '-form-upload-location', 'public://', 'Correct value for upload location found.');
     $this->assertFieldByXPath("//input[@data-drupal-selector='edit-table-" . $first_uuid . "-form-submit-text']", 'Select files', 'Correct value for submit text found.');
     $this->assertFieldById('edit-table-' . $second_uuid . '-label', 'entity_form', 'Correct value for widget label found.');
@@ -248,7 +250,9 @@ class ConfigUITest extends WebTestBase {
     $this->assertOptionSelectedWithDrupalSelector('edit-table-' . $second_uuid . '-form-form-mode-form-select', 'register', 'Correct value for form modes found.');
     $this->assertFieldByXPath("//input[@data-drupal-selector='edit-table-" . $second_uuid . "-form-submit-text']", 'But some are more equal than others', 'Correct value for submit text found.');
 
-    $this->drupalPostForm(NULL, [], 'Finish');
+    $this->drupalPostForm(NULL, ['table[' . $first_uuid . '][form][multiple]' => FALSE], 'Finish');
+    $this->drupalGet('/admin/config/content/entity_browser/test_entity_browser/widgets');
+    $this->assertNoFieldChecked('edit-table-' . $first_uuid . '-form-multiple', 'Accept multiple files option is disabled.');
 
     $this->drupalLogout();
     $this->drupalGet('/admin/config/content/entity_browser/test_entity_browser');
