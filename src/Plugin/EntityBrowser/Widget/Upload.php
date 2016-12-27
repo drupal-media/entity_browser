@@ -88,6 +88,7 @@ class Upload extends WidgetBase {
       'upload_location' => 'public://',
       'multiple' => TRUE,
       'submit_text' => $this->t('Select files'),
+      'extensions' => 'jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp',
     ] + parent::defaultConfiguration();
   }
 
@@ -105,6 +106,9 @@ class Upload extends WidgetBase {
       // Multiple uploads will only be accepted if the source field allows
       // more than one value.
       '#multiple' => $field_cardinality != 1 && $this->configuration['multiple'],
+      '#upload_validators' => [
+        'file_validate_extensions' => [$this->configuration['extensions']],
+      ],
     ];
 
     return $form;
@@ -169,6 +173,14 @@ class Upload extends WidgetBase {
       '#default_value' => $this->configuration['multiple'],
       '#description' => $this->t('Multiple uploads will only be accepted if the source field allows more than one value.'),
     ];
+    $form['extensions'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Allowed file extensions'),
+      '#description' => $this->t('Separate extensions with a space or comma and do not include the leading dot.'),
+      '#default_value' => $this->configuration['extensions'],
+      '#element_validate' => [[static::class, 'validateExtensions']],
+      '#required' => TRUE,
+    ];
 
     $form['submit_text'] = [
       '#type' => 'textfield',
@@ -185,6 +197,25 @@ class Upload extends WidgetBase {
     }
 
     return $form;
+  }
+
+  /**
+   * Validates a list of file extensions.
+   *
+   * @See \Drupal\file\Plugin\Field\FieldType\FileItem::validateExtensions
+   */
+  public static function validateExtensions($element, FormStateInterface $form_state) {
+    if (!empty($element['#value'])) {
+      $extensions = preg_replace('/([, ]+\.?)/', ' ', trim(strtolower($element['#value'])));
+      $extensions = array_filter(explode(' ', $extensions));
+      $extensions = implode(' ', array_unique($extensions));
+      if (!preg_match('/^([a-z0-9]+([.][a-z0-9])* ?)+$/', $extensions)) {
+        $form_state->setError($element, t('The list of allowed extensions is not valid, be sure to exclude leading dots and to separate extensions with a comma or space.'));
+      }
+      else {
+        $form_state->setValueForElement($element, $extensions);
+      }
+    }
   }
 
 }

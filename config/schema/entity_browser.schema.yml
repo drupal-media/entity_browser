@@ -97,6 +97,9 @@ entity_browser.browser.widget.upload:
     multiple:
       type: boolean
       label: 'Allow multiple uploads'
+    extensions:
+      type: string
+      label: 'Allowed file extensions'
 
 entity_browser.browser.widget.view:
   type: mapping
