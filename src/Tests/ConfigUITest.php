@@ -207,12 +207,11 @@ class ConfigUITest extends WebTestBase {
     $this->assertEqual('upload', $widget->id(), 'Entity browser widget was correctly saved.');
     $this->assertEqual($first_uuid, $widget->uuid(), 'Entity browser widget uuid was correctly saved.');
     $configuration = $widget->getConfiguration()['settings'];
-    $this->assertEqual(['upload_location' => 'public://', 'multiple' => TRUE, 'submit_text' => 'Select files'], $configuration, 'Entity browser widget configuration was correctly saved.');
     $this->assertEqual([
       'upload_location' => 'public://',
       'multiple' => TRUE,
-      'extensions' => 'jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp',
       'submit_text' => 'Select files',
+      'extensions' => 'jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp',
     ], $configuration, 'Entity browser widget configuration was correctly saved.');
     $this->assertEqual(1, $widget->getWeight(), 'Entity browser widget weight was correctly saved.');
     $widget = $widgets->get($second_uuid);
