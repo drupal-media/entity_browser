@@ -25,7 +25,6 @@ content:
       field_widget_display_settings: {  }
     third_party_settings: {  }
     type: entity_browser_entity_reference
-    region: content
   field_paragraphs_nested:
     type: entity_reference_paragraphs
     weight: 1
@@ -36,7 +35,6 @@ content:
       add_mode: dropdown
       form_display_mode: default
     third_party_settings: {  }
-    region: content
 hidden:
   created: true
   status: true
