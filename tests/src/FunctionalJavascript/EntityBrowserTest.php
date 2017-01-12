@@ -167,4 +167,47 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
 
   }
 
+  /**
+   * Tests NoDisplay selection display plugin.
+   */
+  public function testNoDisplaySelectionDisplay() {
+    /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display */
+    $form_display = $this->container->get('entity_type.manager')
+      ->getStorage('entity_form_display')
+      ->load('node.article.default');
+
+    $form_display->setComponent('field_reference', [
+      'type' => 'entity_browser_entity_reference',
+      'settings' => [
+        'entity_browser' => 'multiple_submit_example',
+        'field_widget_display' => 'label',
+        'open' => TRUE,
+      ],
+    ])->save();
+
+    $account = $this->drupalCreateUser([
+      'access multiple_submit_example entity browser pages',
+      'create article content',
+      'access content',
+    ]);
+    $this->drupalLogin($account);
+
+    $this->drupalGet('node/add/article');
+    // Open the entity browser widget form.
+    $this->getSession()->getPage()->clickLink('Select entities');
+    $this->getSession()->switchToIFrame('entity_browser_iframe_multiple_submit_example');
+
+    // Click the second submit button to make sure the widget does not close.
+    $this->getSession()->getPage()->pressButton('Second submit button');
+
+    // Check that the entity browser widget is still open.
+    $this->getSession()->getPage()->hasButton('Second submit button');
+
+    // Click the primary submit button to close the widget.
+    $this->getSession()->getPage()->pressButton('Select entities');
+
+    // Check that the entity browser widget is closed.
+    $this->assertSession()->buttonNotExists('Second submit button');
+  }
+
 }
