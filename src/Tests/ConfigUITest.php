@@ -210,6 +210,7 @@ class ConfigUITest extends WebTestBase {
     $this->assertEqual([
       'upload_location' => 'public://',
       'multiple' => TRUE,
+      'auto_select' => FALSE,
       'submit_text' => 'Select files',
       'extensions' => 'jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp',
     ], $configuration, 'Entity browser widget configuration was correctly saved.');
@@ -218,7 +219,13 @@ class ConfigUITest extends WebTestBase {
     $this->assertEqual('entity_form', $widget->id(), 'Entity browser widget was correctly saved.');
     $this->assertEqual($second_uuid, $widget->uuid(), 'Entity browser widget uuid was correctly saved.');
     $configuration = $widget->getConfiguration()['settings'];
-    $this->assertEqual(['entity_type' => 'user', 'bundle' => 'user', 'form_mode' => 'register', 'submit_text' => 'But some are more equal than others'], $configuration, 'Entity browser widget configuration was correctly saved.');
+    $this->assertEqual([
+      'entity_type' => 'user',
+      'bundle' => 'user',
+      'form_mode' => 'register',
+      'submit_text' => 'But some are more equal than others',
+      'auto_select' => FALSE,
+    ], $configuration, 'Entity browser widget configuration was correctly saved.');
     $this->assertEqual(2, $widget->getWeight(), 'Entity browser widget weight was correctly saved.');
 
     // Navigate to edit.

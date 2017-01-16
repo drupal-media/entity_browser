@@ -91,6 +91,9 @@ entity_browser.browser.widget.upload:
     submit_text:
       type: string
       label: 'Submit button text'
+    auto_select:
+      type: boolean
+      label: 'Automatically submit selection'
     upload_location:
       type: string
       label: 'Upload location'
@@ -108,6 +111,9 @@ entity_browser.browser.widget.view:
     submit_text:
       type: string
       label: 'Submit button text'
+    auto_select:
+      type: boolean
+      label: 'Automatically submit selection'
     view:
       type: string
       label: 'View ID'

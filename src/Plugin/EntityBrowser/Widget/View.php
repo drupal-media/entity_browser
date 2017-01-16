@@ -22,7 +22,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
  *   id = "view",
  *   label = @Translation("View"),
  *   provider = "views",
- *   description = @Translation("Uses a view to provide entity listing in a browser's widget.")
+ *   description = @Translation("Uses a view to provide entity listing in a browser's widget."),
+ *   autoSelect = TRUE
  * )
  */
 class View extends WidgetBase implements ContainerFactoryPluginInterface {
@@ -257,6 +258,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues()['table'][$this->uuid()]['form'];
     $this->configuration['submit_text'] = $values['submit_text'];
+    $this->configuration['auto_select'] = $values['auto_select'];
     if (!empty($values['view'])) {
       list($view_id, $display_id) = explode('.', $values['view']);
       $this->configuration['view'] = $view_id;

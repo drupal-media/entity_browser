@@ -109,4 +109,13 @@ interface WidgetInterface extends PluginInspectionInterface, ConfigurablePluginI
    */
   public function submit(array &$element, array &$form, FormStateInterface $form_state);
 
+  /**
+   * Returns if widget requires JS commands support by selection display.
+   *
+   * @return bool
+   *   True is auto selection is enabled and add/remove of entities will be done
+   *   over javascript events on selection display.
+   */
+  public function requiresJsCommands();
+
 }

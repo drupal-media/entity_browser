@@ -47,6 +47,36 @@
             }
           });
         });
+
+        // If "auto_select" functionality is enabled, then selection column is
+        // hidden and click on row will actually add element into selection
+        // display over javascript event. Currently only multistep display
+        // supports that functionality.
+        if (drupalSettings.entity_browser_widget.auto_select) {
+          var selection_cells = views_instance.$view.find('.views-field-entity-browser-select');
+
+          // Register on cell parents (rows) click event.
+          selection_cells.parent()
+            .once('register-row-click')
+            .click(function (event) {
+              event.preventDefault();
+
+              var $row = $(this);
+
+              // Ensure to use input (checkbox) field from entity browser
+              // column dedicated for selection checkbox.
+              var $input = $row.find('.views-field-entity-browser-select input.form-checkbox');
+
+              // Get selection display element and trigger adding of entity
+              // over ajax request.
+              $row.parents('form')
+                .find('.entities-list')
+                .trigger('add-entities', [[$input.val()]]);
+            });
+
+          // Hide selection cells (selection column) with checkboxes.
+          selection_cells.hide();
+        }
       }
     }
   };
