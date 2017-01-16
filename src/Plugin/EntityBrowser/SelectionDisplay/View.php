@@ -14,7 +14,8 @@ use Drupal\views\Views;
  *   id = "view",
  *   label = @Translation("View selection display"),
  *   description = @Translation("Use a pre-configured view as selection area."),
- *   acceptPreselection = TRUE
+ *   acceptPreselection = TRUE,
+ *   jsCommands = FALSE
  * )
  */
 class View extends SelectionDisplayBase {

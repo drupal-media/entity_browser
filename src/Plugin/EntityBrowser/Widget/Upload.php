@@ -19,7 +19,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @EntityBrowserWidget(
  *   id = "upload",
  *   label = @Translation("Upload"),
- *   description = @Translation("Adds an upload field browser's widget.")
+ *   description = @Translation("Adds an upload field browser's widget."),
+ *   autoSelect = FALSE
  * )
  */
 class Upload extends WidgetBase {
@@ -186,6 +187,14 @@ class Upload extends WidgetBase {
       '#type' => 'textfield',
       '#title' => $this->t('Submit button text'),
       '#default_value' => $this->configuration['submit_text'],
+    ];
+
+    // Allow "auto_select" setting when autoSelect is supported by widget.
+    $form['auto_select'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Automatically submit selection'),
+      '#default_value' => $this->configuration['auto_select'],
+      '#disabled' => !$this->getPluginDefinition()['autoSelect'],
     ];
 
     if ($this->moduleHandler->moduleExists('token')) {

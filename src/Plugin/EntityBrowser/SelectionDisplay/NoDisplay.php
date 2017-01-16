@@ -12,7 +12,8 @@ use Drupal\entity_browser\SelectionDisplayBase;
  *   id = "no_display",
  *   label = @Translation("No selection display"),
  *   description = @Translation("Skips the current selection display and immediately delivers the entities selected."),
- *   acceptPreselection = FALSE
+ *   acceptPreselection = FALSE,
+ *   jsCommands = FALSE
  * )
  */
 class NoDisplay extends SelectionDisplayBase {
