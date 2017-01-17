@@ -40,9 +40,9 @@
   /**
    * Action to queue command for future execution.
    *
-   * @param commandName
+   * @param {string} commandName
    *   Command name, that will be executed.
-   * @param commandParam
+   * @param {Array} commandParam
    *   Params for command. If command already exists in queue params will be
    *   added to end of list.
    */

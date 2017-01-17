@@ -112,7 +112,7 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
       $this->init($form_state);
     }
 
-    $this->isFunctionalForm($form_state);
+    $this->isFunctionalForm();
 
     $form['#attributes']['class'][] = 'entity-browser-form';
     if (!empty($form_state->get(['entity_browser', 'instance_uuid']))) {
@@ -149,20 +149,16 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
 
   /**
    * Check if entity browser with selected configuration combination can work.
-   *
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   Form status.
    */
-  protected function isFunctionalForm(FormStateInterface $form_state) {
+  protected function isFunctionalForm() {
     /** @var \Drupal\entity_browser\WidgetInterface $widget */
-    $widget = $this->entityBrowser->getWidgets()
-      ->get($this->getCurrentWidget($form_state));
+    foreach ($this->entityBrowser->getWidgets() as $widget) {
+      /** @var \Drupal\entity_browser\SelectionDisplayInterface $selectionDisplay */
+      $selectionDisplay = $this->entityBrowser->getSelectionDisplay();
 
-    /** @var \Drupal\entity_browser\SelectionDisplayInterface $selectionDisplay */
-    $selectionDisplay = $this->entityBrowser->getSelectionDisplay();
-
-    if ($widget->requiresJsCommands() && !$selectionDisplay->supportsJsCommands()) {
-      throw new ConfigException('Used entity browser selection display cannot work in combination with settings defined for used selection widget.');
+      if ($widget->requiresJsCommands() && !$selectionDisplay->supportsJsCommands()) {
+        throw new ConfigException('Used entity browser selection display cannot work in combination with settings defined for used selection widget.');
+      }
     }
   }
 

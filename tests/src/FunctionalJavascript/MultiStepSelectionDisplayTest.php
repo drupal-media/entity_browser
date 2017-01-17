@@ -66,7 +66,7 @@ class MultiStepSelectionDisplayTest extends EntityBrowserJavascriptTestBase {
    * @param array $configuration
    *   Configuration that will be used for field form display.
    */
-  protected function changeFieldFormDisplayConfig($configuration) {
+  protected function changeFieldFormDisplayConfig(array $configuration) {
     /** @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface $form_display */
     $form_display = $this->container->get('entity_type.manager')
       ->getStorage('entity_form_display')

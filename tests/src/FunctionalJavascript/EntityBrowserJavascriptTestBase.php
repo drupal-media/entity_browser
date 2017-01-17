@@ -3,14 +3,11 @@
 namespace Drupal\Tests\entity_browser\FunctionalJavascript;
 
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Component\Utility\SafeMarkup;
-use Drupal\Core\Entity\Sql\SqlEntityStorageInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\file\Entity\File;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
-use Drupal\Tests\Component\Utility\SafeMarkupTest;
 
 /**
  * Base class for Entity browser Javascript functional tests.
@@ -115,7 +112,7 @@ abstract class EntityBrowserJavascriptTestBase extends JavascriptTestBase {
    * @return \Drupal\entity_browser\EntityBrowserInterface
    *   Returns an Entity Browser.
    */
-  protected function getEntityBrowser($browser_name, $display_id, $widget_selector_id, $selection_display_id, $display_configuration = [], $widget_selector_configuration = [], $selection_display_configuration = [], $widget_configurations = []) {
+  protected function getEntityBrowser($browser_name, $display_id, $widget_selector_id, $selection_display_id, array $display_configuration = [], array $widget_selector_configuration = [], array $selection_display_configuration = [], array $widget_configurations = []) {
     /** @var \Drupal\Core\Entity\EntityStorageInterface $storage */
     $storage = $this->container->get('entity_type.manager')
       ->getStorage('entity_browser');
@@ -237,6 +234,5 @@ abstract class EntityBrowserJavascriptTestBase extends JavascriptTestBase {
       $this->htmlOutput($html_output);
     }
   }
-
 
 }
