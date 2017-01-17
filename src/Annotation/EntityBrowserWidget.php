@@ -45,6 +45,6 @@ class EntityBrowserWidget extends Plugin {
    *
    * @var bool
    */
-  public $autoSelect = FALSE;
+  public $auto_select = FALSE;
 
 }

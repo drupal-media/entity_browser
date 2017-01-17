@@ -60,6 +60,6 @@ class EntityBrowserSelectionDisplay extends Plugin {
    *
    * @var bool
    */
-  public $jsCommands = FALSE;
+  public $js_commands = FALSE;
 
 }

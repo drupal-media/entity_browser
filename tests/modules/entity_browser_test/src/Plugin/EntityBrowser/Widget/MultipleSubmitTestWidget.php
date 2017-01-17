@@ -12,7 +12,7 @@ use Drupal\entity_browser\WidgetBase;
  *   id = "multiple_submit_test_widget",
  *   label = @Translation("Multiple submit test widget"),
  *   description = @Translation("Test widget with multiple submit buttons only for testing purposes."),
- *   autoSelect = FALSE
+ *   auto_select = FALSE
  * )
  */
 class MultipleSubmitTestWidget extends WidgetBase {

@@ -125,7 +125,7 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
     // Check if widget supports auto select functionality and expose config to
     // front-end javascript.
     $autoSelect = FALSE;
-    if ($this->getPluginDefinition()['autoSelect']) {
+    if ($this->getPluginDefinition()['auto_select']) {
       $autoSelect = $this->configuration['auto_select'];
       $form['#attached']['drupalSettings']['entity_browser_widget']['auto_select'] = $autoSelect;
     }
@@ -156,7 +156,7 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
     ];
 
     // If auto select is supported by Widget, append default configuration.
-    if ($this->getPluginDefinition()['autoSelect']) {
+    if ($this->getPluginDefinition()['auto_select']) {
       $defaultConfig['auto_select'] = FALSE;
     }
 
@@ -215,8 +215,8 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
       '#default_value' => $this->configuration['submit_text'],
     ];
 
-    // Allow "auto_select" setting when autoSelect is supported by widget.
-    if ($this->getPluginDefinition()['autoSelect']) {
+    // Allow "auto_select" setting when auto_select is supported by widget.
+    if ($this->getPluginDefinition()['auto_select']) {
       $form['auto_select'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Automatically submit selection'),
@@ -354,7 +354,7 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    * {@inheritdoc}
    */
   public function requiresJsCommands() {
-    return $this->getPluginDefinition()['autoSelect'] && $this->getConfiguration()['settings']['auto_select'];
+    return $this->getPluginDefinition()['auto_select'] && $this->getConfiguration()['settings']['auto_select'];
   }
 
 }

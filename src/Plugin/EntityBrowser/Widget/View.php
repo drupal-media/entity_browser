@@ -23,7 +23,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
  *   label = @Translation("View"),
  *   provider = "views",
  *   description = @Translation("Uses a view to provide entity listing in a browser's widget."),
- *   autoSelect = TRUE
+ *   auto_select = TRUE
  * )
  */
 class View extends WidgetBase implements ContainerFactoryPluginInterface {

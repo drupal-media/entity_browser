@@ -20,7 +20,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *   id = "upload",
  *   label = @Translation("Upload"),
  *   description = @Translation("Adds an upload field browser's widget."),
- *   autoSelect = FALSE
+ *   auto_select = FALSE
  * )
  */
 class Upload extends WidgetBase {

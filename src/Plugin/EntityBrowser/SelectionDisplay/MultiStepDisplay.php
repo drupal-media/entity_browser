@@ -21,7 +21,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *   label = @Translation("Multi step selection display"),
  *   description = @Translation("Shows the current selection display, allowing to mix elements selected through different widgets in several steps."),
  *   acceptPreselection = TRUE,
- *   jsCommands = TRUE
+ *   js_commands = TRUE
  * )
  */
 class MultiStepDisplay extends SelectionDisplayBase {

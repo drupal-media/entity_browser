@@ -135,7 +135,7 @@ abstract class SelectionDisplayBase extends PluginBase implements SelectionDispl
    * {@inheritdoc}
    */
   public function supportsJsCommands() {
-    return $this->getPluginDefinition()['jsCommands'];
+    return $this->getPluginDefinition()['js_commands'];
   }
 
   /**

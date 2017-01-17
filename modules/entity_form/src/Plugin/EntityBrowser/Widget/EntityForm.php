@@ -22,7 +22,7 @@ use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
  *   id = "entity_form",
  *   label = @Translation("Entity form"),
  *   description = @Translation("Provides entity form widget."),
- *   autoSelect = FALSE
+ *   auto_select = FALSE
  * )
  */
 class EntityForm extends WidgetBase {
