@@ -5,9 +5,6 @@ entity_browser.browser.widget.dummy:
     submit_text:
       type: string
       label: 'Submit button text'
-    auto_select:
-      type: boolean
-      label: 'Automatically submit selection'
     text:
       type: string
       label: 'Text'
@@ -19,6 +16,3 @@ entity_browser.browser.widget.multiple_submit_test_widget:
     submit_text:
       type: string
       label: 'Submit button text'
-    auto_select:
-      type: boolean
-      label: 'Automatically submit selection'

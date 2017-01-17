@@ -38,7 +38,6 @@ widgets:
     settings:
       upload_location: 'public://'
       submit_text: 'Select files'
-      auto_select: false
     uuid: 735d146c-a4b2-4327-a057-d109e0905e05
     weight: -9
     label: 'Upload files'

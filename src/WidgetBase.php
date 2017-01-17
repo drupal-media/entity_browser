@@ -123,8 +123,9 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
     }
 
     // In case of auto submitting, widget will handle adding entities in JS.
-    $form['#attached']['drupalSettings']['entity_browser_widget']['auto_select'] = $this->configuration['auto_select'];
-    if (!$this->configuration['auto_select']) {
+    $autoSelect = !empty($this->configuration['auto_select']);
+    $form['#attached']['drupalSettings']['entity_browser_widget']['auto_select'] = $autoSelect;
+    if (!$autoSelect) {
       $form['actions'] = [
         '#type' => 'actions',
         'submit' => [
@@ -146,7 +147,6 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
   public function defaultConfiguration() {
     return [
       'submit_text' => $this->t('Select entities'),
-      'auto_select' => FALSE,
     ];
   }
 
@@ -200,14 +200,6 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
       '#type' => 'textfield',
       '#title' => $this->t('Submit button text'),
       '#default_value' => $this->configuration['submit_text'],
-    ];
-
-    // Allow "auto_select" setting when autoSelect is supported by widget.
-    $form['auto_select'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Automatically submit selection'),
-      '#default_value' => $this->configuration['auto_select'],
-      '#disabled' => !$this->getPluginDefinition()['autoSelect'],
     ];
 
     return $form;
@@ -340,7 +332,7 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    * {@inheritdoc}
    */
   public function requiresJsCommands() {
-    return $this->getConfiguration()['settings']['auto_select'];
+    return FALSE;
   }
 
 }

@@ -42,6 +42,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
     return array(
       'view' => NULL,
       'view_display' => NULL,
+      'auto_select' => FALSE,
     ) + parent::defaultConfiguration();
   }
 
@@ -231,6 +232,13 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildConfigurationForm($form, $form_state);
 
+    // Allow "auto_select" setting when autoSelect is supported by widget.
+    $form['auto_select'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Automatically submit selection'),
+      '#default_value' => $this->configuration['auto_select'],
+    ];
+
     $options = [];
     // Get only those enabled Views that have entity_browser displays.
     $displays = Views::getApplicableViews('entity_browser_display');
@@ -264,6 +272,13 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
       $this->configuration['view'] = $view_id;
       $this->configuration['view_display'] = $display_id;
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function requiresJsCommands() {
+    return $this->getConfiguration()['settings']['auto_select'];
   }
 
 }
