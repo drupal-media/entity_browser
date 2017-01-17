@@ -122,9 +122,15 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
       }
     }
 
-    // In case of auto submitting, widget will handle adding entities in JS.
-    $autoSelect = !empty($this->configuration['auto_select']);
-    $form['#attached']['drupalSettings']['entity_browser_widget']['auto_select'] = $autoSelect;
+    // Check if widget supports auto select functionality and expose config to
+    // front-end javascript.
+    $autoSelect = FALSE;
+    if ($this->getPluginDefinition()['autoSelect']) {
+      $autoSelect = $this->configuration['auto_select'];
+      $form['#attached']['drupalSettings']['entity_browser_widget']['auto_select'] = $autoSelect;
+    }
+
+    // In case of auto select, widget will handle adding entities in JS.
     if (!$autoSelect) {
       $form['actions'] = [
         '#type' => 'actions',
@@ -145,9 +151,16 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return [
+    $defaultConfig = [
       'submit_text' => $this->t('Select entities'),
     ];
+
+    // If auto select is supported by Widget, append default configuration.
+    if ($this->getPluginDefinition()['autoSelect']) {
+      $defaultConfig['auto_select'] = FALSE;
+    }
+
+    return $defaultConfig;
   }
 
   /**
@@ -201,6 +214,15 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
       '#title' => $this->t('Submit button text'),
       '#default_value' => $this->configuration['submit_text'],
     ];
+
+    // Allow "auto_select" setting when autoSelect is supported by widget.
+    if ($this->getPluginDefinition()['autoSelect']) {
+      $form['auto_select'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Automatically submit selection'),
+        '#default_value' => $this->configuration['auto_select'],
+      ];
+    }
 
     return $form;
   }
@@ -332,7 +354,7 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    * {@inheritdoc}
    */
   public function requiresJsCommands() {
-    return FALSE;
+    return $this->getPluginDefinition()['autoSelect'] && $this->getConfiguration()['settings']['auto_select'];
   }
 
 }
