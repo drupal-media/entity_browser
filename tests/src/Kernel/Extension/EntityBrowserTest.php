@@ -13,6 +13,7 @@ use Drupal\entity_browser\WidgetInterface;
 use Drupal\entity_browser\WidgetSelectorInterface;
 use Drupal\entity_browser\SelectionDisplayInterface;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\views\Entity\View;
 
 /**
  * Tests the entity_browser config entity.
@@ -30,6 +31,7 @@ class EntityBrowserTest extends KernelTestBase {
     'system',
     'user',
     'views',
+    'file',
     'entity_browser',
     'entity_browser_test',
   ];
@@ -67,6 +69,7 @@ class EntityBrowserTest extends KernelTestBase {
     $this->routeProvider = $this->container->get('router.route_provider');
 
     $this->installSchema('system', ['router', 'key_value_expire', 'sequences']);
+    View::create(['id' => 'test_view'])->save();
   }
 
   /**
@@ -158,6 +161,7 @@ class EntityBrowserTest extends KernelTestBase {
       'langcode' => $this->container->get('language_manager')->getDefaultLanguage()->getId(),
       'status' => TRUE,
       'dependencies' => [
+        'config' => ['views.view.test_view'],
         'module' => ['views'],
       ],
       'name' => 'test_browser',

@@ -1,6 +1,8 @@
 langcode: en
 status: true
 dependencies:
+  config:
+    - views.view.files_entity_browser
   module:
     - views
 name: test_entity_browser_file

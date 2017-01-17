@@ -1,6 +1,10 @@
 langcode: en
 status: true
-dependencies: {  }
+dependencies:
+  config:
+    - views.view.files_entity_browser
+  module:
+    - views
 name: test_entity_browser_iframe_view
 label: 'Test entity browser iframe with view widget'
 display: iframe

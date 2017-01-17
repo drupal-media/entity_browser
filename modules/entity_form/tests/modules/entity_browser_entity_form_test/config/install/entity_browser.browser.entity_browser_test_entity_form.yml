@@ -1,8 +1,11 @@
 langcode: en
 status: true
 dependencies:
+  config:
+    - views.view.content
   module:
     - entity_browser_entity_form
+    - views
 name: entity_browser_test_entity_form
 label: 'Entity Browser Test'
 display: iframe

@@ -10,3 +10,4 @@ dependencies:
   - entity_browser_entity_form
   - media_entity
   - inline_entity_form
+  - views

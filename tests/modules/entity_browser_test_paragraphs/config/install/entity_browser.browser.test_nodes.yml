@@ -1,8 +1,11 @@
 langcode: und
 status: true
 dependencies:
+  config:
+    - views.view.nodes_entity_browser
   module:
     - entity_browser
+    - views
 name: test_nodes
 label: 'Test entity browser for nodes'
 display: iframe

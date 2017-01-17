@@ -8,6 +8,7 @@ use Drupal\Core\Render\Element;
 use Drupal\entity_browser\WidgetBase;
 use Drupal\Core\Url;
 use Drupal\entity_browser\WidgetValidationManager;
+use Drupal\views\Entity\View as ViewEntity;
 use Drupal\views\Views;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -262,6 +263,18 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
       $this->configuration['view'] = $view_id;
       $this->configuration['view_display'] = $display_id;
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function calculateDependencies() {
+    $dependencies = [];
+    if ($this->configuration['view']) {
+      $view = ViewEntity::load($this->configuration['view']);
+      $dependencies[$view->getConfigDependencyKey()] = [$view->getConfigDependencyName()];
+    }
+    return $dependencies;
   }
 
 }

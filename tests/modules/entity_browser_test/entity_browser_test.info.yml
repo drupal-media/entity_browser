@@ -8,3 +8,4 @@ dependencies:
   - entity_browser
   - file
   - node
+  - views
