@@ -63,6 +63,9 @@ modal:
 
 modal_selection:
   version: VERSION
+  css:
+    component:
+      css/entity_browser.modal_selection.css: {}
   js:
     js/entity_browser.modal_selection.js: {}
   dependencies:

@@ -36,7 +36,7 @@
       '<iframe />',
       {
         'src': iframeSettings['src'],
-        'width': iframeSettings['width'],
+        'width': '100%',
         'height': iframeSettings['height'],
         'data-uuid': uuid,
         'data-original-path': original_path,
@@ -45,12 +45,15 @@
       }
     );
 
+    var throbber = $('<div class="ajax-progress-fullscreen"></div>');
+    $(this).parent().css('width', iframeSettings['width']);
+
     // Register callbacks.
     if (drupalSettings.entity_browser.iframe[uuid].js_callbacks || false) {
       Drupal.entityBrowser.registerJsCallbacks(this, drupalSettings.entity_browser.iframe[uuid].js_callbacks, 'entities-selected');
     }
 
-    $(this).parent().append(iframe).trigger('entityBrowserIFrameAppend');
+    $(this).parent().append(throbber).append(iframe).trigger('entityBrowserIFrameAppend');
     $(this).hide();
   };
 
