@@ -40,4 +40,11 @@ class EntityBrowserWidget extends Plugin {
    */
   public $description = '';
 
+  /**
+   * Indicates that widget supports auto selection of entities.
+   *
+   * @var bool
+   */
+  public $auto_select = FALSE;
+
 }

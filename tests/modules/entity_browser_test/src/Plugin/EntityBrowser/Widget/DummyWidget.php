@@ -11,7 +11,8 @@ use Drupal\entity_browser\WidgetBase;
  * @EntityBrowserWidget(
  *   id = "dummy",
  *   label = @Translation("Dummy widget"),
- *   description = @Translation("Dummy widget existing for testing purposes.")
+ *   description = @Translation("Dummy widget existing for testing purposes."),
+ *   auto_select = FALSE
  * )
  */
 class DummyWidget extends WidgetBase {

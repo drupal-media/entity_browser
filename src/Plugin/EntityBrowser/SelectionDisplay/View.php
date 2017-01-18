@@ -17,6 +17,7 @@ use Drupal\views\Entity\View as ViewEntity;
  *   description = @Translation("Use a pre-configured view as selection area."),
  *   acceptPreselection = TRUE,
  *   provider = "views",
+ *   js_commands = FALSE
  * )
  */
 class View extends SelectionDisplayBase {

@@ -3,6 +3,7 @@
 namespace Drupal\entity_browser\Form;
 
 use Drupal\Component\Uuid\UuidInterface;
+use Drupal\Core\Config\ConfigException;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface;
@@ -111,6 +112,8 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
       $this->init($form_state);
     }
 
+    $this->isFunctionalForm();
+
     $form['#attributes']['class'][] = 'entity-browser-form';
     if (!empty($form_state->get(['entity_browser', 'instance_uuid']))) {
       $form['#attributes']['data-entity-browser-uuid'] = $form_state->get(['entity_browser', 'instance_uuid']);
@@ -142,6 +145,21 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
     $form['#attached']['library'][] = 'entity_browser/entity_browser';
 
     return $form;
+  }
+
+  /**
+   * Check if entity browser with selected configuration combination can work.
+   */
+  protected function isFunctionalForm() {
+    /** @var \Drupal\entity_browser\WidgetInterface $widget */
+    foreach ($this->entityBrowser->getWidgets() as $widget) {
+      /** @var \Drupal\entity_browser\SelectionDisplayInterface $selectionDisplay */
+      $selectionDisplay = $this->entityBrowser->getSelectionDisplay();
+
+      if ($widget->requiresJsCommands() && !$selectionDisplay->supportsJsCommands()) {
+        throw new ConfigException('Used entity browser selection display cannot work in combination with settings defined for used selection widget.');
+      }
+    }
   }
 
   /**

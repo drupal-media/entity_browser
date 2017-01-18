@@ -218,7 +218,12 @@ class ConfigUITest extends WebTestBase {
     $this->assertEqual('entity_form', $widget->id(), 'Entity browser widget was correctly saved.');
     $this->assertEqual($second_uuid, $widget->uuid(), 'Entity browser widget uuid was correctly saved.');
     $configuration = $widget->getConfiguration()['settings'];
-    $this->assertEqual(['entity_type' => 'user', 'bundle' => 'user', 'form_mode' => 'register', 'submit_text' => 'But some are more equal than others'], $configuration, 'Entity browser widget configuration was correctly saved.');
+    $this->assertEqual([
+      'entity_type' => 'user',
+      'bundle' => 'user',
+      'form_mode' => 'register',
+      'submit_text' => 'But some are more equal than others',
+    ], $configuration, 'Entity browser widget configuration was correctly saved.');
     $this->assertEqual(2, $widget->getWeight(), 'Entity browser widget weight was correctly saved.');
 
     // Navigate to edit.

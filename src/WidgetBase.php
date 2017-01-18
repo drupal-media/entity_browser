@@ -109,6 +109,8 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    * {@inheritdoc}
    */
   public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters) {
+    $form = [];
+
     // Allow configuration overrides at runtime based on form state to enable
     // use cases where the instance of a widget may have contextual
     // configuration like field settings. "widget_context" doesn't have to be
@@ -120,30 +122,46 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
       }
     }
 
-    $form['actions'] = [
-      '#type' => 'actions',
-      'submit' => [
-        '#type' => 'submit',
-        '#value' => $this->configuration['submit_text'],
-        '#eb_widget_main_submit' => TRUE,
-        '#attributes' => ['class' => ['is-entity-browser-submit']],
-        '#button_type' => 'primary',
-      ],
-    ];
+    // Check if widget supports auto select functionality and expose config to
+    // front-end javascript.
+    $autoSelect = FALSE;
+    if ($this->getPluginDefinition()['auto_select']) {
+      $autoSelect = $this->configuration['auto_select'];
+      $form['#attached']['drupalSettings']['entity_browser_widget']['auto_select'] = $autoSelect;
+    }
+
+    // In case of auto select, widget will handle adding entities in JS.
+    if (!$autoSelect) {
+      $form['actions'] = [
+        '#type' => 'actions',
+        'submit' => [
+          '#type' => 'submit',
+          '#value' => $this->configuration['submit_text'],
+          '#eb_widget_main_submit' => TRUE,
+          '#attributes' => ['class' => ['is-entity-browser-submit']],
+          '#button_type' => 'primary',
+        ],
+      ];
+    }
 
     return $form;
   }
-
 
   /**
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return [
+    $defaultConfig = [
       'submit_text' => $this->t('Select entities'),
     ];
-  }
 
+    // If auto select is supported by Widget, append default configuration.
+    if ($this->getPluginDefinition()['auto_select']) {
+      $defaultConfig['auto_select'] = FALSE;
+    }
+
+    return $defaultConfig;
+  }
 
   /**
    * {@inheritdoc}
@@ -196,6 +214,15 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
       '#title' => $this->t('Submit button text'),
       '#default_value' => $this->configuration['submit_text'],
     ];
+
+    // Allow "auto_select" setting when auto_select is supported by widget.
+    if ($this->getPluginDefinition()['auto_select']) {
+      $form['auto_select'] = [
+        '#type' => 'checkbox',
+        '#title' => $this->t('Automatically submit selection'),
+        '#default_value' => $this->configuration['auto_select'],
+      ];
+    }
 
     return $form;
   }
@@ -321,6 +348,13 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
         $form_state->get(['entity_browser', 'instance_uuid']),
         $entities
       ));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function requiresJsCommands() {
+    return $this->getPluginDefinition()['auto_select'] && $this->getConfiguration()['settings']['auto_select'];
   }
 
 }

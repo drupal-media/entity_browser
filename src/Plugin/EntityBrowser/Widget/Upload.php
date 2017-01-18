@@ -19,7 +19,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * @EntityBrowserWidget(
  *   id = "upload",
  *   label = @Translation("Upload"),
- *   description = @Translation("Adds an upload field browser's widget.")
+ *   description = @Translation("Adds an upload field browser's widget."),
+ *   auto_select = FALSE
  * )
  */
 class Upload extends WidgetBase {
@@ -162,6 +163,8 @@ class Upload extends WidgetBase {
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    $form = parent::buildConfigurationForm($form, $form_state);
+
     $form['upload_location'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Upload location'),
@@ -180,12 +183,6 @@ class Upload extends WidgetBase {
       '#default_value' => $this->configuration['extensions'],
       '#element_validate' => [[static::class, 'validateExtensions']],
       '#required' => TRUE,
-    ];
-
-    $form['submit_text'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Submit button text'),
-      '#default_value' => $this->configuration['submit_text'],
     ];
 
     if ($this->moduleHandler->moduleExists('token')) {

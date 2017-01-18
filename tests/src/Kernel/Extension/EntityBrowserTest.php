@@ -182,6 +182,7 @@ class EntityBrowserTest extends KernelTestBase {
             'view' => 'test_view',
             'view_display' => 'test_display',
             'submit_text' => 'Select entities',
+            'auto_select' => FALSE,
           ],
         ],
       ],

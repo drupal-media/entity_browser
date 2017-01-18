@@ -132,6 +132,13 @@ abstract class SelectionDisplayBase extends PluginBase implements SelectionDispl
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function supportsJsCommands() {
+    return $this->getPluginDefinition()['js_commands'];
+  }
+
+  /**
    * Marks selection as done - sets value in form state and dispatches event.
    */
   protected function selectionDone(FormStateInterface $form_state) {

@@ -11,7 +11,8 @@ use Drupal\entity_browser\WidgetBase;
  * @EntityBrowserWidget(
  *   id = "multiple_submit_test_widget",
  *   label = @Translation("Multiple submit test widget"),
- *   description = @Translation("Test widget with multiple submit buttons only for testing purposes.")
+ *   description = @Translation("Test widget with multiple submit buttons only for testing purposes."),
+ *   auto_select = FALSE
  * )
  */
 class MultipleSubmitTestWidget extends WidgetBase {

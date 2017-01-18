@@ -2,14 +2,12 @@
 
 namespace Drupal\Tests\entity_browser\FunctionalJavascript;
 
-use Drupal\Component\Utility\SafeMarkup;
-use Drupal\Core\Entity\Sql\SqlEntityStorageInterface;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\file\Entity\File;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\FunctionalJavascriptTests\JavascriptTestBase;
-use Drupal\Tests\Component\Utility\SafeMarkupTest;
 
 /**
  * Base class for Entity browser Javascript functional tests.
@@ -108,11 +106,13 @@ abstract class EntityBrowserJavascriptTestBase extends JavascriptTestBase {
    *   The widget selector configuration.
    * @param array $selection_display_configuration
    *   The selection display configuration.
+   * @param array $widget_configurations
+   *   Widget configurations. Have be provided with widget UUIDs.
    *
    * @return \Drupal\entity_browser\EntityBrowserInterface
    *   Returns an Entity Browser.
    */
-  protected function getEntityBrowser($browser_name, $display_id, $widget_selector_id, $selection_display_id, $display_configuration = [], $widget_selector_configuration = [], $selection_display_configuration = []) {
+  protected function getEntityBrowser($browser_name, $display_id, $widget_selector_id, $selection_display_id, array $display_configuration = [], array $widget_selector_configuration = [], array $selection_display_configuration = [], array $widget_configurations = []) {
     /** @var \Drupal\Core\Entity\EntityStorageInterface $storage */
     $storage = $this->container->get('entity_type.manager')
       ->getStorage('entity_browser');
@@ -136,6 +136,15 @@ abstract class EntityBrowserJavascriptTestBase extends JavascriptTestBase {
       $browser->getSelectionDisplay()
         ->setConfiguration($selection_display_configuration);
     }
+
+    // Apply custom widget configurations.
+    if ($widget_configurations) {
+      foreach ($widget_configurations as $widget_uuid => $widget_config) {
+        $view_widget = $browser->getWidget($widget_uuid);
+        $view_widget->setConfiguration(NestedArray::mergeDeep($view_widget->getConfiguration(), $widget_config));
+      }
+    }
+
     $browser->save();
 
     // Clear caches after new browser is saved to remove old cached states.
@@ -191,6 +200,22 @@ abstract class EntityBrowserJavascriptTestBase extends JavascriptTestBase {
   }
 
   /**
+   * Click on element found by xpath selector.
+   *
+   * @param string $xpathSelector
+   *   Xpath selector for element that will be used to trigger click on it.
+   * @param bool $waitAfterAction
+   *   Flag to wait after click is executed.
+   */
+  protected function clickXpathSelector($xpathSelector, $waitAfterAction = TRUE) {
+    $this->getSession()->getPage()->find('xpath', $xpathSelector)->click();
+
+    if ($waitAfterAction) {
+      $this->waitForAjaxToFinish();
+    }
+  }
+
+  /**
    * Debugger method to save additional HTML output.
    *
    * The base class will only save browser output when accessing page using
@@ -209,6 +234,5 @@ abstract class EntityBrowserJavascriptTestBase extends JavascriptTestBase {
       $this->htmlOutput($html_output);
     }
   }
-
 
 }

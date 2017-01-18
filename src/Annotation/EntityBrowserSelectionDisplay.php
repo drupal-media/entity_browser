@@ -50,4 +50,16 @@ class EntityBrowserSelectionDisplay extends Plugin {
    */
   public $acceptPreselection = FALSE;
 
+  /**
+   * Indicates that javascript commands can be executed for Selection display.
+   *
+   * Currently supported javascript commands are adding and removing selection
+   * from selection display. Javascript commands use Ajax requests to load
+   * relevant changes and makes user experience way better, becase form is not
+   * flashed every time.
+   *
+   * @var bool
+   */
+  public $js_commands = FALSE;
+
 }
