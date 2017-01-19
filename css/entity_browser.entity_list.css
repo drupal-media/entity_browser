@@ -26,7 +26,8 @@
 }
 
 .entities-list .rendered-entity {
-  display: block;
+  display: inline-block;
+  vertical-align: text-top;
 }
 
 .entities-list.hidden {
