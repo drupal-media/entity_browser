@@ -18,3 +18,4 @@ git clone --depth 1 --branch 8.x-3.x http://git.drupal.org/project/ctools.git
 git clone --depth 1 --branch 8.x-1.x http://git.drupal.org/project/inline_entity_form.git
 git clone --depth 1 --branch 8.x-1.x http://git.drupal.org/project/media_entity.git
 git clone --depth 1 --branch 8.x-1.x http://git.drupal.org/project/paragraphs.git
+git clone --depth 1 --branch 8.x-1.x http://git.drupal.org/project/entity.git
