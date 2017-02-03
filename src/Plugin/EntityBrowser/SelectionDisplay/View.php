@@ -123,8 +123,9 @@ class View extends SelectionDisplayBase {
    */
   public function calculateDependencies() {
     $dependencies = [];
-    if ($this->configuration['view'] && ($view = ViewEntity::load($this->configuration['view']))) {
-      $dependencies[$view->getConfigDependencyKey()][] = $view->getConfigDependencyName();
+    if ($this->configuration['view']) {
+      $view = ViewEntity::load($this->configuration['view']);
+      $dependencies[$view->getConfigDependencyKey()] = [$view->getConfigDependencyName()];
     }
     return $dependencies;
   }
