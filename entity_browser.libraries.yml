@@ -6,6 +6,12 @@ common:
     - core/underscore
     - core/drupal.dialog.ajax
 
+pager:
+  version: VERSION
+  css:
+    theme:
+      css/entity_browser.pager.css: {}
+
 entity_browser:
   version: VERSION
   css:

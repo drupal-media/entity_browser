@@ -35,11 +35,11 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     $this->getSession()->getPage()->checkField('entity_browser_select[file:' . $image->id() . ']');
     $this->getSession()->getPage()->pressButton('Select entities');
 
-    $this->assertSession()->pageTextContains('llama.jpg');
     // Switch back to the main page.
     $this->getSession()->switchToIFrame();
     $this->waitForAjaxToFinish();
     // Test the Edit functionality.
+    $this->assertSession()->pageTextContains('llama.jpg');
     $this->assertSession()->buttonExists('Edit');
     // @TODO Test the edit button.
     // Test the Delete functionality.
