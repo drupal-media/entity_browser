@@ -2,6 +2,7 @@
 
 namespace Drupal\entity_browser;
 
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -191,7 +192,10 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
       'id' => '',
     ];
 
-    $this->configuration = $configuration['settings'] + $this->defaultConfiguration();
+    $this->configuration = NestedArray::mergeDeep(
+      $this->defaultConfiguration(),
+      $configuration['settings']
+    );
     $this->label = $configuration['label'];
     $this->weight = $configuration['weight'];
     $this->uuid = $configuration['uuid'];

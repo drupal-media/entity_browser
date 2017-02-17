@@ -2,6 +2,7 @@
 
 namespace Drupal\entity_browser;
 
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -38,6 +39,7 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
    */
   public function __construct($configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->setConfiguration($configuration);
     $this->widget_ids = isset($this->configuration['widget_ids']) ? $this->configuration['widget_ids'] : [];
   }
 
@@ -62,7 +64,10 @@ abstract class WidgetSelectorBase extends PluginBase implements WidgetSelectorIn
    * {@inheritdoc}
    */
   public function setConfiguration(array $configuration) {
-    $this->configuration = $configuration;
+    $this->configuration = NestedArray::mergeDeep(
+      $this->defaultConfiguration(),
+      $configuration
+    );
   }
 
   /**

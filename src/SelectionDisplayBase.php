@@ -2,6 +2,7 @@
 
 namespace Drupal\entity_browser;
 
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Config\ConfigException;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -95,7 +96,10 @@ abstract class SelectionDisplayBase extends PluginBase implements SelectionDispl
    * {@inheritdoc}
    */
   public function setConfiguration(array $configuration) {
-    $this->configuration = $configuration + $this->defaultConfiguration();
+    $this->configuration = NestedArray::mergeDeep(
+      $this->defaultConfiguration(),
+      $configuration
+    );
   }
 
   /**

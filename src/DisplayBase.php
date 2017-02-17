@@ -2,6 +2,7 @@
 
 namespace Drupal\entity_browser;
 
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\KeyValueStore\KeyValueStoreExpirableInterface;
@@ -79,7 +80,7 @@ abstract class DisplayBase extends PluginBase implements DisplayInterface, Conta
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EventDispatcherInterface $event_dispatcher, UuidInterface $uuid_generator, KeyValueStoreExpirableInterface $selection_storage) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->configuration += $this->defaultConfiguration();
+    $this->setConfiguration($configuration);
     $this->eventDispatcher = $event_dispatcher;
     $this->uuidGenerator = $uuid_generator;
     $this->selectionStorage = $selection_storage;
@@ -120,7 +121,10 @@ abstract class DisplayBase extends PluginBase implements DisplayInterface, Conta
    * {@inheritdoc}
    */
   public function setConfiguration(array $configuration) {
-    $this->configuration = $configuration;
+    $this->configuration = NestedArray::mergeDeep(
+      $this->defaultConfiguration(),
+      $configuration
+    );
   }
 
   /**
