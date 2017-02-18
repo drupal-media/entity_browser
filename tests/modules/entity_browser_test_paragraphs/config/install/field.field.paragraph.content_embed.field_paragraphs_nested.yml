@@ -4,6 +4,7 @@ dependencies:
   config:
     - field.storage.paragraph.field_paragraphs_nested
     - paragraphs.paragraphs_type.content_embed
+    - paragraphs.paragraphs_type.nested_paragraph
   module:
     - entity_reference_revisions
 id: paragraph.content_embed.field_paragraphs_nested
@@ -19,7 +20,8 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    target_bundles: null
+    target_bundles:
+      nested_paragraph: nested_paragraph
     target_bundles_drag_drop:
       content_embed:
         weight: 2

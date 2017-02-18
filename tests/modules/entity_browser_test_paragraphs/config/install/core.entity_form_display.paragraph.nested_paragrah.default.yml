@@ -3,14 +3,13 @@ status: true
 dependencies:
   config:
     - entity_browser.browser.test_nodes
-    - field.field.paragraph.content_embed.field_content_reference
-    - field.field.paragraph.content_embed.field_paragraphs_nested
-    - paragraphs.paragraphs_type.content_embed
+    - field.field.paragraph.nested_paragraph.field_content_reference
+    - paragraphs.paragraphs_type.nested_paragraph
   module:
     - entity_browser
-id: paragraph.content_embed.default
+id: paragraph.nested_paragraph.default
 targetEntityType: paragraph
-bundle: content_embed
+bundle: nested_paragraph
 mode: default
 content:
   field_content_reference:
@@ -25,17 +24,6 @@ content:
       field_widget_display_settings: {  }
     third_party_settings: {  }
     type: entity_browser_entity_reference
-  field_paragraphs_nested:
-    type: entity_reference_paragraphs
-    weight: 1
-    settings:
-      title: Paragraph
-      title_plural: Paragraphs
-      edit_mode: open
-      add_mode: dropdown
-      form_display_mode: default
-      default_paragraph_type: '_none'
-    third_party_settings: {  }
 hidden:
   created: true
   status: true

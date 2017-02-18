@@ -91,7 +91,7 @@ class ParagraphsTest extends EntityBrowserJavascriptTestBase {
     $this->assertSession()->elementTextContains('css', $selector_1, 'Hello world');
 
     // Testing nested paragraphs field.
-    $this->getSession()->getPage()->pressButton('field_paragraph_0_subform_field_paragraphs_nested_content_embed_add_more');
+    $this->getSession()->getPage()->pressButton('field_paragraph_0_subform_field_paragraphs_nested_nested_paragraph_add_more');
     $this->waitForAjaxToFinish();
     $this->assertSession()->linkExists('Select entities');
     $this->getSession()->getPage()->clickLink('Select entities');
@@ -103,7 +103,7 @@ class ParagraphsTest extends EntityBrowserJavascriptTestBase {
     $this->getSession()->switchToIFrame();
     $this->waitForAjaxToFinish();
 
-    $this->getSession()->getPage()->pressButton('field_paragraph_0_subform_field_paragraphs_nested_content_embed_add_more');
+    $this->getSession()->getPage()->pressButton('field_paragraph_0_subform_field_paragraphs_nested_nested_paragraph_add_more');
     $this->waitForAjaxToFinish();
     $this->assertSession()->linkExists('Select entities');
     $this->getSession()->getPage()->clickLink('Select entities');
@@ -116,7 +116,7 @@ class ParagraphsTest extends EntityBrowserJavascriptTestBase {
     $this->waitForAjaxToFinish();
 
     // Test editing node in nested paragraph.
-    $this->assertSession()->elementTextContains('css', '.field--name-field-paragraphs-nested tbody tr:nth-child(1) .paragraphs-subform', 'Nested node');
+    $this->assertSession()->elementTextContains('css', '.field--name-field-paragraphs-nested tbody tr:nth-child(1) .paragraph-type-title', 'Nested paragraph');
     $this->click('.field--name-field-paragraphs-nested tbody tr:nth-child(1) .paragraphs-subform [value="Edit"]');
     $this->waitForAjaxToFinish();
     $this->assertSession()->elementExists('css', '.ui-dialog .node-article-edit-form .form-item-title-0-value [value="Nested node"]');
