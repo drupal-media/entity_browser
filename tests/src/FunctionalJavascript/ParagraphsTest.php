@@ -116,7 +116,7 @@ class ParagraphsTest extends EntityBrowserJavascriptTestBase {
     $this->waitForAjaxToFinish();
 
     // Test editing node in nested paragraph.
-    $this->assertSession()->elementTextContains('css', '.field--name-field-paragraphs-nested tbody tr:nth-child(1) .paragraph-type-title', 'Nested paragraph');
+    $this->assertSession()->elementTextContains('css', '.field--name-field-paragraphs-nested tbody tr:nth-child(1) .paragraphs-subform', 'Nested node');
     $this->click('.field--name-field-paragraphs-nested tbody tr:nth-child(1) .paragraphs-subform [value="Edit"]');
     $this->waitForAjaxToFinish();
     $this->assertSession()->elementExists('css', '.ui-dialog .node-article-edit-form .form-item-title-0-value [value="Nested node"]');
