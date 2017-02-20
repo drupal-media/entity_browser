@@ -132,14 +132,16 @@ class EntityForm extends WidgetBase {
    * {@inheritdoc}
    */
   public function submit(array &$element, array &$form, FormStateInterface $form_state) {
-    $entities = $this->prepareEntities($form, $form_state);
-    array_walk(
-      $entities,
-      function (EntityInterface $entity) {
-        $entity->save();
-      }
-    );
-    $this->selectEntities($entities, $form_state);
+    if (!empty($form_state->getTriggeringElement()['#eb_widget_main_submit'])) {
+      $entities = $this->prepareEntities($form, $form_state);
+      array_walk(
+        $entities,
+        function (EntityInterface $entity) {
+          $entity->save();
+        }
+      );
+      $this->selectEntities($entities, $form_state);
+    }
   }
 
   /**

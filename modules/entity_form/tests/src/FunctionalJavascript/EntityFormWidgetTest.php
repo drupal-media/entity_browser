@@ -84,35 +84,70 @@ class EntityFormWidgetTest extends JavascriptTestBase {
    * Test if save button is appears on form.
    */
   public function testEntityForm() {
-    $this->drupalGet('node/add/foo');
-    $this->getSession()->getPage()->clickLink('Select entities');
-    $this->getSession()->switchToIFrame('entity_browser_iframe_entity_browser_test_entity_form');
-    $this->assertSession()->buttonExists('Save entity');
     /** @var \Drupal\entity_browser\EntityBrowserInterface $browser */
     $browser = $this->container->get('entity_type.manager')
       ->getStorage('entity_browser')
       ->load('entity_browser_test_entity_form');
-    $entity_form_widget = $browser->getWidget('9c6ee4c0-4642-4203-b4bd-ec0bad068ad3');
-    // Update submit text in widget settings.
-    $entity_form_widget->setConfiguration([
-      'settings' => [
-        'entity_type' => 'node',
-        'bundle' => 'article',
-        'form_mode' => 'default',
-        'submit_text' => 'Save node',
-      ],
-      'uuid' => '9c6ee4c0-4642-4203-b4bd-ec0bad068ad3',
-      'weight' => 2,
-      'label' => 'entity_form',
-      'id' => 'entity_form',
-    ]);
+
+    // Make sure that the "Save entities" button exists.
+    $this->drupalGet('entity-browser/iframe/entity_browser_test_entity_form');
+    $this->assertSession()->buttonExists('Save entity');
+
+    // Change save button's text and make sure that the change was respected.
+    $config = $browser->getWidget('9c6ee4c0-4642-4203-b4bd-ec0bad068ad3')->getConfiguration();
+    $config['settings']['submit_text'] = 'Save node';
+    $browser->getWidget('9c6ee4c0-4642-4203-b4bd-ec0bad068ad3')->setConfiguration($config);
     $browser->save();
+    $this->drupalGet('entity-browser/iframe/entity_browser_test_entity_form');
+    $this->assertSession()->buttonNotExists('Save entity');
+    $this->assertSession()->buttonExists('Save node');
+
+    // Make sure that the widget works correctly with the field widget
     $this->drupalGet('node/add/foo');
     $this->getSession()->getPage()->clickLink('Select entities');
     $this->getSession()->switchToIFrame('entity_browser_iframe_entity_browser_test_entity_form');
-    // Assert changes in widget configuration is respected.
-    $this->assertSession()->buttonNotExists('Save entity');
-    $this->assertSession()->buttonExists('Save node');
+    $this->getSession()->getPage()->fillField('inline_entity_form[title][0][value]', 'War is peace');
+    $this->getSession()->getPage()->pressButton('Save node');
+
+    // Switch back to the main page.
+    $this->getSession()->switchToIFrame();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+
+    $this->assertSession()->pageTextContains('War is peace');
+    $this->getSession()->getPage()->fillField('title[0][value]', 'Freedom is slavery');
+    $this->getSession()->getPage()->pressButton('Save');
+
+    $parent_node = $this->container->get('entity_type.manager')
+      ->getStorage('node')
+      ->loadByProperties(['title' => 'Freedom is slavery']);
+    $parent_node = current($parent_node);
+    $this->assertEquals(1, $parent_node->get('field_reference')->count(), 'There is one child node.');
+    $this->assertEquals('War is peace', $parent_node->field_reference->entity->label(), 'Child node has correct title.');
+
+    // Now try using Multi value selection display and make sure there is only
+    // one node created by the Entity browser.
+    $browser->setSelectionDisplay('multi_step_display')->save();
+    $this->drupalGet('node/add/foo');
+    $this->getSession()->getPage()->clickLink('Select entities');
+    $this->getSession()->switchToIFrame('entity_browser_iframe_entity_browser_test_entity_form');
+    $this->getSession()->getPage()->fillField('inline_entity_form[title][0][value]', 'War is peace');
+    $this->getSession()->getPage()->pressButton('Save node');
+    $this->getSession()->getPage()->pressButton('Use selected');
+
+    // Switch back to the main page.
+    $this->getSession()->switchToIFrame();
+    $this->assertSession()->assertWaitOnAjaxRequest();
+
+    $this->assertSession()->pageTextContains('War is peace');
+    $this->getSession()->getPage()->fillField('title[0][value]', 'Ignorance is strength');
+    $this->getSession()->getPage()->pressButton('Save');
+
+    $parent_node = $this->container->get('entity_type.manager')
+      ->getStorage('node')
+      ->loadByProperties(['title' => 'Ignorance is strength']);
+    $parent_node = current($parent_node);
+    $this->assertEquals(1, $parent_node->get('field_reference')->count(), 'There is one child node.');
+    $this->assertEquals('War is peace', $parent_node->field_reference->entity->label(), 'Child node has correct title.');
   }
 
 }
