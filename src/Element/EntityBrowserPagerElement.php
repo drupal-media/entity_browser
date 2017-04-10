@@ -76,7 +76,7 @@ class EntityBrowserPagerElement extends FormElement {
       '#submit' => [[static::class, 'submitPager']],
       '#value' => t('Next ›'),
       '#name' => 'next_page',
-      '#disabled' => $element['#total_pages'] === $page,
+      '#disabled' => $element['#total_pages'] == $page,
       '#attributes' => ['class' => ['next']],
       '#limit_validation_errors' => [array_merge($element['#parents'], ['next'])],
     ];
