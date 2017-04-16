@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for entity_browser_example module.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function entity_browser_example_uninstall() {
+  \Drupal::configFactory()->getEditable('core.entity_form_display.node.entity_browser_test.default')->delete();
+  \Drupal::configFactory()->getEditable('core.entity_view_display.node.entity_browser_test.default')->delete();
+  \Drupal::configFactory()->getEditable('core.entity_view_display.node.entity_browser_test.teaser')->delete();
+  \Drupal::configFactory()->getEditable('entity_browser.browser.test_files')->delete();
+  \Drupal::configFactory()->getEditable('entity_browser.browser.test_nodes')->delete();
+  \Drupal::configFactory()->getEditable('field.field.node.entity_browser_test.body')->delete();
+  \Drupal::configFactory()->getEditable('field.field.node.entity_browser_test.field_files')->delete();
+  \Drupal::configFactory()->getEditable('field.field.node.entity_browser_test.field_nodes')->delete();
+  \Drupal::configFactory()->getEditable('field.storage.node.field_files')->delete();
+  \Drupal::configFactory()->getEditable('field.storage.node.field_nodes')->delete();
+  \Drupal::configFactory()->getEditable('node.type.entity_browser_test')->delete();
+  \Drupal::configFactory()->getEditable('views.view.files_entity_browser')->delete();
+  \Drupal::configFactory()->getEditable('views.view.nodes_entity_browser')->delete();
+}
