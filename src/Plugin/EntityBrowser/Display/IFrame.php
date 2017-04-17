@@ -183,6 +183,10 @@ class IFrame extends DisplayBase implements DisplayRouterInterface {
    *   Response event.
    */
   public function propagateSelection(FilterResponseEvent $event) {
+    if (empty($this->entities)) {
+      return;
+    }
+
     $render = [
       'labels' => [
         '#markup' => 'Labels: ' . implode(', ', array_map(function (EntityInterface $item) {
