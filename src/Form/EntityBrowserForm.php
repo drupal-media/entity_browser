@@ -92,6 +92,7 @@ class EntityBrowserForm extends FormBase implements EntityBrowserFormInterface {
     }
     $form_state->set(['entity_browser', 'selected_entities'], []);
     $form_state->set(['entity_browser', 'validators'], []);
+    $form_state->set(['entity_browser', 'widget_context'], []);
     $form_state->set(['entity_browser', 'selection_completed'], FALSE);
 
     // Initialize form state with persistent data, if present.

@@ -99,6 +99,7 @@ class Upload extends WidgetBase {
   public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters) {
     $form = parent::getForm($original_form, $form_state, $additional_widget_parameters);
     $field_cardinality = $form_state->get(['entity_browser', 'validators', 'cardinality', 'cardinality']);
+    $upload_validators = $form_state->has(['entity_browser', 'widget_context', 'upload_validators']) ? $form_state->get(['entity_browser', 'widget_context', 'upload_validators']) : [];
     $form['upload'] = [
       '#type' => 'managed_file',
       '#title' => $this->t('Choose a file'),
@@ -107,9 +108,9 @@ class Upload extends WidgetBase {
       // Multiple uploads will only be accepted if the source field allows
       // more than one value.
       '#multiple' => $field_cardinality != 1 && $this->configuration['multiple'],
-      '#upload_validators' => [
+      '#upload_validators' => array_merge([
         'file_validate_extensions' => [$this->configuration['extensions']],
-      ],
+      ], $upload_validators),
     ];
 
     return $form;

@@ -354,21 +354,24 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
 
     // Enable entity browser if requirements for that are fulfilled.
     if (EntityBrowserElement::isEntityBrowserAvailable($selection_mode, $cardinality, count($ids))) {
+      $persistentData = $this->getPersistentData();
+
       $element['entity_browser'] = [
         '#type' => 'entity_browser',
         '#entity_browser' => $this->getSetting('entity_browser'),
         '#cardinality' => $cardinality,
         '#selection_mode' => $selection_mode,
         '#default_value' => $entities,
-        '#entity_browser_validators' => ['entity_type' => ['type' => $entity_type]],
+        '#entity_browser_validators' => $persistentData['validators'],
+        '#widget_context' => $persistentData['widget_context'],
         '#custom_hidden_id' => $hidden_id,
         '#process' => [
           ['\Drupal\entity_browser\Element\EntityBrowserElement', 'processEntityBrowser'],
           [get_called_class(), 'processEntityBrowser'],
         ],
       ];
-
     }
+
     $element['#attached']['library'][] = 'entity_browser/entity_reference';
 
     $field_parents = $element['#field_parents'];
@@ -561,6 +564,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       'validators' => [
         'entity_type' => ['type' => $this->fieldDefinition->getFieldStorageDefinition()->getSetting('target_type')],
       ],
+      'widget_context' => [],
     ];
   }
 

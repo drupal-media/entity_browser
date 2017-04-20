@@ -24,6 +24,9 @@ use Drupal\Core\Entity\EntityInterface;
  * - #selection_mode: (optional) Determines how selection in entity browser will
  *     be handled. Will selection be appended/prepended or it will be replaced
  *     in case of editing. Defaults to append.
+ * - #widget_context: (optional) Widget configuration overrides which enable
+ *     use cases where the instance of a widget needs awareness of contextual
+ *     configuration like field settings.
  *
  * Return value will be an array of selected entities, which will appear under
  * 'entities' key on the root level of the element's values in the form state.
@@ -86,6 +89,7 @@ class EntityBrowserElement extends FormElement {
       '#process' => [[$class, 'processEntityBrowser']],
       '#default_value' => [],
       '#entity_browser_validators' => [],
+      '#widget_context' => [],
       '#attached' => ['library' => ['entity_browser/common']],
     ];
   }
@@ -172,6 +176,7 @@ class EntityBrowserElement extends FormElement {
       [
         'validators' => $validators,
         'selected_entities' => $entity_browser_preselected_entities,
+        'widget_context' => $element['#widget_context'],
       ]
     );
 

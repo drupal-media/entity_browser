@@ -112,15 +112,8 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
   public function getForm(array &$original_form, FormStateInterface $form_state, array $additional_widget_parameters) {
     $form = [];
 
-    // Allow configuration overrides at runtime based on form state to enable
-    // use cases where the instance of a widget may have contextual
-    // configuration like field settings. "widget_context" doesn't have to be
-    // used in this way, if a widget doesn't want its default configuration
-    // overwritten it can not call this method and implement its own logic.
-    foreach ($this->defaultConfiguration() as $key => $value) {
-      if ($form_state->has(['entity_browser', 'widget_context', $key]) && isset($this->configuration[$key])) {
-        $this->configuration[$key] = $form_state->get(['entity_browser', 'widget_context', $key]);
-      }
+    if ($form_state->has(['entity_browser', 'widget_context'])) {
+      $this->handleWidgetContext($form_state->get(['entity_browser', 'widget_context']));
     }
 
     // Check if widget supports auto select functionality and expose config to
@@ -359,6 +352,24 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
    */
   public function requiresJsCommands() {
     return $this->getPluginDefinition()['auto_select'] && $this->getConfiguration()['settings']['auto_select'];
+  }
+
+  /**
+   * Allow configuration overrides at runtime based on widget context passed to
+   * this widget from the Entity Browser element.
+   *
+   * Widgets can override this method to replace the default behavior of
+   * replacing configuration with widget context if array keys match.
+   *
+   * @param array $widget_context
+   *   The widget context.
+   */
+  protected function handleWidgetContext($widget_context) {
+    foreach ($this->defaultConfiguration() as $key => $value) {
+      if (isset($widget_context[$key]) && isset($this->configuration[$key])) {
+        $this->configuration[$key] = $widget_context[$key];
+      }
+    }
   }
 
 }
