@@ -9,6 +9,29 @@ use \Drupal\Core\Form\FormStateInterface;
 use \Drupal\Core\Render\Element;
 use Drupal\Core\Url;
 use \Drupal\file\FileInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function entity_browser_help($route_name, RouteMatchInterface $arg) {
+  switch ($route_name) {
+    case 'help.page.entity_browser':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The Entity Browser module provides a generic entity browser/picker/selector. It can be used in any context where one needs to select a few entities and do something with them. For more information, see the online documentation for <a href=":entity_browser-documentation">Entity Browser</a>.', array(':entity_browser-documentation' => 'https://drupal-media.gitbooks.io/drupal8-guide/content/modules/entity_browser/intro.html')) . '</p>';
+      $output .= '<h3>' . t('Uses') . '</h3>';
+      $output .= '<dl>';
+      $output .= '<dt>' . t('General') . '</dt>';
+      $output .= '<dd>' . t('Entity browser comes with an example module that can be used as a starting point.') . '</dd>';
+      $output .= '<dt>' . t('Example use cases') . '</dt>';
+      $output .= '<dd>' . t('Powerfull entity reference widget') . '</dd>';
+      $output .= '<dd>' . t('Embedding entities into wysiwyg') . '</dd>';
+      $output .= '</dl>';
+
+      return $output;
+  }
+}
 
 /**
  * Implements hook_theme().
