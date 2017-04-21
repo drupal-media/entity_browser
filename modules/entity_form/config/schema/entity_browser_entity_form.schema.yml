@@ -22,3 +22,29 @@ entity_browser.browser.widget.entity_form:
     form_mode:
       type: string
       label: 'Form display mode ID'
+
+field.widget.settings.inline_entity_form_complex:
+  type: mapping
+  label: 'Inline entity form widget'
+  mapping:
+    form_mode:
+      type: string
+      label: 'Form mode'
+    override_labels:
+      type: boolean
+      label: 'Override labels'
+    label_singular:
+      type: string
+      label: 'Label for singular entity'
+    label_plural:
+      type: string
+      label: 'Label for multiple entities'
+    allow_new:
+      type: boolean
+      label: 'Allow new entities'
+    allow_existing:
+      type: boolean
+      label: 'Allow existing entities'
+    match_operator:
+      type: string
+      label: 'Match operator'
