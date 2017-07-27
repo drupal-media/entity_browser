@@ -22,6 +22,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Plugin implementation of the 'entity_reference' widget for entity browser.
@@ -69,6 +70,13 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
   protected $moduleHandler;
 
   /**
+   * The current user.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected $currentUser;
+
+  /**
    * Constructs widget plugin.
    *
    * @param string $plugin_id
@@ -89,12 +97,15 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    *   Field widget display plugin manager.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler service.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
    */
-  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityTypeManagerInterface $entity_type_manager, EventDispatcherInterface $event_dispatcher, FieldWidgetDisplayManager $field_display_manager, ModuleHandlerInterface $module_handler) {
+  public function __construct($plugin_id, $plugin_definition, FieldDefinitionInterface $field_definition, array $settings, array $third_party_settings, EntityTypeManagerInterface $entity_type_manager, EventDispatcherInterface $event_dispatcher, FieldWidgetDisplayManager $field_display_manager, ModuleHandlerInterface $module_handler, AccountInterface $current_user) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $third_party_settings);
     $this->entityTypeManager = $entity_type_manager;
     $this->fieldDisplayManager = $field_display_manager;
     $this->moduleHandler = $module_handler;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -110,7 +121,8 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       $container->get('entity_type.manager'),
       $container->get('event_dispatcher'),
       $container->get('plugin.manager.entity_browser.field_widget_display'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('current_user')
     );
   }
 
@@ -498,7 +510,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       'items' => array_map(
         function (ContentEntityInterface $entity, $row_id) use ($field_widget_display, $details_id, $field_parents) {
           $display = $field_widget_display->view($entity);
-          $edit_button_access = $this->getSetting('field_widget_edit');
+          $edit_button_access = $this->getSetting('field_widget_edit') && $entity->access('update', $this->currentUser);
           if ($entity->getEntityTypeId() == 'file') {
             // On file entities, the "edit" button shouldn't be visible unless
             // the module "file_entity" is present, which will allow them to be
