@@ -464,7 +464,7 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
       $validators['file_validate_extensions'] = [implode(' ', $extensions)];
 
       // Add resolution validation.
-      if ($settings['max_resolution'] || $settings['min_resolution']) {
+      if (!empty($settings['max_resolution']) || !empty($settings['min_resolution'])) {
         $validators['entity_browser_file_validate_image_resolution'] = [$settings['max_resolution'], $settings['min_resolution']];
       }
     }
