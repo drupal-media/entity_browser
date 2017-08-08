@@ -15,7 +15,7 @@
   Drupal.behaviors.entityBrowserEntityReference = {
     attach: function (context) {
       $(context).find('.field--widget-entity-browser-entity-reference').each(function () {
-        $(this).find('.entities-list').sortable({
+        $(this).find('.entities-list.sortable').sortable({
           stop: Drupal.entityBrowserEntityReference.entitiesReordered
         });
       });
