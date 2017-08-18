@@ -32,6 +32,7 @@ class EntityBrowserTest extends KernelTestBase {
     'user',
     'views',
     'file',
+    'node',
     'entity_browser',
     'entity_browser_test',
   ];
