@@ -47,6 +47,23 @@ class EntityBrowser extends DisplayPluginBase {
   /**
    * {@inheritdoc}
    */
+  public function getOption($option) {
+    // @todo remove upon resolution of https://www.drupal.org/node/2904798
+    // This overrides getOption() instead of ajaxEnabled() because
+    // \Drupal\views\Controller\ViewAjaxController::ajaxView() currently calls
+    // that directly.
+    if ($option == 'use_ajax') {
+      return TRUE;
+    }
+    else {
+      return parent::getOption($option);
+    }
+  }
+
+
+  /**
+   * {@inheritdoc}
+   */
   protected function defineOptions() {
     $options = parent::defineOptions();
     $options['use_ajax']['default'] = TRUE;
