@@ -164,38 +164,48 @@ class EntityBrowserElement extends FormElement {
       ['cardinality' => ['cardinality' => $element['#cardinality']]]
     );
 
-    $display = $entity_browser->getDisplay();
-    $display->setUuid(sha1(implode('-', array_merge([$complete_form['#build_id']], $element['#parents']))));
-    $element['entity_browser'] = [
-      '#eb_parents' => array_merge($element['#parents'], ['entity_browser']),
-    ];
-    $element['entity_browser'] = $display->displayEntityBrowser(
-      $element['entity_browser'],
-      $form_state,
-      $complete_form,
-      [
-        'validators' => $validators,
-        'selected_entities' => $entity_browser_preselected_entities,
-        'widget_context' => $element['#widget_context'],
-      ]
-    );
+    // Display error message if the entity browser was not found.
+    if (!$entity_browser) {
+      $element['entity_browser'] = [
+        '#type' => 'markup',
+        '#markup' => is_string($element['#entity_browser']) ? $this->t('Entity browser @browser not found.', ['@browser' => $element['#entity_browser']]) : $this->t('Entity browser not found.'),
+      ];
+    }
+    // Display entity_browser
+    else {
+      $display = $entity_browser->getDisplay();
+      $display->setUuid(sha1(implode('-', array_merge([$complete_form['#build_id']], $element['#parents']))));
+      $element['entity_browser'] = [
+        '#eb_parents' => array_merge($element['#parents'], ['entity_browser']),
+      ];
+      $element['entity_browser'] = $display->displayEntityBrowser(
+        $element['entity_browser'],
+        $form_state,
+        $complete_form,
+        [
+          'validators' => $validators,
+          'selected_entities' => $entity_browser_preselected_entities,
+          'widget_context' => $element['#widget_context'],
+        ]
+      );
 
-    $hidden_id = Html::getUniqueId($element['#id'] . '-target');
-    $element['entity_ids'] = [
-      '#type' => 'hidden',
-      '#id' => $hidden_id,
-      // We need to repeat ID here as it is otherwise skipped when rendering.
-      '#attributes' => ['id' => $hidden_id, 'class' => ['eb-target']],
-      '#default_value' => $default_value,
-    ];
+      $hidden_id = Html::getUniqueId($element['#id'] . '-target');
+      $element['entity_ids'] = [
+        '#type' => 'hidden',
+        '#id' => $hidden_id,
+        // We need to repeat ID here as it is otherwise skipped when rendering.
+        '#attributes' => ['id' => $hidden_id, 'class' => ['eb-target']],
+        '#default_value' => $default_value,
+      ];
 
-    $element['#attached']['drupalSettings']['entity_browser'] = [
-      $entity_browser->getDisplay()->getUuid() => [
-        'cardinality' => $element['#cardinality'],
-        'selection_mode' => $element['#selection_mode'],
-        'selector' => '#' . $hidden_id,
-      ],
-    ];
+      $element['#attached']['drupalSettings']['entity_browser'] = [
+        $entity_browser->getDisplay()->getUuid() => [
+          'cardinality' => $element['#cardinality'],
+          'selection_mode' => $element['#selection_mode'],
+          'selector' => '#' . $hidden_id,
+        ],
+      ];
+    }
 
     return $element;
   }
