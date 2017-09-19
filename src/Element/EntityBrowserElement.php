@@ -168,7 +168,7 @@ class EntityBrowserElement extends FormElement {
     if (!$entity_browser) {
       $element['entity_browser'] = [
         '#type' => 'markup',
-        '#markup' => is_string($element['#entity_browser']) ? $this->t('Entity browser @browser not found.', ['@browser' => $element['#entity_browser']]) : $this->t('Entity browser not found.'),
+        '#markup' => is_string($element['#entity_browser']) ? t('Entity browser @browser not found.', ['@browser' => $element['#entity_browser']]) : t('Entity browser not found.'),
       ];
     }
     // Display entity_browser
