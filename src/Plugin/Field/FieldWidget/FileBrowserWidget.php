@@ -247,10 +247,10 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
       // Check to see if this entity has an edit form. If not, the edit button
       // will only throw an exception.
       if (!$entity->getEntityType()->getFormClass('edit')) {
-        $can_edit = FALSE;
+        $edit_button_access = FALSE;
       }
       elseif ($has_file_entity) {
-        $can_edit = $entity->access('update', $this->currentUser);
+        $edit_button_access = $can_edit && $entity->access('update', $this->currentUser);
       }
 
       $entity_id = $entity->id();
@@ -357,7 +357,7 @@ class FileBrowserWidget extends EntityReferenceBrowserWidget {
             'data-entity-id' => $entity->getEntityTypeId() . ':' . $entity->id(),
             'data-row-id' => $delta,
           ],
-          '#access' => $can_edit,
+          '#access' => $edit_button_access,
         ],
         'remove_button' => [
           '#type' => 'submit',
