@@ -29,4 +29,19 @@ class WidgetManager extends DefaultPluginManager {
     $this->setCacheBackend($cache_backend, 'entity_browser_widget_plugins');
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  protected function findDefinitions() {
+    $definitions = parent::findDefinitions();
+
+    // Our own "media_image_upload" widget should only be available if the
+    // "Media" module is enabled.
+    if (!$this->moduleHandler->moduleExists('media')) {
+      unset($definitions['media_image_upload']);
+    }
+
+    return $definitions;
+  }
+
 }

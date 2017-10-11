@@ -2,12 +2,12 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.storage.media.ief_media_bundle_file_field
-    - media_entity.bundle.ief_media_bundle
-id: media.ief_media_bundle.ief_media_bundle_file_field
-field_name: ief_media_bundle_file_field
+    - field.storage.media.ief_media_type_file_field
+    - media.type.ief_media_type
+id: media.ief_media_type.ief_media_type_file_field
+field_name: ief_media_type_file_field
 entity_type: media
-bundle: ief_media_bundle
+bundle: ief_media_type
 label: files
 description: ''
 required: false

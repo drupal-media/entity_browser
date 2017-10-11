@@ -2,16 +2,16 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.media.ief_media_bundle.ief_media_bundle_file_field
-    - media_entity.bundle.ief_media_bundle
+    - field.field.media.ief_media_type.ief_media_type_file_field
+    - media.type.ief_media_type
   module:
     - entity_browser
-id: media.ief_media_bundle.default
+id: media.ief_media_type.default
 targetEntityType: media
-bundle: ief_media_bundle
+bundle: ief_media_type
 mode: default
 content:
-  ief_media_bundle_file_field:
+  ief_media_type_file_field:
     weight: 11
     settings:
       entity_browser: ief_entity_browser_file

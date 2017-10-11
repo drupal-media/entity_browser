@@ -8,6 +8,6 @@ dependencies:
   - file
   - entity_browser
   - entity_browser_entity_form
-  - media_entity
+  - drupal:media (>= 8.4)
   - inline_entity_form
   - views

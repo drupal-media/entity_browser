@@ -3,7 +3,7 @@ status: true
 dependencies:
   config:
     - field.storage.node.ief_media_field
-    - media_entity.bundle.ief_media_bundle
+    - media.type.ief_media_type
     - node.type.ief_content
 id: node.ief_content.ief_media_field
 field_name: ief_media_field
@@ -19,7 +19,7 @@ settings:
   handler: 'default:media'
   handler_settings:
     target_bundles:
-      ief_media_bundle: ief_media_bundle
+      ief_media_type: ief_media_type
     sort:
       field: _none
     auto_create: false

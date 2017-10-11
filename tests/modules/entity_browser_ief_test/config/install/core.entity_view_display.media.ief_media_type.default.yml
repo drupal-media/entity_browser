@@ -2,15 +2,15 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.media.ief_media_bundle.ief_media_bundle_file_field
+    - field.field.media.ief_media_type.ief_media_type_file_field
     - image.style.thumbnail
-    - media_entity.bundle.ief_media_bundle
+    - media.type.ief_media_type
   module:
     - image
     - user
-id: media.ief_media_bundle.default
+id: media.ief_media_type.default
 targetEntityType: media
-bundle: ief_media_bundle
+bundle: ief_media_type
 mode: default
 content:
   created:
@@ -22,7 +22,7 @@ content:
       custom_date_format: ''
       timezone: ''
     third_party_settings: {  }
-  ief_media_bundle_file_field:
+  ief_media_type_file_field:
     weight: 2
     label: above
     settings:

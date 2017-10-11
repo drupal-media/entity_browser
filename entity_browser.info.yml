@@ -7,6 +7,6 @@ test_dependencies:
   - ctools:ctools
   - token:token
   - inline_entity_form:inline_entity_form
-  - media_entity:media_entity
+  - drupal:media (>= 8.4)
   - paragraphs:paragraphs
 configure: entity.entity_browser.collection
