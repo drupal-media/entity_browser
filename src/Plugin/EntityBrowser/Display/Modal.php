@@ -116,13 +116,15 @@ class Modal extends IFrame {
         'src' => $src,
         'class' => 'entity-browser-modal-iframe',
         'width' => '100%',
-        'height' => $this->configuration['height'] - 90,
         'frameborder' => 0,
         'style' => 'padding:0; position:relative; z-index:10002;',
         'name' => $name,
         'id' => $name,
       ],
     ];
+    if (!empty($this->configuration['height']) && is_numeric($this->configuration['height']) && $this->configuration['height'] > 90) {
+      $content['#attributes']['height'] = $this->configuration['height'] - 90;
+    }
     $html = drupal_render($content);
 
     $response = new AjaxResponse();
