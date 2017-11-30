@@ -40,10 +40,10 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return array(
+    return [
       'view' => NULL,
       'view_display' => NULL,
-    ) + parent::defaultConfiguration();
+    ] + parent::defaultConfiguration();
   }
 
   /**
@@ -238,7 +238,7 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
     foreach ($displays as $display) {
       list($view_id, $display_id) = $display;
       $view = $this->entityTypeManager->getStorage('view')->load($view_id);
-      $options[$view_id . '.' . $display_id] = $this->t('@view : @display', array('@view' => $view->label(), '@display' => $view->get('display')[$display_id]['display_title']));
+      $options[$view_id . '.' . $display_id] = $this->t('@view : @display', ['@view' => $view->label(), '@display' => $view->get('display')[$display_id]['display_title']]);
     }
 
     $form['view'] = [

@@ -128,12 +128,12 @@ function entity_browser_entity_form_reference_form_submit($reference_form, FormS
   }
 
   foreach ($attach_entities as $attach_entity) {
-    $entities[] = array(
+    $entities[] = [
       'entity' => $attach_entity,
       'weight' => $weight,
       'form' => NULL,
       'needs_save' => FALSE,
-    );
+    ];
     $weight++;
   }
   $form_state->set(['inline_entity_form', $ief_id, 'entities'], $entities);

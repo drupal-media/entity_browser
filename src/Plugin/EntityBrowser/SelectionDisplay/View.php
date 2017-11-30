@@ -26,10 +26,10 @@ class View extends SelectionDisplayBase {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return array(
+    return [
       'view' => NULL,
       'view_display' => NULL,
-    ) + parent::defaultConfiguration();
+    ] + parent::defaultConfiguration();
   }
 
   /**
@@ -61,11 +61,11 @@ class View extends SelectionDisplayBase {
 
     $form['view'] = $storage['selection_display_view']->executeDisplay($this->configuration['view_display']);
 
-    $form['use_selected'] = array(
+    $form['use_selected'] = [
       '#type' => 'submit',
       '#value' => $this->t('Use selection'),
       '#name' => 'use_selected',
-    );
+    ];
 
     return $form;
   }
@@ -89,7 +89,7 @@ class View extends SelectionDisplayBase {
     $views = Views::getAllViews();
     foreach ($views as $view_id => $view) {
       foreach ($view->get('display') as $display_id => $display) {
-        $options[$view_id . '.' . $display_id] = $this->t('@view : @display', array('@view' => $view->label(), '@display' => $display['display_title']));
+        $options[$view_id . '.' . $display_id] = $this->t('@view : @display', ['@view' => $view->label(), '@display' => $display['display_title']]);
       }
     }
 

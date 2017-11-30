@@ -58,10 +58,10 @@ class Permissions implements ContainerInjectionInterface {
 
     foreach ($browsers as $browser) {
       if ($browser->route()) {
-        $permissions['access ' . $browser->id() . ' entity browser pages'] = array(
-          'title' => $this->translationManager->translate('Access @name pages', array('@name' => $browser->label())),
-          'description' => $this->translationManager->translate('Access pages that %browser uses to operate.', array('%browser' => $browser->label())),
-        );
+        $permissions['access ' . $browser->id() . ' entity browser pages'] = [
+          'title' => $this->translationManager->translate('Access @name pages', ['@name' => $browser->label()]),
+          'description' => $this->translationManager->translate('Access pages that %browser uses to operate.', ['%browser' => $browser->label()]),
+        ];
       }
     }
 

@@ -130,7 +130,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return array(
+    return [
       'entity_browser' => NULL,
       'open' => FALSE,
       'field_widget_display' => 'label',
@@ -138,7 +138,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       'field_widget_remove' => TRUE,
       'field_widget_display_settings' => [],
       'selection_mode' => EntityBrowserElement::SELECTION_MODE_APPEND,
-    ) + parent::defaultSettings();
+    ] + parent::defaultSettings();
   }
 
   /**
@@ -177,7 +177,7 @@ class EntityReferenceBrowserWidget extends WidgetBase implements ContainerFactor
       '#default_value' => $this->getSetting('field_widget_display'),
       '#options' => $displays,
       '#ajax' => [
-        'callback' => array($this, 'updateSettingsAjax'),
+        'callback' => [$this, 'updateSettingsAjax'],
         'wrapper' => $id,
       ],
     ];
