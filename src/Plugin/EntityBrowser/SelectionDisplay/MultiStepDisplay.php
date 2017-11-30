@@ -160,7 +160,7 @@ class MultiStepDisplay extends SelectionDisplayBase {
       '#value' => $this->t($this->configuration['select_text']),
       '#name' => 'use_selected',
       '#attributes' => [
-        'class' => ['entity-browser-use-selected'],
+        'class' => ['entity-browser-use-selected', 'button--primary'],
       ],
       '#access' => empty($selected_entities) ? FALSE : TRUE,
     ];
