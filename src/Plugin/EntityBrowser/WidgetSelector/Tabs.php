@@ -21,6 +21,8 @@ class Tabs extends WidgetSelectorBase {
    */
   public function getForm(array &$form = [], FormStateInterface &$form_state = NULL) {
     $element = [];
+    /** @var \Drupal\entity_browser\EntityBrowserInterface $browser */
+    $browser = $form_state->getFormObject()->getEntityBrowser();
     foreach ($this->widget_ids as $id => $label) {
       $name = 'tab_selector_' . $id;
       $element[$name] = [
@@ -34,6 +36,7 @@ class Tabs extends WidgetSelectorBase {
         '#submit' => [],
         '#name' => $name,
         '#widget_id' => $id,
+        '#access' => $browser->getWidget($id)->access(),
       ];
     }
 

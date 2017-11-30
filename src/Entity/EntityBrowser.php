@@ -303,6 +303,14 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   public function getFirstWidget() {
     $instance_ids = $this->getWidgets()->getInstanceIds();
+    $instance_ids = array_filter($instance_ids, function ($id) {
+      return $this->getWidget($id)->access()->isAllowed();
+    });
+
+    if (empty($instance_ids)) {
+      return NULL;
+    }
+
     return reset($instance_ids);
   }
 

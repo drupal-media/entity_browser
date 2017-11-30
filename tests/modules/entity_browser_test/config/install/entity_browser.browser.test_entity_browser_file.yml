@@ -35,3 +35,10 @@ widgets:
     weight: -10
     label: view
     id: view
+  cbc59500-04ab-4395-b063-c561f0e3bf80:
+    id: dummy
+    label: dummy
+    weight: -8
+    uuid: cbc59500-04ab-4395-b063-c561f0e3bf80
+    settings:
+      text: 'This is dummy widget.'

@@ -3,6 +3,7 @@
 namespace Drupal\entity_browser;
 
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\PluginBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -370,6 +371,13 @@ abstract class WidgetBase extends PluginBase implements WidgetInterface, Contain
         $this->configuration[$key] = $widget_context[$key];
       }
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function access() {
+    return AccessResult::allowed();
   }
 
 }

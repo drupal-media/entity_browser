@@ -17,4 +17,12 @@ interface EntityBrowserFormInterface extends FormInterface {
    */
   public function setEntityBrowser(EntityBrowserInterface $entity_browser);
 
+  /**
+   * Gets entity browser entity,
+   *
+   * @return \Drupal\entity_browser\EntityBrowserInterface
+   *   Entity browser entity.
+   */
+  public function getEntityBrowser();
+
 }

@@ -3,6 +3,7 @@
 namespace Drupal\entity_browser\Plugin\EntityBrowser\Widget;
 
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\entity_browser\WidgetBase;
@@ -277,6 +278,22 @@ class View extends WidgetBase implements ContainerFactoryPluginInterface {
       $dependencies[$view->getConfigDependencyKey()] = [$view->getConfigDependencyName()];
     }
     return $dependencies;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function access() {
+    // Mark the widget as not visible if the user has no access to the view.
+    /** @var \Drupal\views\ViewExecutable $view */
+    $view = $this->entityTypeManager
+      ->getStorage('view')
+      ->load($this->configuration['view'])
+      ->getExecutable();
+
+
+    // Check if the current user has access to this view.
+    return AccessResult::allowedIf($view->access($this->configuration['view_display']));
   }
 
 }

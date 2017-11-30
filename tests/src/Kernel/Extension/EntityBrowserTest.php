@@ -13,6 +13,7 @@ use Drupal\entity_browser\WidgetInterface;
 use Drupal\entity_browser\WidgetSelectorInterface;
 use Drupal\entity_browser\SelectionDisplayInterface;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\user\Entity\User;
 use Drupal\views\Entity\View;
 
 /**
@@ -465,6 +466,43 @@ class EntityBrowserTest extends KernelTestBase {
     $form_object->validateForm($form, $form_state);
 
     $this->assertEmpty($form_state->getErrors(), t('Validation succeeded where expected'));
+  }
+
+  /**
+   * Tests view widget access.
+   */
+  public function testViewWidgetAccess() {
+    $this->installConfig(['entity_browser_test']);
+    $this->installEntitySchema('user');
+    $this->installEntitySchema('user_role');
+
+    /** @var \Drupal\entity_browser\EntityBrowserInterface $entity */
+    $entity = $this->controller->load('test_entity_browser_file');
+
+    $this->assertFalse($entity->getWidget('774798f1-5ec5-4b63-84bd-124cd51ec07d')->access()->isAllowed());
+
+    // Create a user that has permission to access the view and try with it.
+    /** @var \Drupal\user\RoleInterface $role */
+    $role = $this->container->get('entity_type.manager')
+      ->getStorage('user_role')
+      ->create([
+        'name' => $this->randomString(),
+        'id' => $this->randomMachineName(),
+      ]);
+    $role->grantPermission('access content');
+    $role->save();
+
+    $user = $this->container->get('entity_type.manager')
+      ->getStorage('user')
+      ->create([
+        'name' => $this->randomString(),
+        'mail' => 'info@example.com',
+        'roles' => $role->id(),
+      ]);
+    $user->save();
+    \Drupal::currentUser()->setAccount($user);
+
+    $this->assertTrue($entity->getWidget('774798f1-5ec5-4b63-84bd-124cd51ec07d')->access()->isAllowed());
   }
 
 }
