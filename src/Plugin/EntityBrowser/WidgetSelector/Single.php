@@ -20,7 +20,7 @@ class Single extends WidgetSelectorBase {
    * {@inheritdoc}
    */
   public function getForm(array &$form, FormStateInterface &$form_state) {
-    return array();
+    return [];
   }
 
 }

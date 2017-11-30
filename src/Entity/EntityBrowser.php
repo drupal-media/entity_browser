@@ -352,7 +352,7 @@ class EntityBrowser extends ConfigEntityBase implements EntityBrowserInterface, 
    */
   protected function widgetSelectorPluginCollection() {
     if (!$this->widgetSelectorCollection) {
-      $options = array();
+      $options = [];
       foreach ($this->getWidgets()->getInstanceIds() as $id) {
         $options[$id] = $this->getWidgets()->get($id)->label();
       }

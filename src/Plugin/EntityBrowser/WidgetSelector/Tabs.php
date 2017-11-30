@@ -19,22 +19,22 @@ class Tabs extends WidgetSelectorBase {
   /**
    * {@inheritdoc}
    */
-  public function getForm(array &$form = array(), FormStateInterface &$form_state = NULL) {
+  public function getForm(array &$form = [], FormStateInterface &$form_state = NULL) {
     $element = [];
     foreach ($this->widget_ids as $id => $label) {
       $name = 'tab_selector_' . $id;
-      $element[$name] = array(
+      $element[$name] = [
         '#type' => 'button',
         '#attributes' => ['class' => ['tab']],
         '#value' => $label,
         '#disabled' => $id == $this->getDefaultWidget(),
         '#executes_submit_callback' => TRUE,
-        '#limit_validation_errors' => array(array($id)),
+        '#limit_validation_errors' => [[$id]],
         // #limit_validation_errors only takes effect if #submit is present.
-        '#submit' => array(),
+        '#submit' => [],
         '#name' => $name,
         '#widget_id' => $id,
-      );
+      ];
     }
 
     $element['#attached']['library'][] = 'entity_browser/tabs';

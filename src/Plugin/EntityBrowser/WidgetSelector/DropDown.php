@@ -19,31 +19,31 @@ class DropDown extends WidgetSelectorBase {
   /**
    * {@inheritdoc}
    */
-  public function getForm(array &$form = array(), FormStateInterface &$form_state = NULL) {
+  public function getForm(array &$form = [], FormStateInterface &$form_state = NULL) {
     // Set a wrapper container for us to replace the form on ajax call.
     $form['#prefix'] = '<div id="entity-browser-form">';
     $form['#suffix'] = '</div>';
 
-    $element['widget'] = array(
+    $element['widget'] = [
       '#type' => 'select',
       '#options' => $this->widget_ids,
       '#default_value' => $this->getDefaultWidget(),
       '#executes_submit_callback' => TRUE,
-      '#limit_validation_errors' => array(array('widget')),
+      '#limit_validation_errors' => [['widget']],
       // #limit_validation_errors only takes effect if #submit is present.
-      '#submit' => array(),
-      '#ajax' => array(
-        'callback' => array($this, 'changeWidgetCallback'),
+      '#submit' => [],
+      '#ajax' => [
+        'callback' => [$this, 'changeWidgetCallback'],
         'wrapper' => 'entity-browser-form',
-      ),
-    );
+      ],
+    ];
 
-    $element['change'] = array(
+    $element['change'] = [
       '#type' => 'submit',
       '#name' => 'change',
       '#value' => $this->t('Change'),
-      '#attributes' => array('class' => array('js-hide')),
-    );
+      '#attributes' => ['class' => ['js-hide']],
+    ];
 
     return $element;
   }

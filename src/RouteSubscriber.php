@@ -77,7 +77,7 @@ class RouteSubscriber {
   protected function getBrowserIDsWithRoute() {
     // Get all display plugins which provides the type.
     $display_plugins = $this->displayManager->getDefinitions();
-    $ids = array();
+    $ids = [];
     foreach ($display_plugins as $id => $definition) {
       if (!empty($definition['uses_route'])) {
         $ids[$id] = $id;
