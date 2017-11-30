@@ -123,8 +123,8 @@ interface EntityBrowserInterface extends ConfigEntityInterface {
   /**
    * Gets first widget based on weights.
    *
-   * @return string
-   *   First widget instance ID.
+   * @return string|null
+   *   First widget instance ID or NULL if no widgets are available.
    */
   public function getFirstWidget();
 

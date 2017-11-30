@@ -239,4 +239,13 @@ class EntityForm extends WidgetBase {
     $this->configuration['form_mode'] = $this->configuration['form_mode']['form_select'];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function access() {
+    return $this->entityTypeManager
+      ->getAccessControlHandler($this->configuration['entity_type'])
+      ->createAccess($this->configuration['bundle'], NULL, [], TRUE);
+  }
+
 }

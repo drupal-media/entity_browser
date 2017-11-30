@@ -118,4 +118,12 @@ interface WidgetInterface extends PluginInspectionInterface, ConfigurablePluginI
    */
   public function requiresJsCommands();
 
+  /**
+   * Defines if the widget is visible / accessible in a given context.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
+   */
+  public function access();
+
 }

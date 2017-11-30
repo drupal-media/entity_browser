@@ -78,6 +78,7 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
 
     $this->getSession()->switchToIFrame('entity_browser_iframe_test_entity_browser_file');
 
+    $this->assertSession()->linkExists('dummy');
     $this->assertSession()->linkExists('view');
     $this->assertSession()->linkExists('upload');
 
@@ -102,6 +103,26 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     //  'files[upload][]' => $this->container->get('file_system')->realpath($image2->getFileUri()),
     //];
     // $this->drupalPostForm(NULL, $edit, 'Select files');.
+
+    \Drupal::state()->set('eb_test_dummy_widget_access', FALSE);
+    $this->drupalGet('entity-browser/iframe/test_entity_browser_file');
+    $this->assertSession()->linkNotExists('dummy');
+    $this->assertSession()->linkExists('view');
+    $this->assertSession()->linkExists('upload');
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'eb_dummy');
+
+    // Move dummy widget to the first place and make sure it does not appear.
+    $browser = $this->container->get('entity_type.manager')
+      ->getStorage('entity_browser')
+      ->load('test_entity_browser_file');
+    $browser->getWidget('cbc59500-04ab-4395-b063-c561f0e3bf80')->setWeight(-15);
+    $browser->save();
+    $this->drupalGet('entity-browser/iframe/test_entity_browser_file');
+    $this->assertSession()->linkNotExists('dummy');
+    $this->assertSession()->linkExists('view');
+    $this->assertSession()->linkExists('upload');
+    $this->assertSession()->pageTextNotContains('This is dummy widget.');
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'eb_dummy');
   }
 
   /**
@@ -130,6 +151,9 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     $this->getSession()->switchToIFrame('entity_browser_iframe_test_entity_browser_file');
 
     $this->assertSession()->selectExists('widget');
+    $this->assertSession()->optionExists('widget', 'cbc59500-04ab-4395-b063-c561f0e3bf80'); // Dummy
+    $this->assertSession()->optionExists('widget', '2dc1ab07-2f8f-42c9-aab7-7eef7f8b7d87'); // Upload
+    $this->assertSession()->optionExists('widget', '774798f1-5ec5-4b63-84bd-124cd51ec07d'); // View
     // Selects the view widget.
     $this->getSession()->getPage()->selectFieldOption('widget', '774798f1-5ec5-4b63-84bd-124cd51ec07d');
 
@@ -148,10 +172,30 @@ class EntityBrowserTest extends EntityBrowserJavascriptTestBase {
     // Causes a fatal.
     // Selects the upload widget.
     // $this->getSession()->getPage()->selectFieldOption('widget', '2dc1ab07-2f8f-42c9-aab7-7eef7f8b7d87');.
+
+    \Drupal::state()->set('eb_test_dummy_widget_access', FALSE);
+    $this->drupalGet('entity-browser/iframe/test_entity_browser_file');
+    $this->assertSession()->optionNotExists('widget', 'cbc59500-04ab-4395-b063-c561f0e3bf80'); // Dummy
+    $this->assertSession()->optionExists('widget', '2dc1ab07-2f8f-42c9-aab7-7eef7f8b7d87'); // Upload
+    $this->assertSession()->optionExists('widget', '774798f1-5ec5-4b63-84bd-124cd51ec07d'); // View
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'eb_dummy');
+
+    // Move dummy widget to the first place and make sure it does not appear.
+    $browser = $this->container->get('entity_type.manager')
+      ->getStorage('entity_browser')
+      ->load('test_entity_browser_file');
+    $browser->getWidget('cbc59500-04ab-4395-b063-c561f0e3bf80')->setWeight(-15);
+    $browser->save();
+    $this->drupalGet('entity-browser/iframe/test_entity_browser_file');
+    $this->assertSession()->optionNotExists('widget', 'cbc59500-04ab-4395-b063-c561f0e3bf80'); // Dummy
+    $this->assertSession()->optionExists('widget', '2dc1ab07-2f8f-42c9-aab7-7eef7f8b7d87'); // Upload
+    $this->assertSession()->optionExists('widget', '774798f1-5ec5-4b63-84bd-124cd51ec07d'); // View
+    $this->assertSession()->pageTextNotContains('This is dummy widget.');
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Contexts', 'eb_dummy');
   }
 
   /**
-   * Tests wievs selection display.
+   * Tests views selection display.
    */
   public function testViewsSelectionDisplayWidget() {
 
