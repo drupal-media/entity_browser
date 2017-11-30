@@ -28,7 +28,6 @@ class InlineEntityFormTest extends EntityBrowserJavascriptTestBase {
     'system',
     'node',
     'inline_entity_form',
-    'entity',
     'entity_browser_ief_test',
   ];
 
